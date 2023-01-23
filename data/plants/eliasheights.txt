@@ -1,0 +1,768 @@
+order	ocr	taxon	elias	fna	other	mean
+63	Silver Fir, Cascades Fir (A. amabilis)	Abies amabilis	75	75		75
+58	Balsam Fir (A. bolsomeoJ 102	Abies balsamea	25	23		24
+60	Subalpine Fir. Alpine Fir (A. /asiocorpoJ	Abies bifolia	35	30		32.5
+66	Bristlecone Fir (A. bracteato) 114	Abies bracteata		25		25
+62	White Fir (A. concolorJ 107	Abies concolor	50	40		45
+59	Fraser Fir, She Balsam (A. fraseriJ 103	Abies fraseri	25	25		25
+61	Grand Fir, Lowland Fir (A. grandisJ 106	Abies grandis	50	75		62.5
+60	Subalpine Fir. Alpine Fir (A. /asiocorpoJ	Abies lasiocarpa	35	20		27.5
+62	White Fir (A. concolorJ 107	Abies lowiana	50	60		55
+65	California Re Fir (A. mognificaJ 112	Abies magnifica	50			50
+64	Noble Fir (A.,rocera) 110	Abies procera	65	80		72.5
+467	Sweet Acacia (A. farnesianoJ 627	Acacia farnesiana	10			10
+471	Catclaw Acacia (A. greggHJ 630	Acacia greggii	7			7
+470	Steel Acacia [A. mocracontha) 629	Acacia macracantha			9	9
+469	Sffiall's Acacia (A. smallii} 629	Acacia smallii	5			5
+468	Twisted Acacia (A. tortuoso} 628	Acacia tortuosa			6	6
+472	Wright's Acacia (A. wrighliiJ 631	Acacia wrightii			9	9
+621	Florida Maple (A. borbatum} 790	Acer barbatum	18			18
+614	Vine Maple (A. circinalum} 783	Acer circinatum	15			15
+612	Rocky Mountain Maple (A. glabrum} '781	Acer glabrum	9			9
+618	Bigtooth Maple (A. grondidenlatumJ 787	Acer grandidentatum	15			15
+619	Chalk Maple (A. Ieucoderme) 788	Acer leucoderme	12			12
+609	Bigleaf Maple (A. macraphyHumJ 778	Acer macrophyllum	30			30
+622	Boxelder (A. negundoJ 791	Acer negundo	20			20
+617	Black Maple {A. nigrum) 786	Acer nigrum	25			25
+610	Striped Maple, Moose Wood (A, pensylvonicumJ	Acer pensylvanicum	12			12
+611	Norway Maple (A. plotonoidesJ 780	Acer platanoides	30			30
+613	Sycamore Maple (A. pseudoplo!onus) 782	Acer pseudoplatanus	30			30
+615	Red Map.le (A. rubrum) 784	Acer rubrum	28			28
+616	Silver Maple (A. sacchorinumj 785	Acer saccharinum	30			30
+620	Sugar Maple (A. soccharum) 789 	Acer saccharum	30			30
+608	Mountain Maple {A. spicotumJ 777	Acer spicatum	30		?	30
+743	Everglades Palm (A. wrighUiJ	Acoelorraphe wrightii	8			8
+606	California Buckeye {A. coJifornicaJ 773	Aesculus californica	9			9
+602	Ohio Buckeye, Fetid Buckeye {A. g!abraJ	Aesculus glabra	25			25
+607	Horsechestnut {A. hippocastonumJ 774	Aesculus hippocastanum	25			25
+603	Yellow Buckeye, Sweet Buckeye (A. octandroj	Aesculus octandra	26			26
+604	Red Buckeye (A. povia) 771	Aesculus pavia	6			6
+605	Painted Buckeye, Dwarf Buckeye {A. sylvaticaJ	Aesculus sylvatica	10			10
+642	Tree of Heaven, Ailanthus (A. oltissimoj 813	Ailanthus altissima	25			25
+479	Mimosa Tree, Silk Tree (A. juJibrissinJ 638	Albizia julibrissin	15			15
+478	Woman's Tongue, Lebbeck's Albizia [A. lebbeck}	Albizia lebbeck	15			15
+267	Europ􀆧an Alder (A. g/ulinosa) 409	Alnus glutinosa	30			30
+270	Seaside Alder (A. marilima) 412	Alnus maritima	10			10
+264	Arizona Aider (A. obJongifolio) 407	Alnus oblongifolia	10			10
+263	White Alder (A. rhombifoliaJ 406	Alnus rhombifolia	20			20
+266	Red Alder (A. rubraJ 408	Alnus rubra	40			40
+268	Speckled Alder (A. rugosaJ 410	Alnus rugosa	10			10
+265	Hazel Alder (A. serrulata) 408	Alnus serrulata	10			10
+262	Sitka Alder {A. sinuata) 405	Alnus sinuata	10			10
+269	Mountain Alder (A. tenuifolia) 411	Alnus tenuifolia	10			10
+641	Mexican Alvaradoa (A. omorphoides) 812	Alvaradoa amorphoides	15			15
+429	Saskatoon Serviceberry (A. alnifo/ia) 594	Amelanchier alnifolia	12			12
+431	Downy Serviceberry (A. arboreal 596	Amelanchier arborea	12			12
+432	Inland Serviceberry (A. inlerior) 597	Amelanchier interior	8			8
+430	Roundleaf Serviceberry (A. songuineaJ 595	Amelanchier sanguinea	6			6
+428	Utah Serviceberry (A. utahensis) 593	Amelanchier utahensis	8			8
+706	Black Calabash (A. latifolio} 883	Amphitecna latifolia	6			6
+648	Balsam Torchwood (A. bolsamiferoj 821	Amyris balsamifera	10			10
+647	Torchwood (A. e/emifero) 820	Amyris elemifera	5			5
+512	Cabbage Angelin (A. inermis) 671	Andira inermis	10			10
+110	Pond Apple (A. globroJ 202	Annona glabra	16	15		15.5
+111	Sugar Apple, Sweetsop {A. squomosa) 203	Annona squamosa		8		8
+668	Devil's Walking Stick (A. spinoso) 842	Aralia spinosa	7			7
+370	Arizona Madrone (A. ariz.onicoJ 525	Arbutus arizonica	15			15
+368	Pacific Madrone(A. menziesiiJ 523	Arbutus menziesii	40			40
+369	Texas Madrone (A, texonoJ 524	Arbutus texana	8			8
+389	Marbleberry {A. escollonioidesJ	Ardisia escallonioides	7.5			7.5
+725	Big Sagebrush (A. tridentoto)	Artemisia tridentata	6			6
+109	Pawpaw (A. triloba) 200	Asimina triloba	10			10
+677	Black Mangrove {A. germinonsj 853	Avicennia germinans	12			12
+260	Blue Birch (B. caerulea-grandis) 401	Betula ×caerulea	25			25
+253	Yellow Birch (B. olleghoniensisJ 394	Betula alleghaniensis	22			22
+252	Sweet Birch, Cherry Birch (B. lento) 393	Betula lenta	18			18
+256	River Birch {B. nigra) 397	Betula nigra	25			25
+255	Water Birch (B. occidenlolisJ	Betula occidentalis	12			12
+257	Paper Birch (B. popyrifero) 398	Betula papyrifera	25			25
+258	European Birch (B. pendulo) 399	Betula pendula	15			15
+259	Gray Birch (B. popu/ifo/iaJ 400	Betula populifolia	10			10
+261	European White Birch (B. pubescens)	Betula pubescens	10			10
+254	Ashe's Birch {B. uber) 395	Betula uber	8			8
+673	Bahama Strongbark (B. O\'oloJ 849	Bourreria ovata	12			12
+674	Rough Slrongbark (B. radu/o) 850	Bourreria radula	12			12
+156	Paper Mulberry (B. papyrifera) 263	Broussonetia papyrifera	15			15
+529	Oxhorn Bucidn (B. buceras) 688	Bucida buceras	25			25
+374	Saffron Plum (B. celastrina} 531	Bumelia celastrina	6			6
+371	Gum Bumelia (B. /anuginosoJ 528	Bumelia lanuginosa	12			12
+373	Buckthorn Bumelia (B. lycioidesJ 530	Bumelia lycioides	9			9
+372	Ironwood or Tough Bumelia (B. lenoxj 529	Bumelia tenax	8			8
+625	Fragrant Bursera (B. fagaroides)	Bursera fagaroides	5			5
+623	Elephant Tree (B. microphyllo}	Bursera microphylla	5			5
+624	Gumbo-Limbo (B. simaruba}	Bursera simaruba	20			20
+667	Key Byrsonima (B. lucidoJ 841	Byrsonima lucida	6			6
+498	Paradise Poinciana (C. gilliesii} 658	Caesalpinia gilliesii	5			5
+497	Mexican Poinciana re. mexicanoJ 657	Caesalpinia mexicana	5			5
+496	Flowerfence Poinciana {C. pulcherrimo} 657	Caesalpinia pulcherrima	10			10
+71	Incense Cedar (C. decurrensJ 123	Calocedrus decurrens	50	57		53.5
+514	Pale Lidflower (G. pa/Jens) 674	Calyptranthes pallens	8			8
+515	Myrtle-of-the-River (G. zuzygium) 675	Calyptranthes zuzygium	12			12
+112	Cinnamon Bark, Canella (C, win!erona) 204	Canella winteriana	10			10
+554	Canotia (C. holacanthaJ 718	Canotia holacantha	6			6
+353	Jamaica Caper (C. cynophal/ophoroJ	Capparis cynophallophora	6			6
+354	Bay-Leaved Caper {C. flexuosa) 505	Capparis flexuosa	8			8
+303	Papaya (G. papaya) 455	Carica papaya	6			6
+275	Saguaro, Giant Cactus (C. gigon!eus) 420	Carnegia gigantea	15.5			15.5
+169	Shagbark Hickory, Shellbark Hickory {C.	carolinae-septentrionalis	45	39		42
+251	American Hornbeam (C. caroliniana) 389	Carpinus caroliniana	8			8
+166	Water Hickory, Bitter Hickory (C. aqua!·	Carya aquatica	35	46		40.5
+167	'Bitternut Hickory {C. cordiformisJ 282	Carya cordiformis	35	52		43.5
+172	·' ·Scrub Hickory, Florida Hickory fC, j)ori· ·1 dona) 288	Carya floridana	25	25		25
+173	· Pignut Hickory (C. glabro) 290	Carya glabra	40	30		35
+165	Pecan (C. i//inoensis)	Carya illinoinensis	60	44	?	52
+170	Big She lb?rk Hickory, King Nut Hickory (C. laciniosa)	Carya laciniosa	40	41		40.5
+164	Nutmeg Hickory (C. myristiciformis) 278	Carya myristiciformis	35			35
+169	Shagbark Hickory, Shellbark Hickory {C.	Carya ovata	45	46		45.5
+174	Sand Hickory {C. pa/Iida) 291	Carya pallida	15	29		22
+171	IBlack Hickory {C. texano) 287	Carya texana	28	41		34.5
+168	- :Mockernut Hickory, White Hickory {C. !omen- ,,, tasa) 283	Carya tomentosa	35	36		35.5
+185	'Florida Chinkapin (G. alnifolia variety	Castanea alnifolia var. floridana				#DIV/0!
+182	American Chestnut {C. dentata) 303	Castanea dentata	6	30	?	18
+184	Ozark Chinkapin {C. ozorkensis) 306	Castanea ozarkensis		20		20
+183	􀆦'Allegheny Chinkapin (C. pumila) 305	Castanea pumila	8	15		11.5
+186	Golden Chinkapin (C. chrysophylla) 307	Castanopsis chrysophylla	40			40
+272	Brazilian Beefwood (C. cris!olo) 415	Casuarina cristata	20			20
+271	Horsetail Casuarina (C. equisetifoliaJ 414	Casuarina equisetifolia	30			30
+702	Southern Catalpa (C, bignonioides} 879	Catalpa bignonioides	15			15
+703	;Northern Catalpa (C. speciosa) 880	Catalpa speciosa	30			30
+576	Feltleaf Ceanothus (C. arboreusJ 742	Ceanothus arboreus	7			7
+577	Spiny Ceanothus re. spinos4sJ 742	Ceanothus spinosus	6			6
+575	Blueblossom {C. thyrsifiorusJ 741	Ceanothus thyrsiflorus	6			6
+142	Sugarberry, Hackberry {C. laevigata) 246	Celtis laevigata	28			28
+141	Lindheimer Hackberry (C. lindheimeri)- 245	Celtis lindheimeri	14			14
+139	Hackberry (C, occidenla/is) 243	Celtis occidentalis	18			18
+144	Spiny Hackberry (C. pa/Iida) 248	Celtis pallida	5			5
+140	Netleaf Hackberry (C. retic ulala) 244	Celtis reticulata	10			10
+143	Georgia Hackberry, Dwarf Hackberry (C. tenuifo- ;·, /ia} 247 ·	Celtis tenuifolia	10			10
+707	eUUon Bush (C, occiden!olisj ·· 885	Cephalanthus occidentalis	15		?	15
+494	Blue Paloverde {C. floridu.m) 654	Cercidium floridum	10			10
+495	Border Paloverde (G. mocrum} 655	Cercidium macrum	8			8
+493	Yellow Paloverde re. microphyllum) 654	Cercidium microphyllum	6			6
+486	Eastern Redbud (C. conadensisJ 646	Cercis canadensis	8			8
+487	California Redbud {C. occidentolisJ 647	Cercis occidentalis	7			7
+395	Birchleaf Mountain Mahogany (C. betu-	Cercocarpus betuloides	8			8
+396	Hairy Mountain Mahogany (C. breviflorus}	Cercocarpus breviflorus	7			7
+393	Curlleaf Mountain Mahogany {C. Jedifo·	Cercocarpus ledifolius	12			12
+394	Catalina Mountain Mahogany (C. traskioe)	Cercocarpus traskiae	7			7
+277	Key Wost Cephalocereus (C. robinii variety	Cereus robinii		10		10
+278	Deering Cephalo cereus (C. robinii variety deeringiiJ	Cereus robinii var. deeringii				#DIV/0!
+276	Organ-Pipe Cactus (C. thurberi) 421	Cereus thurberi	6			6
+77	Port Orford Cedar, Lawson False-Cypress (C.	Chamaecyparis lawsoniana	65	50		57.5
+75	Alaska Cedar, Yellow Cypress (C. noolkalensis)	Chamaecyparis nootkatensis	50	40		45
+78	Hinoki While Cedar (C. oblusoJ 134	Chamaecyparis obtusa	14			14
+79	Sawara White Cedar (C. pisifera) 134	Chamaecyparis pisifera	15			15
+76	Atlantic White Cedar (C. !hyoidesJ 132	Chamaecyparis thyoides	28	20		24
+704	'Desert Willow (C. /ineoris) 881	Chilopsis linearis	10			10
+680	Fringetree (C. virginicusJ 857	Chionanthus virginicus	10			10
+466	Coco-Plum (C. icaco) 622	Chrysobalanus icaco	5			5
+375	Satinloaf (C. o/iviformeJ 532	Chrysophyllum oliviforme			9	9
+121	Camphor Tree (C. camphor) 21	Cinnamomum camphora			24	24
+676	Florida Fiddlewood {C. frulicosum)	Citharexylum fruticosum	12			12
+651	Sour Orange (C. auronlium) 824	Citrus ×aurantium	6			6
+652	Sweet Orange (C. sinensisJ 825	Citrus ×sinensis	8			8
+650	Lime (C. ourontifolio) 823	Citrus aurantiifolia	8			8
+653	Lemon (C. Jimon) 825	Citrus limon			6	6
+500	Yellowwood {C. /utea) 660	Cladrastis lutea	18			18
+359	Sweet Pepperbush (G. acuminoto) 510	Clethra acuminata	6			6
+358	Buc􀆨wheat or Titi Tree {C. monophyllaJ	Cliftonia monophylla	8			8
+288	Balsam Apple (G. rosea} 433	Clusia rosea	18			18
+283	Dove Plum (G. diversifolioJ 427	Coccoloba diversifolia	20			20
+282	Sea Gra pe (G. uviferoJ 4􀄗6	Coccoloba uvifera	15			15
+749	Florida Silver Palm (C, argentato)	Coccothrinax argentata	8			8
+739	Coconut Palm {C. nucifera) 922	Cocos nucifera	20			20
+580	Coffee Colubrina (G, tlrborescensJ 745	Colubrina arborescens	8			8
+579	Cuban Colubrina re. cubensisJ 744	Colubrina cubensis	9			9
+578	Soldierwood {C. el/iptica) 744	Colubrina elliptica	8			8
+589	Bitter Condalia (C. globosa) 754	Condalia globosa	6			6
+588	Bluewood (G. hookeriJ 753	Condalia hookeri	9			9
+527	Butlon Mangrove (C. erectusJ 686	Conocarpus erectus	20			20
+672	Anacahuite (C. bois:::ieri) 848	Cordia boissieri	8			8
+671	Geiger Tree (C. sebes1eno) . 847	Cordia sebestena	9			9
+542	Alternate-Leaf Dogwood {C. olternifoliaJ 704	Cornus alternifolia	9			9
+538	Roughleaf Dogwoqd (G. drummondiiJ 701	Cornus drummondii	4			4
+536	Flowering Dogwood (C. Florido) 699	Cornus florida	15			15
+539	Brown Dogwood {C. gJabroloJ 702	Cornus glabrata	6			6
+537	Pacific Dogwood (C. nuttalliiJ 700	Cornus nuttallii	30			30
+541	Red-Osier Dogwood (C. stolonifer'o) 703	Cornus stolonifera	5			5
+540	Stiffcornel Dogwood (C. stricta) 702	Cornus stricta	4.5			4.5
+626	American Smoke Tree (C. obovotus) 797	Cotinus obovatus	12			12
+397	Cliffrose (C. mexiconoJ 561	Cowania mexicana	8			8
+447	May Hawthorn (C. oeslivalisJ 613	Crataegus aestivalis			10	10
+447	May Hawthorn (C. oeslivalisJ 613	Crataegus ashei			6	6
+449	Barberryleaf HaWthorn (G. berberifolio) 614	Crataegus berberifolia			8	8
+453	Brainerd Hawthorn (G. brainerdiJ 615	Crataegus boyntonii			8	8
+449	Barberryleaf HaWthorn (G. berberifolio) 614	Crataegus brachyacantha			12	12
+453	Brainerd Hawthorn (G. brainerdiJ 615	Crataegus brainerdii				#DIV/0!
+442	Pear Hawthorn (C. caJpodendronJ 611	Crataegus calpodendron			6	6
+452	Round-Leaved Hawthorn (G. chrysocarpo)	Crataegus chrysocarpa				#DIV/0!
+457	Scarlet Hawthorn (C. coccinea} 617	Crataegus coccinea			8	8
+459	Kansas Hawthorn (C. coccinioidesJ 618	Crataegus coccinioides			6	6
+454	Cerro Hawthorn (G. eryfhropodaJ 616	Crataegus collina			8	8
+440	Columbia Hawthorn (G. columbiona) 610	Crataegus columbiana				#DIV/0!
+448	Cockspur Hawthorn (G. crus-golli) 614	Crataegus crus-galli			10	10
+454	Cerro Hawthorn (G. eryfhropodaJ 616	Crataegus dilatata			7	7
+439	Black Hawthorn (C. douglasiiJ 610	Crataegus douglasii	12			12
+454	Cerro Hawthorn (G. eryfhropodaJ 616	Crataegus erythropoda				#DIV/0!
+455	Fanleaf Hawthorn re. flobellotoJ 616	Crataegus flabellata				#DIV/0!
+444	Yellow Hawthorn (C. flava) 612	Crataegus flava				#DIV/0!
+444	Yellow Hawthorn (C. flava) 612	Crataegus harbisonii			8	8
+445	Entangled Hawthorn (C, intricotoJ 612	Crataegus intricata			3	3
+445	Entangled Hawthorn (C, intricotoJ 612	Crataegus iracunda			10	10
+461	Parsley Hawthorn (C. marsho/JiiJ 619	Crataegus macrosperma			7	7
+444	Yellow Hawthorn (C. flava) 612	Crataegus margaretta			7	7
+461	Parsley Hawthorn (C. marsho/JiiJ 619	Crataegus marshallii			8	8
+456	Downy Hawthorn re. mollisJ 616	Crataegus mollis	12		12	12
+464	English Hawthorn (C. monogynaJ 620	Crataegus monogyna	12			12
+458	Frosted Hawthorn (C. pruinosaJ 618	Crataegus opaca			10	10
+460	Washington Hawthorn (C. phaenopyrum} 619	Crataegus phaenopyrum	12		8	10
+458	Frosted Hawthorn (C. pruinosaJ 618	Crataegus pruinosa			10	10
+451	Dotted Hawthorn (G. punctalaJ 614	Crataegus pulcherrima			8	8
+451	Dotted Hawthorn (G. punctalaJ 614	Crataegus punctata			12	12
+463	Willow Hawthorn re. solignaJ 619	Crataegus saligna				#DIV/0!
+462	Litllehip Hawthorn (C. spothulotaJ 619	Crataegus spathulata			8	8
+441	Fleshy Hawthorn (C. succulenta) 611	Crataegus succulenta			6	6
+450	Tracy Hawthorn {C. lrocyi) 614	Crataegus tracyi				#DIV/0!
+463	Willow Hawthorn re. solignaJ 619	Crataegus triflora			6	6
+443	One-Flowered Hawthorn (C. unifloraJ 611	Crataegus uniflora			5	5
+446	Green Hawthorn (G. viridis} 612	Crataegus viridis			12	12
+705	Common Calabash Tree (C, cujeteJ 882	Crescentia cujete	10			10
+552	Florida Crossopetalum re. rhacoma) 717	Crossopetalum rhacoma	6			6
+595	The Florida Cupania (G. gJabraJ 76Q	Cupania glabra	15			15
+80	Arizona Cypress (C. orizonicoJ 137	Cupressus arizonica	25	23		24
+83	Modoc Cypress (C. bokerii) 139	Cupressus bakeri	14	30		22
+84	Gowen Cypress (C. goi'enionoJ 140	Cupressus goveniana	8	10		9
+81	Tecate Cypress (C. guadolupensis) 138	Cupressus guadalupensis	10	10		10
+82	NcNab Cypress (C. mocnobionoJ 138	Cupressus macnabiana	13	12		12.5
+85	Monterey Cypress (C. macrocarpa) 140	Cupressus macrocarpa	25	25		25
+85	Monterey Cypress (C. macrocarpa) 140	Cupressus sargentii		25		25
+357	Leatherwood, Ironwood JC. rocemifloro)	Cyrilla racemiflora	8			8
+504	Desert Smoketree {D. spinosoJ 664	Dalea spinosa	8			8
+499	Flamboyant Tree {D. regiaJ 658	Delonix regia	15			15
+382	Texas Persimmon (D. lexona) 541	Diospyros texana	16			16
+381	Common Persimmon (D, virginionoJ 539	Diospyros virginiana	20			20
+377	Willow Bo stic {D. so/icifolioJ 534	Dipholis salicifolia	16			16
+601	Florida Hopbush (D. viscosoJ 766	Dodonaea viscosa	3			3
+572	Milkbark, Whitewood (D, diversifolia) 737	Drypetes diversifolia	12			12
+573	Guiana Plum (D. loterifloro) 737	Drypetes lateriflora	10			10
+675	Anaqua {E. anocua) 850	Ehretia anacua	15			15
+532	Oleaster, Russian Olive (E, ongustifolioj 692	Elaeagnus angustifolia	8			8
+360	Elliottia(E. racemosaJ 512	Elliottia racemosa	10			10
+505	Southwestern Coral Bean (E. flobelliformisJ	Erythrina flabelliformis			3	3
+506	Eastern Coral Bean (E. herbacea} 665	Erythrina herbacea			5	5
+524	Blue Gum (E. g/obuJusJ 683	Eucalyptus globulus	80			80
+519	White Stopper Eugenia (E. oxillarisJ 678	Eugenia axillaris	8			8
+520	Redberry Eugenia (E. confusaJ 679	Eugenia confusa	18			18
+518	Boxleaf Eugenia (E. foetidoJ 677	Eugenia foetida	6			6
+521	Spiceberry Eugenia (E. rhombea} 680	Eugenia rhombea	8			8
+550	Eastefn Wahoo {E. atropurpureus) 715	Euonymus atropurpureus	8			8
+551	Western Wahoo {E. occidenlolisJ 716	Euonymus occidentalis	6			6
+708	[! Caribbean Princewood (E, coriboeumj 886	Exostema caribaeum	8			8
+599	Inkwood (E. poniculolaJ 764	Exothea paniculata	15			15
+503	Kidneywood (E. polystachyo) 663	Eysenhardtia polystachya	7			7
+180	American Beech (F. grondifolioJ 300	Fagus grandifolia	30			30
+181	European Beech (F. sylvalica) 302	Fagus sylvatica	30			30
+147	Florida Strangler Fig (F. ourea} 253	Ficus aurea	20			20
+150	Common Fig {F. carica) 256	Ficus carica	10			10
+148	Shortleaf Fig (F. citrifolia) 255	Ficus citrifolia	15			15
+149	Indian RubDer Tree (F. elastica) 256	Ficus elastica	40			40
+295	Chinese Parasol Tree (F. simplex} 445	Firmiana simplex			9	9
+681	Swamp Privet (F. ocuminaloJ 859	Forestiera acuminata	10			10
+683	Narrow-Leafed Foresliera (F. o,igusitifolio} 860	Forestiera angustifolia	7			7
+682	Desert Olive Forestiera (F. phillyreoidesj 859	Forestiera phillyreoides	8			8
+684	Florida Privet {F. segregate) 860	Forestiera segregata			3	3
+285	Franklinia (F. altomohoJ 430	Franklinia alatamaha	7			7
+688	White Ash (F. omcricanoJ 866	Fraxinus americana	25			25
+686	Singleleaf Ash (F. onomolaJ 864	Fraxinus anomala	8			8
+696	Berlandier Ash (F, berlondieronoJ	Fraxinus berlandieriana			9	9
+690	Carolina Ash (F. r.11ro/ininn11)	Fraxinus caroliniana	12			12
+692	Fragrant Ash (F. cuspidoto) 871	Fraxinus cuspidata	8			8
+693	Two-Petal Ash (F. dipetala) 871	Fraxinus dipetala	7			7
+700	Goodding Ash (F. gooddingiiJ	Fraxinus gooddingii			6	6
+699	Gregg Ash (F. greggiiJ 876	Fraxinus greggii	8			8
+697	Oregon Ash {F. lalifolia) 874	Fraxinus latifolia	25			25
+691	Black Ash (F. nigroJ 869	Fraxinus nigra	20			20
+698	Chihuahua Ash (F. papil/osa}	Fraxinus papillosa			6	6
+687	Green Ash (F. pennsylvonicoJ 865	Fraxinus pennsylvanica	20			20
+689	Pumpkin Ash {F. profunda)	Fraxinus profunda	30			30
+685	Blue Ash (F. quodrongu/otoj · 863	Fraxinus quadrangulata	20			20
+694	Texas Ash (F. texensis) 872	Fraxinus texensis	15			15
+695	Velvet Ash(F. velutino) 873	Fraxinus velutina	12			12
+293	California Fremontla (F, ca/ifornicum)	Fremontodendron californicum	9			9
+294	Mexican Fremontia (F. mexicanumJ	Fremontodendron mexicanum	6			6
+535	Wavyleaf Silktassel (G. elliptico) 696	Garrya elliptica	6			6
+710	'.>" Seven;Year Apple (G. c/usiifolio) 888	Genipa clusiifolia	4			4
+1	GiiJ.kgo, Maidenhair (G. bilobaJ 30	Ginkgo biloba	30	30		30
+489	Waterlocust (G, oquatico) 649	Gleditsia aquatica			30	30
+488	Honeylocust {G. triacanthosJ 648	Gleditsia triacanthos	30		45	37.5
+284	Loblolly Bay (G. losionthus/ 428	Gordonia lasianthus	20			20
+298	Upland Cotton (G. hirsutum}	Gossypium hirsutum			5	5
+533	Silk Oak (G. robustoJ 693	Grevillea robusta	20			20
+666	Texas Lignumvitae (G. ongustifoliuni}	Guaiacum angustifolium	6			6
+665	Holywood Lignumvitae (G. sonclumJ	Guaiacum sanctum	10			10
+274	Blolly (G. discolor) 417	Guapira discolor	16			16
+712	Everglades Velvetseed {G. elliptica} 890 	Guettarda elliptica	6			6
+711	Rllti:Shleaf Velvetseed {G. scabra) 889	Guettarda scabra	10			10
+553	. Falsebox (G. lotifoliaJ 717	Gyminda latifolia	8			8
+570	 pysterwood (G. JucidoJ 73	Gymnanthes lucida	10			10
+491	Kentucky Coffee Tree (G. dioicusJ 651	Gymnocladus dioicus	30			30
+383	Carolina Silverbell (H. coro inaJ 543	Halesia carolina	30			30
+385	Two-Winged Silverbell (H. diptera) 545	Halesia diptera	10			10
+384	Little Silverbell (H. parvijJora} 544	Halesia parviflora	9			9
+128	Witch Hazel (H. virginianaJ 227	Hamamelis virginiana	8			8
+714	H. palens)	Hamelia patens	5			5
+649	Baratta (H. parvifolio) 821	Helietta parvifolia	7			7
+297	Rose-of-Sharon (H, syriacusJ	Hibiscus syriacus	8			8
+296	Sea Hibiscus (H, tiliaceusJ	Hibiscus tiliaceus	6			6
+574	Manchineel (H. moncinello} 738	Hippomane mancinella	12			12
+646	Crucifixion Thorn, Holacantha (H. emoryij 817	Holacantha emoryi	4			4
+600	White Ironwood (H, trifo/iotoJ 765	Hypelate trifoliata	13			13
+566	Carolina Holly (I. ambiguo) 731	Ilex ambigua	6			6
+564	Sarvis Holly rt amelonchierJ 730	Ilex amelanchier	5			5
+559	Dahoon [I. cassineJ 725	Ilex cassine	8			8
+556	' '􀃱i.arge Gallberry (I. corioceaJ 724	Ilex coriacea	8			8
+563	􀄭ossum Haw (I, decidua) 729	Ilex decidua	10			10
+558	·Tawnyberry Holly (l. krugianaJ 725	Ilex krugiana	10			10
+562	Smooth Winterberry (I, laevigata} 728	Ilex laevigata	6			6
+565	Mountain Winterberry (I. montono) 730	Ilex montana	12			12
+557	Myrtle Dahoon (I, myrtifoliaJ 725,	Ilex myrtifolia	8			8
+555	American Holly (I. opocaJ 723	Ilex opaca	15			15
+561	Common Winterberry (I. verticillato) 727	Ilex verticillata	8			8
+560	'Yaupon, Cassina (I, vomitorio) 726	Ilex vomitoria	8			8
+113	Florida Anise Tree (I. floridanum) 206	Illicium floridanum	8			8
+114	Yellow Anise Tree (I. parviflorum) 207	Illicium parviflorum			7	7
+388	Joewood(J, keyensisJ 549	Jacquinia keyensis	6			6
+160	California Walnut (J. californica) 270	Juglans californica	10			10
+158	Butternut, White Walnut(}. cinerea) 268	Juglans cinerea	30			30
+163	Hinds Walnut (J. hindsii) 274	Juglans hindsii	20			20
+162	Arizona Walnut (J. major) 273	Juglans major	18			18
+161	Texas Black Walnut. Littfe Walnut (J. micracarpa)	Juglans microcarpa	15			15
+159	Black Walnut (/. nigra) 269	Juglans nigra	40			40
+94	AShe Juniper(/. ashei) 151	Juniperus ashei	12	15		13.5
+90	California Juniper(/. californicaJ 147	Juniperus californica	10	8		9
+86	Common Juniper(]. communisJ 143	Juniperus communis	7	3		5
+87	Alligator Juniper (J. deppeonoJ 144	Juniperus deppeana	15	15		15
+89	Mexican Drooping Juniper(/. floccido) 146	Juniperus flaccida	10	12		11
+93	One-Seed Juniper, Cherrystone Junipe r (f. monasperma)	Juniperus monosperma	12	7		9.5
+92	Western Juniper, Sierra Juniper(/, occidentolis)	Juniperus occidentalis	10	20		15
+91	Utah Juniper(/. osteosperma) 148	Juniperus osteosperma	8	6		7
+88	Pinchot Juniper, Red-berry J uniper(/. pin·	Juniperus pinchotii	7	6		6.5
+95	Rocky Mountain Juniper(!. scopulorum) 152	Juniperus scopulorum	15	20		17.5
+97	Southern Redcedar (J. silicicala) 155	Juniperus silicicola	15	10		12.5
+96	Eastern Redcedar (J. virginiona) 154	Juniperus virginiana	20	30		25
+363	MoUntaiil Laurel(K. latifolia) 516	Kalmia latifolia	9			9
+355	Allthorn(K, spinosaJ 505	Koeberlinia spinosa	4			4
+594	Goldenrain Tree {K. paniculotaJ 760	Koelreuteria paniculata	15			15
+591	Leadwood {K. ferreum) 755	Krugiodendron ferreum	9			9
+513	Crape Myrtle (L. indica} 672	Lagerstroemia indica	7			7
+530	White Mangrove {L. racem,osa) 689	Laguncularia racemosa	18			18
+41	European Larch, Common Larch (L.	Larix decidua			21	21
+40	Tamarack (L. laricinoJ 77	Larix laricina	25	20		22.5
+43	Subalpine Larch (L. lya/JiiJ 80	Larix lyallii		25		25
+42	Western Larch (L. occidenlolisJ 78	Larix occidentalis	55	50		52.5
+157	Corkwood {L. f/oridonoJ	Leitneria floridana	8			8
+484	Leadtree{L. JeucocepholoJ 643·	Leucaena leucocephala	10			10
+485		Leucaena pulverulenta	15			15
+483	Littleleaf Leadtree (L. retusaJ 642	Leucaena retusa	8			8
+116	Gulf Licaria (L. triandroJ 211	Licaria triandra			9	9
+679	California Privet (L. ovalifolium) 856	Ligustrum ovalifolium	5			5
+127	Sweetgum (L, styraciflua) 225	Liquidambar styraciflua	40			40
+108	Tulip Tree, Yellow Poplar {L. tu/ipiferoJ 197	Liriodendron tulipifera	50			50
+187	Tanoak (L. densijlorusJ 309	Lithocarpus densiflorus	30			30
+362	Tree Lyonia, Staggerbush {L. ferruginea	Lyonia ferruginea	9			9
+391	Lyontree (L. jJoribundus) 554	Lyonothamnus floribundus	15			15
+477	Bahama Lysiloma (L. JatisiJiquumJ 636	Lysiloma latisiliquum	20			20
+151	Osage-Orange (M. pomifera) 257	Maclura pomifera	20			20
+104	Cucumber Tree (M. acuminata) 192	Magnolia acuminata	30			30
+107	Fraser Magnolia (M. fraseri) 196	Magnolia fraseri	15			15
+102	Southern Magnolia, Bull Bay (M. grondifloroJ	Magnolia grandiflora	30			30
+106	Bigleaf Magnolia (M. macrophyl a) 195	Magnolia macrophylla	15			15
+105	Umbrella Magnolia (M. tripetala/ 194	Magnolia tripetala	15			15
+103	Sweetbay (M. virginiana) 191	Magnolia virginiana	25			25
+636	Mango {M. indico) 807	Mangifera indica	15			15
+379	Wild Dilly (M. bohomensisJ 536	Manilkara bahamensis	10			10
+380	Sapodilla (M. zopota) 538	Manilkara zapotilla	15			15
+376	False Mastic (M. foetidissimumJ 533 	Mastichodendron foetidissimum	25			25
+548	Florida Mayten {M. phyllonthoidesJ 714	Maytenus phyllanthoides	6			6
+523	Cajeput Tree (M. quinquenervio) 682	Melaleuca quinquenervia	15			15
+664	Chinaberry Tree (M. azedarach} 837	Melia azedarach	15			15
+638	Florida Poison Tree (M. toxiferum) 809	Metopium toxiferum	12			12
+356	Horseradish Tree (M. oleiferoJ 506	Moringa oleifera	9			9
+155	White Mulberry (M. alba) 262	Morus alba	25			25
+154	Texas Mulberry (M. microphyl/aJ 261	Morus microphylla	8			8
+153	Black Mulberry (M. nigra) 260	Morus nigra	25			25
+152	Red Mulberry (M. rubro) 259	Morus rubra	20			20
+522	Twinberry Eugenia (M, fragansJ 681	Myrcianthes fragrans	8			8
+179	Pacific Bayberry (M. ca/ifornica) 297	Myrica californica	8			8
+175	'!: (Myrica) 293 Southern Bayberry, Wax Myrtle (M. ceri·	Myrica cerifera	12			12
+178	Evergreen Bayberry (M. helerophy/loJ 296	Myrica heterophylla		3		3
+176	'Odorless Bayberry (M. inodoraJ 295	Myrica inodora	7			7
+177	Northern Bayberry (M. pensylvanico) 296	Myrica pensylvanica	2			2
+122	Jamaica Neclandra{N. coriaceaj 218	Nectandra coriacea	14			14
+669	Oleander {N. oleander) 844	Nerium oleander	10			10
+543	Water Tupelo {N. oquatica} 706	Nyssa aquatica	35		24	29.5
+544	Ogeche Tupelo {N. ogecheJ 707	Nyssa ogeche	18		12	15
+545	Black Tupelo (N. sylvolicaJ 708	Nyssa biflora	40		18	29
+545	Black Tupelo (N. sylvolicaJ 708	Nyssa sylvatica	40		18	29
+510	Desert Ironwood {O. tesota) 670	Olneya tesota			8	8
+281	Braz.ii Prickly Pear (0. broz.iliensisJ 425	Opuntia brasiliensis	4			4
+280	Indian Fig (0. ficus-indica} 425	Opuntia ficus-indica		6		6
+279	Jumping Cholla (0. fu/gidoJ 424	Opuntia fulgida	3			3
+678	Devilwood (0. omericanus) 855	Osmanthus americanus	15			15
+250	Knowlton Hop Hornbeam (0. knowllonii)	Ostrya knowltonii		9		9
+249	Eastern Hop Hornbeam {O. virginianaJ	Ostrya virginiana	12			12
+361	Sourwood (0, arboreum) 513	Oxydendrum arboreum	18			18
+492	Jerusalem-Thorn or Palo Verde (P. ocu- ·	Parkinsonia aculeata	12			12
+701	Royal Paulownia (P. lomenlosoJ 877	Paulownia tomentosa	15			15
+120	Avocado (P. americana) 216	Persea americana	20			20
+118	Red Bay (P. borbonio) 214	Persea borbonia	20			20
+119	Swamp Bay {P. paluslris) 215	Persea palustris	12			12
+740	Date Palm (P. doclylifero) 923	Phoenix dactylifera	10			10
+465	Christmasberry (P. orbulifolio} 620	Photinia arbutifolia	6			6
+567	Gooseberry Tree (P. ocidus} 	Phyllanthus acidus	10			10
+51	Norway Spruce, Common Spruce (P.	Picea abies	65	30		47.5
+45	Weeping Spruce (P. breweriona)	Picea breweriana	25	40		32.5
+49	Engelmann Spruce (P. engelmanniiJ	Picea engelmannii	35	60		47.5
+46	White Spruce (P. glaucaJ 84	Picea glauca	40	30		35
+47	Black Spruce, Bog Spruce (P. morionoJ B5	Picea mariana	18	25		21.5
+50	Blue Spruce, Colorado Blue Spruce (P.	Picea pungens	35	50		42.5
+48	Red Spruce (P. rubensJ 87	Picea rubens	30	40		35
+44	Sitka Spruce (P. sitchensis) 82	Picea sitchensis	60	80		70
+644	Bitterbush (P. pen!ondro) 816	Picramnia pentandra			6	6
+709	􀃧,"·. Pinckneya (P. pubensJ 887	Pinckneya pubens	8			8
+5	Whitebark Pine (P. albicaulisJ 40	Pinus albicaulis	20	21		20.5
+10	Rocky Mountain Bristlecone Pine (P. oristata)	Pinus aristata	20	16		18
+37	Knobcone Pine (P. allenuotoJ 74	Pinus attenuata	15	24		19.5
+8	Foxtail Pine (P. bolfourionaJ 43	Pinus balfouriana	15	22		18.5
+25	Jack Pine (P. bonksionoJ 62	Pinus banksiana	25	27		26
+13	Mexican Pinyan (P. cembroidesJ 48	Pinus cembroides	14	15		14.5
+28	Sand Pine (P. c/ausa) 65	Pinus clausa		21		21
+17	Lodgepole Pine (P. contorla) 55	Pinus contorta	30	50		40
+35	Coulter Pine (P. coulteriJ 72	Pinus coulteri		24		24
+32	Shartleaf Pine (P. echinataJ	Pinus echinata	35	40		37.5
+12	Pinyon, Colorado Pinyon (P. edu/isJ 46	Pinus edulis	10	21		15.5
+33	Slash Pine (P. elliolliiJ 70	Pinus elliottii	35	30		32.5
+20	Apache Pine, Arizona Longleaf Pine (P. engelmannii)	Pinus engelmannii	22	35		28.5
+6	Limber Pine (P. flexi/is} 41	Pinus flexilis	38	26		32
+24	Spruce Pine, Cedar Pine (P. glabraJ	Pinus glabra		30		30
+22	Jeffrey Pine (P. jeffreyi) 60	Pinus jeffreyi	60	61		60.5
+4	Sugar Pine (P. /ombertianoJ 39	Pinus lambertiana	65	75		70
+39	Chihuahua Pine (P. leiophy/Ja)	Pinus leiophylla	25	25		25
+9	Great Basin Bristlecone Pine (P. longaevoJ 44	Pinus longaeva		16		16
+11	Singleleaf Pinyan (P. monophylloJ 45	Pinus monophylla		14		14
+3	Western White Pine (P. monticoloJ	Pinus monticola	50	70		60
+29	Bishop Pine (P. muricoto) 66	Pinus muricata		24		24
+18	Austrian Pine, Black Pine (P. nigro) 56	Pinus nigra	50			50
+19	Longleaf Pine, Southern Pine (P. polustris) 56	Pinus palustris	40	47		43.5
+21	Ponderosa Pine (P. ponderosaJ	Pinus ponderosa	60	72		66
+26	Table Mountain Pine (P. pungensJ	Pinus pungens	20	12		16
+14	Parry Pinyon (P. quadrifo/iaJ 48	Pinus quadrifolia		10		10
+38	Monterey Pine {P. rodiotoJ 74	Pinus radiata		30		30
+15	Red Pine, Norway Pine (P. resinosa)	Pinus resinosa	30	37		33.5
+31	Pitch Pine (P. rigidoJ 67	Pinus rigida	30	31		30.5
+36	Digger Pine ( P. sobiniano) 73	Pinus sabiniana		25		25
+30	Pond Pine, Pocosin Pine (P. serotinaJ	Pinus serotina		21		21
+7	Southwestern White Pine (P. strobiformis) 42	Pinus strobiformis		30		30
+2	White Pine (P. strobusJ 37	Pinus strobus	70	67	?	68.5
+16	Scots Pine (P. sy/vestris) 54	Pinus sylvestris	35	40		37.5
+34	Loblolly Pine (P. taeda) 71	Pinus taeda	40	46		43
+23	Torrey Pine (P. lorreyonaJ 61	Pinus torreyana		15		15
+27	Virginia Pine (P. virginianaJ 64	Pinus virginiana	15	18		16.5
+511	Florida Fish Poison Tree (P. piscipula} 671	Piscidia piscipula	15			15
+273	Cockspur (P. rotundolo) 416	Pisonia rotundata		5		5
+639	Texas Pistache (P. lexano} 810	Pistacia texana	10			10
+473	Ebony Blackhead (P, fiexicouJe) 633	Pithecellobium flexicaule	10			10
+475	Guadeloupe Blackhead (P. guadalupense) 634	Pithecellobium guadalupense	6			6
+474	Huajillo (P. pa/lens) 633	Pithecellobium pallens	10			10
+476	Catclaw Blackbead (P. anguis-cotiJ 635	Pithecellobium unguis-cati			9	9
+138	Water Elm (P. aqualica} 241	Planera aquatica	15			15
+123	American Sycamore (P. occidentalis) 220	Platanus occidentalis	35	50		42.5
+125	California Sycamore (P. rocemosa/ 222	Platanus racemosa	30	15		22.5
+126	Arizona Sycamore (P. wrightii} 223	Platanus wrightii		25		25
+124	London Plane Tree (P. x acerifolia) 221	Platanus x acerifolia			30	30
+662	Trifoliate Orange (P. trifolialo) 834	Poncirus trifoliata	7			7
+307	White Poplar (P. alba} 464	Populus alba			30	30
+308	Narrowleaf Cottonwood (P, angustifalia)	Populus angustifolia	18			18
+305	Balsam Poplar (P. balsamifera) 46	Populus balsamifera	30			30
+309	Eastern Cottonwood (P. del!oides) 465	Populus deltoides	30	55		42.5
+311	Rio Grande Cottonwood (P. fremonlii variety	Populus fremontii	30			30
+310	Fremont Cottonwood (P. fremontii) 466	Populus fremontii			21	21
+317	Bigtooth Aspen (P. grondidentata}	Populus grandidentata	20			20
+304	Swamp Cottonwood (P. heterophylloJ 460	Populus heterophylla	30			30
+313	Lombardy Poplar (P. nigra variety	Populus nigra	30			30
+315	Palmer Cottonwood (P. po/merij	Populus palmeri	18			18
+318	Plains Cottonwood (P. sargentiiJ	Populus sargentii	27			27
+316	Quaking Aspen (P. tremuloides)	Populus tremuloides	18			18
+306	Black Cottonwood (P. trichacarpa) 463	Populus trichocarpa	50			50
+312	wislizeniiJ 467	Populus wislizeni		35		35
+378	Egg Fruit (P. campechianoJ 535	Pouteria campechiana	25			25
+482		Prosopis glandulosa			6	6
+480	Screwbean Mesquite (P. pubescensJ 639	Prosopis pubescens	10			10
+481	Mesquite(P. velutinaJ 640 · Glandular Mesquite (P, glandulosaJ 641	Prosopis velutina	10			10
+409	Allegheny Plum (P. olleghoniensisJ 575	Prunus alleghaniensis	6			6
+407	American Plum (P. americonoJ 574	Prunus americana	11			11
+416	Almond (P. omygdolus) 562	Prunus amygdalus			10	10
+412	Chickasaw Plum (P. ongustifolio) 579	Prunus angustifolia	8			8
+418	Apricot (P. ormeniacaJ 583	Prunus armeniaca			6	6
+419	Mazzard Cherry (P. avium J 583	Prunus avium	20			20
+402	Carolina Laurelcherry (P. caroliniano} 570	Prunus caroliniana	12			12
+420	Sour Cherry (P. cerosusJ 584	Prunus cerasus	15			15
+405	Garden Plum (P. domestica} 572	Prunus domestica	8			8
+423	Bitter Cherry (P. emarginotoJ 586	Prunus emarginata	8			8
+417	Desert Apricot (P. fremonlii) 562	Prunus fremontii	5			5
+413	Hortulan Plum (P. hortulona) 579	Prunus hortulana			10	10
+400	Hollyleaf Cherry (P. ilicifolio) 569	Prunus ilicifolia	8			8
+404	Bullace Plum (P. insilitiaJ 572	Prunus insititia	6			6
+401	Catalina Cherry {P. lyoniiJ 570	Prunus lyonii	9			9
+421	Mahaleb Cherry (P. moholeb) 584	Prunus mahaleb	8			8
+410	Mexican Plum {P. mexiconoJ 576	Prunus mexicana	8			8
+414	Wildgoose Plum (P. munsoniana) 580	Prunus munsoniana	9			9
+403	Myrtle Laurelcherry (P. myrtifolia) 571	Prunus myrtifolia	12			12
+411	Canada Plum (P. nigraJ 577	Prunus nigra	10			10
+422	Pin Cherry (f', pensylvanicoJ 585	Prunus pensylvanica	12			12
+415	Peach (P. persicoJ 581	Prunus persica	7			7
+399	Black Cherry (P. serotinaJ 567	Prunus serotina	30			30
+406	Klamath Plum (P. subcordatoJ 573	Prunus subcordata	8			8
+408	Flatwood Plum (P. umbelloto) 575	Prunus umbellata	6			6
+398	Common Chokecherry (P. virginionoJ 566	Prunus virginiana	8			8
+738	Florida Cherry Palm (P. sorgentii) 921	Pseudophoenix sargentii	8			8
+57	Bigcone Douglas Fir (P. mocrocarpoJ	Pseudotsuga macrocarpa	20	44		32
+56	Douglas Fir .fP. menziesii) 97	Pseudotsuga menziesii	70	90		80
+56	Douglas Fir .fP. menziesii) 97	Pseudotsuga menziesii var. glauca	70	40		55
+517	Common Guava (P. guojovaJ 676	Psidium guajava	10			10
+516	Long-Stalk Stopper (P, longipesJ 676	Psidium longipes			4	4
+713	Seminole Balsamo (P. nervoso) 891	Psychotria nervosa	5			5
+655	California Hoptree (P. crenulota) 828	Ptelea crenulata	5			5
+654	Common Hoptree (P. trifoliata) 827	Ptelea trifoliata	7.5			7.5
+525	Pomegranate {P. granatumJ 683	Punica granatum	15			15
+436	Southern Crabapple (P. ongustifolioJ 602	Pyrus angustifolia	9			9
+433	Common Pear (P. communisJ 599	Pyrus communis	20			20
+437	Sweet Crabapple (P. coronoria) 603	Pyrus coronaria	9			9
+438	Oregon Crabapple (P. fusca) 604	Pyrus fusca	12			12
+434	Prairie Crabar.ple (P. ioensis) 600	Pyrus ioensis	6			6
+435	Apple(P. mo usJ 601 ·	Pyrus malus	12			12
+243	Coast Live Oak (Q. a􀂘rifolia) 380	Quercus agrifolia	25			25
+215	Aja Oak (Q. ajoensis) 346	Quercus ajoensis	10			10
+190	White Oak (Q. alba) 321	Quercus alba	35	25		30
+212	Arizona White Oak (Q. orizonica) 343	Quercus arizonica	20			20
+235	Arkansas Oak (Q. orkansonoJ 372	Quercus arkansana	25			25
+193	,'Bastard Oak, Bluff Oak (Q. auslrina) 325	Quercus austrina		20		20
+205	Swamp White Oak {Q. bico/or) 336	Quercus bicolor	35	30		32.5
+196	 :Chapman Oak (Q. chopmanii) 327 􀀪 1•1	Quercus chapmanii	8			8
+245	Canyon Live Oak (Q. chrysolepis) 382	Quercus chrysolepis	30			30
+233	Scarlet Oak (Q. coccinea) 369	Quercus coccinea	30			30
+201	Blue Oak (Q. douglasii) 332	Quercus douglasii	20			20
+219	California Scrub Oak (Q. dumosa) 349	Quercus dumosa	3			3
+246	Dunn Oak (Q. dunniiJ 383	Quercus dunnii	3			3
+195	·Durand Oak (Q. durondii) 326	Quercus durandii	30			30
+229	Northern Pin Oak (Q. ellipsaidalis) 365	Quercus ellipsoidalis	20			20
+218	Emory Oak (Q. emoryi) 348	Quercus emoryi	20			20
+220	Engelmann Oak, Mesa Oak (Q. enge/mannii)	Quercus engelmannii	18			18
+226	Southern Red Oak (Q. falcata variety fa/-	Quercus falcata	30			30
+198	l v- Gambel's Oak (Q. gombelii) 329	Quercus gambelii	20			20
+199	'Oregon 􀄮hite Oak (Q. garryono) 330	Quercus garryana	20			20
+224	Georgia Oak (Q. georgiono) 360	Quercus georgiana	8			8
+244	Chisos Oak (Q. gracihformis) 382	Quercus graciliformis		8		8
+231	Graves Oak (Q. grovesii) 368	Quercus gravesii	12			12
+216	Gray Oak (Q. grisea) 346	Quercus grisea	20			20
+203	Harvard Shin Oak (Q. havardii) 334	Quercus havardii	1			1
+248	Silverleaf Oak (Q. hypaleucoides) 384	Quercus hypoleucoides	12			12
+225	Bear Oak (Q. ilicifolia) 360	Quercus ilicifolia	8			8
+239	Shingle Oak (Q. imbricaria) 376	Quercus imbricaria	25			25
+240	Bluejack Oak (Q. incanaJ 378	Quercus incana	12			12
+221	California Black Oak {Q. kelloggii) 356	Quercus kelloggii	28			28
+194	Lacey Oak (Q. g/oucoides) 325	Quercus laceyi	15			15
+228	Turkey Oak (Q. loevis) 364	Quercus laevis	15			15
+237	Laure Oak (Q. louri/olia) 374	Quercus laurifolia	30			30
+200	t··-;.-, Califbrnia White Oak, Valley Oak( Q. lo- bolo) 331	Quercus lobata	30			30
+189	Overcup Oak {Q. lyrata) 320	Quercus lyrata	30	20		25
+188	Bμr Oak (Q. macrocorpa) 319	Quercus macrocarpa	40	30		35
+236	Black\'ack Oak (Q. marilandica) 372	Quercus marilandica	12			12
+206	Swamp Chestnut Oak (Q. michauxii) 337	Quercus michauxii	40	20		30
+217	Mohr Oak (Q. mohriana) 347	Quercus mohriana	20			20
+207	'Chestnut Oak (Q. prinusJ 338	Quercus montana	30	30		30
+208	Chinkapin Oak, Yellow Chestnut Oak (Q. mueh·	Quercus muehlenbergii	30			30
+241	Myrtle Oak (Q. myrlifo/ia) 379	Quercus myrtifolia	12			12
+234	Water Oak (Q. nigro) 371	Quercus nigra	25			25
+202	Mexican Blue Oak fQ. oblongifo/ia) 334	Quercus oblongifolia	8			8
+197	Qglethorpe Oak {Q. oglethorpensis) 328	Quercus oglethorpensis	24			24
+227	Cherrybark Oak, Swamp Red Oak (Q. folcota va·	Quercus pagoda	40	40		40
+223	Pin Oak (Q. pa/uslris) 358	Quercus palustris	25			25
+238	Willow Oak (Q. phe las) 375	Quercus phellos	27			27
+209	Dwarf Chinkapin Oak (Q. prinoides) 340	Quercus prinoides	5	3		4
+204	Sandpaper Oak (Q. pungensJ 335	Quercus pungens	8			8
+191	English Oak (Q. robur) 323	Quercus robur	45	30		37.5
+222	Northern Red Oak (Q. rubra) 357	Quercus rubra	25	30		27.5
+211	Netleaf Oak (Q. rugosa) 342	Quercus rugosa			12	12
+232	Shumard Oak (Q. shumardii) 368	Quercus shumardii	30			30
+192	Post Oak (Q. steJ/ata) 323	Quercus stellata	20			20
+213	Cork Oak (Q. suber) 344	Quercus suber	30			30
+247	Island Live Oak {Q. lomenlello) 384	Quercus tomentella	12			12
+214	Tourney Oak (Q. toumeyiJ 345	Quercus toumeyi	2			2
+230	Black Oak (Q. velutina) 366	Quercus velutina	25			25
+210	Live Oak (Q. virginiono) 341	Quercus virginiana	20	35		27.5
+242	Interior Live Oak {Q. wislizeniiJ 380	Quercus wislizeni	20			20
+390	Florida Rapanea (R. pl{nctota)	Rapanea punctata	6			6
+590	Darling Plum (R. septentrionalisJ 754	Reynosia septentrionalis	10			10
+582	Birchleaf Buckthorn (R. betulifoJioJ 748	Rhamnus betulifolia	6			6
+584	California Buc􀃳thorn (R. colifornico) 749	Rhamnus californica	6			6
+586	Carolina Buckthorn {R. caroliniono) 751	Rhamnus caroliniana	12			12
+583	European Buckthorn (R. cotharticaJ 748	Rhamnus cathartica	8			8
+581	Hollyleaf Buckthorn (R. croceo) 747	Rhamnus crocea	8			8
+587	Glossy Buckthorn (R. frangulo) 752	Rhamnus frangula	6			6
+585	Cascara Buckthorn (R. purshionoJ 750	Rhamnus purshiana	12			12
+534	Red Mangrove {R. mangle} 695	Rhizophora mangle	25			25
+365	Mountain Rosebay (R, colowbiense)	Rhododendron catawbiense		3.5		3.5
+366	Pacific Rhododendron (R. mocrophyllum	Rhododendron macrophyllum	7.5	5		6.25
+364	Rosebay Rhododendron {R. maximum)	Rhododendron maximum	12	10		11
+635	Mearns Sumac (R. choriophylla) 806	Rhus choriophylla	5			5
+633	Shining Sumac (R. copallina) 804	Rhus copallina	8			8
+632	Smooth Sumac (R. globro) 803	Rhus glabra	7			7
+627	Lemonade Sumac (R. integrifolioJ 800	Rhus integrifolia	8			8
+628	Kearney Sumac (R. keorneyi) 801	Rhus kearneyi	5			5
+634	Prairie Sumac (R. lanceolata} 806	Rhus lanceolata	10			10
+630	Laurel Sumac (R. laurinaJ 802	Rhus laurina	5			5
+629	Sugar Sumac (R. ovotoJ 801	Rhus ovata	8			8
+631	Staghorn·Sumac (R. typhino) 802	Rhus typhina	10			10
+508	New Mexican Locust fR. neomexiconaJ 668	Robinia neomexicana	8			8
+507	Black Locust {R. pseudoacaciaJ 667	Robinia pseudoacacia	18			18
+509	Clammy Locust {R. viscosoJ 669	Robinia viscosa	10			10
+737	Florida Royal Palm (R. ela!a) 920	Roystonea regia	40	30		35
+745	Bush Palmetto (S. minor) 928	Sabal minor	3			3
+744	Cabbage Palmetto (S. polmello)	Sabal palmetto	25			25
+746	Texas Palmetto (S. texana) 929	Sabal texana	15			15
+342	Feltleaf Willow (S. aloxensis) 495	Salix alaxensis	10			10
+338	White Willow (S, alba) 493	Salix alba	25			25
+328	Peachleaf Willow (S. amygdoloides)	Salix amygdaloides	20			20
+340	Littletree Willow (S. arbuscu/oides)	Salix arbusculoides	9			9
+336	Weeping Willow (S. babylonica) 492	Salix babylonica	18			18
+319	Bebb Willow (S. bebbiano) 480	Salix bebbiana	7.5			7.5
+347	Bonpland Willow(S. bonplondiona)	Salix bonplandiana	15			15
+333	Coastal Plain Willow (S. coro/inionaJ 490	Salix caroliniana	10			10
+320	Pussy Willow {S. discolor} 481	Salix discolor	8			8
+325	Missouri Willow (S. eriocepha/o) 463	Salix eriocephala	15			15
+346	Coyote Willow (S. exiguaJ 499	Salix exigua	8			8
+322	Florida Willow (S. floridonoJ 462	Salix floridana			5	5
+335	River Willow (S. fluviotilis) 491	Salix fluviatilis	7			7
+339	Crack Willow(S. frogilisJ 494	Salix fragilis	30			30
+326	Goodding Willow (S. gooddingii) 484	Salix gooddingii			10	10
+350	Hinds Willow (S. hindsionoJ 502	Salix hindsiana	7.5			7.5
+341	Hooker or Coastal Willow (S. hook·	Salix hookeriana	9			9
+348	Sandbar Willow(S. interior) 500	Salix interior	6			6
+334	Red Willow (S. loeviga!aJ 490	Salix laevigata		15		15
+327	Pacific Willow (S. /asiandro) 484	Salix lasiandra	18			18
+337	Arroyo Willow (S. /osiolepisJ 492	Salix lasiolepis	12			12
+329	Shining Willow (S. lucida) 487	Salix lucida	4			4
+324	Serviceberry Willow (S. montico/oJ 483	Salix monticola	6			6
+332	Black Willow (S. nigraJ 488	Salix nigra	18			18
+351	Satiny Willow (S. pellita) 502	Salix pellita	5			5
+331	Meadow Willow (S. peliolaris)	Salix petiolaris	7			7
+323	Balsam Willow (S. pyrifolia} 462	Salix pyrifolia	8			8
+330	Heart-Leaved Willow (S. rigidoJ	Salix rigida	9			9
+344	Scouler Willow{S. scoulerionaJ 497	Salix scouleriana	7.5			7.5
+349	Northwest Willow(S. sessilifalia) 501	Salix sessilifolia	8			8
+343	Sitka Willow (S. silchensis) 496	Salix sitchensis	5			5
+345	Yew-Leaf Willow (S. taxifolio) 498	Salix taxifolia	15			15
+321	Tracy Willow (S. tracyi) 482	Salix tracyi	6			6
+352	Basket Willow (S. viminalisJ 502	Salix viminalis			6	6
+716	Blue Elder (S. ceru/ea) 895	Sambucus caerulea	15			15
+719	Pacific Red Elder($, co//icorpoj 897	Sambucus callicarpa	6			6
+715	American Elder (S. conodens1s) 894	Sambucus canadensis	6			6
+717	MeXican Elder (S. mexicana) 896	Sambucus mexicana	10			10
+718	Velvet Elder {S. velutino)	Sambucus velutina	10			10
+597	Western Soapberry rs. drummondiiJ 762	Sapindus drummondii	15			15
+598	Wingleaf Soapberry rs. saponarioJ 763	Sapindus saponaria	15			15
+568	Jumping Bean Sapium {S. biloculareJ	Sapium biloculare	6			6
+569	Chinese Tallow Tree {S. sebiferum)	Sapium sebiferum	15			15
+115	Sassafras (S. albidum) 210	Sassafras albidum	15			15
+571	Ba􀀊ama Maidenbush {S. bahamensis)	Savia bahamensis	3			3
+549	' Yellowwood rs. frutescens) 714	Schaefferia frutescens	12			12
+640	Pepper Tree (S. mo/le) 811	Schinus molle	15			15
+547	Gulf Graytwig, Whitewood {S. chrysophyJ-	Schoepfia chrysophylloides	10			10
+67	Coastal Redwood, Redwood (S. sempervirens)	Sequoia sempervirens	100	110		105
+68	Giant Sequoia, Sierra Redwood (S. gigonteum)	Sequoiadendron giganteum	90	90		90
+742	Saw Palmetto (S. repens) 925	Serenoa repens	7			7
+531	Silver Buffaloberry (S. argentea} 690	Shepherdia argentea	5			5
+643	Paradise Tree (S. glauco) 815	Simarouba glauca	15			15
+670	Mulle_in Nightshade (S. erionlhum) 845	Solanum erianthum	5			5
+502	Texas Sophora {S. affinisJ 662	Sophora affinis			10	10
+501	Coralbean, Mescalbean (S. secundifJoroJ 661	Sophora secundiflora	12			12
+425	American Mountain-Ash (S. omericonoJ 589	Sorbus americana	9			9
+427	European Mountain-Ash (S. aucuparioJ 591	Sorbus aucuparia	18			18
+426	Showy Mountain-Ash (S. decoraJ 590	Sorbus decora	20			20
+424	Sitka Mountain-Ash (S. sitchensis) 588	Sorbus sitchensis	9			9
+593	Sierra Bladdernut {S. bolanderiJ	Staphylea bolanderi	6			6
+592	American Bladdernut (S. !rifoliaJ	Staphylea trifolia	8			8
+286	Virginia Stewartia (S. ll)OlocodendronJ 431	Stewartia malacodendron	6			6
+287	Mountain Stewartia (S. ovata) 432	Stewartia ovata	6			6
+386	Bigleaf Snowball (S. grandifolius) 546	Styrax grandifolius	12			12
+645	Baycedar, Suriana (S. morilimoj 816	Suriana maritima	5			5
+663	Wes! Indies Mahogany (S. mahagoni}	Swietenia mahagoni	15			15
+387	Common Sweetleaf (S. linctoria)	Symplocos tinctoria	10			10
+490	Tamarind (T. indicus) 650	Tamarindus indica			12	12
+300	Desert Tamarisk (T. aphyl/a) 452	Tamarix aphylla	10			10
+301	Five-Stamen Tamarisk (T. chinensisJ 453	Tamarix chinensis	6			6
+302	French Tamarisk (T. gal/ico) 453	Tamarix gallica	10			10
+69	Bald Cypress (T. distichumJ 119	Taxodium distichum	40	50		45
+69	Bald Cypress (T. distichumJ 119	Taxodium distichum var. imbricarium	40	30		35
+70	Montezuma Bald Cypress (T. mucronotum}	Taxodium mucronatum			30	30
+98	Pacific Yew (T. brevifolia) 158	Taxus brevifolia	18	15		16.5
+99	Florida Yew (T. f/oridana) 159	Taxus floridana	10	6		8
+528	Indian Almond (T. cotappo} 687	Terminalia catappa	24			24
+526	Florida Tetrazygia {T. bicolorJ 684	Tetrazygia bicolor	9			9
+299	Porlia Tree (T. populneoJ 450	Thespesia populnea	15			15
+747	Brittle Thatch Palm (T. morrisii)	Thrinax morrisii	12			12
+748	Florida Thatch Palm (T. rodia!a)	Thrinax radiata	10			10
+72	(T. occidentolisJ 126	Thuja occidentalis	20	15		17.5
+74	Oriental Arborvitae (T. orienta/isJ 129	Thuja orientalis			20	20
+73	Western Redcedar (T. p/ica!oJ 127	Thuja plicata	50	50		50
+289	American Basswood (T. omericanoJ 436	Tilia americana	25			25
+291	Carolina Basswood (T. coro/iniona) 439	Tilia caroliniana	12			12
+290	Florida Basswood (T. floridana} 436	Tilia floridana	20			20
+292	White Basswood (T. heterophylloJ 440	Tilia heterophylla	24			24
+100	California Torreya, California Nutmeg (T. ca/if or·	Torreya californica	20	20		20
+101	Florida Torreya, Stinking Cedar (T. taxifolio)	Torreya taxifolia		13		13
+637	Poison Sumac (T. vernix) 808	Toxicodendron vernix	7			7
+146	West Indian Trema (T. lamorckiana) 250	Trema lamarckianum	6			6
+145	Florida Trema (T. micrantha) 250	Trema micrantha	25			25
+52	BB	Tsuga canadensis	25	30		27.5
+53	Carolina Hemlock (T. carolinianoJ	Tsuga caroliniana		30		30
+54	Western Hemlock (T. heterophylloJ	Tsuga heterophylla	65	50		57.5
+55	Mountain Hemlock (T. mertensiona)	Tsuga mertensiana	35	40		37.5
+130	Winged Elm (U. a/ata) 233	Ulmus alata	20	18		19
+133	American Elm (U. americana) 236	Ulmus americana	40	35		37.5
+131	Cedar Elm (U. crassifalia} 234	Ulmus crassifolia	20	27		23.5
+135	Wych Elm (U. g/abra} 239	Ulmus glabra		40		40
+136	English Elm (U. procera) 239	Ulmus procera		40		40
+137	Siberian Elm (U. pumila) 240	Ulmus pumila		30		30
+134	Slippery Elm (U. rubra) 237	Ulmus rubra	25	35		30
+132	September Elm, Red Elm (U. serotina) 235	Ulmus serotina	20	21		20.5
+129	Rock Elm (U. lhamasii) 231	Ulmus thomasii	35			35
+117	(U. californico) 212	Umbellularia californica	25			25
+596	Mexican Buckeye (U. speciosa] 761	Ungnadia speciosa	9			9
+367	Sparkleberry, Farkleberry (V. orboreumJ 521	Vaccinium arboreum	9			9
+392	Torrey Vauquelinia (V. colifornico) 555	Vauquelinia californica	6			6
+723	Nannyberry (V. /enlogo) 900 ·	Viburnum lentago	10			10
+720	Possumhaw Viburnum (V. nudum) 898	Viburnum nudum	6			6
+721	Waller Viburnum (V. obovo!umJ 899	Viburnum obovatum	9			9
+724	Blackhaw {V. prunifolium} 901	Viburnum prunifolium	10			10
+722	Rusty Blackhaw (V. ru.fidulum) 899	Viburnum rufidulum	9			9
+741	California Washingtonia (W. filifera)	Washingtonia filifera	15			15
+546	Tallowwood, Hog Plum rx. omericonoJ 710	Ximenia americana	9			9
+726	Aloe Yucca, Spanish Bayonet (Y. aloifoifolia	Yucca aloifolia	5			5
+729	Joshua Tree (Y. brevifolia) 910	Yucca brevifolia	15			15
+734	Carneros Yucca (Y. carnerosono} 914	Yucca carnerosana	6			6
+728	Soaptree Yucca {Y. elata) 909	Yucca elata	5			5
+735	Faxon Yucca (Y. foxoniona} 915	Yucca faxoniana	15			15
+727	Moundlily Yucca (Y. gloriosa) 908	Yucca gloriosa	3			3
+730	Mohave Yucca (Y. mohavensis) 911	Yucca mohavensis	6			6
+731	Beaked Yucca /Y. roslrolo/ 912	Yucca rostrata	4			4
+732	Schott Yucca (Y. schottiiJ 913	Yucca schottii	7			7
+736	Torrey Yucca (Y. lorreyi) 915	Yucca torreyi	8			8
+733	Trecul Yucca (Y. lrecu/eono) 913	Yucca treculeana	8			8
+659	Common Prickly Ash (Z. omericonum)	Zanthoxylum americanum	10			10
+656	Hercules Club (Z. clava-hercu/is) 829	Zanthoxylum clava-herculis	9			9
+661	Biscayne Prickly Ash (Z. corioceum)	Zanthoxylum coriaceum	7			7
+658	Lime Prickly Ash (Z. fagaro) 831	Zanthoxylum fagara	9			9
+660	Yellowheart (Z. //ovum) 832	Zanthoxylum flavum	10			10
+657	Texas Hercules Club (Z. hirsutum} 830	Zanthoxylum hirsutum	5			5
