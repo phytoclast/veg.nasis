@@ -36,8 +36,8 @@ FC <- cbind(FC= "FC.1", STATECODE = FC.1 ) %>%
 
 bm.geo.FC <- bm.geo %>% left_join(FC) %>% subset(Status %in% "N")
 bm.geo.sums <- bm.geo.FC %>% group_by(syn, FC) %>% summarise(ct = length(FC))
-bm.geo.max <- bm.geo.sums %>% group_by(FC) %>% summarise(ctmax = max(ct))
-bm.geo.sums <- bm.geo.sums %>% left_join(bm.geo.max) %>% mutate(pct = ct/ctmax*100)
+bm.geo.max <- bm.geo.sums %>% group_by(syn) %>% summarise(ctsum = sum(ct))
+bm.geo.sums <- bm.geo.sums %>% left_join(bm.geo.max) %>% mutate(pct = ct/ctsum*100)
 
 
 FC.1.taxa <- subset(bm.geo, STATECODE %in% FC.1 & Status %in% "N", select = syn)[,1]
