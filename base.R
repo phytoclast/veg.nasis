@@ -141,4 +141,53 @@ x <- clean.veg(veg.spp)
 
 y<- x %>% group_by(vegplotid, planttypegroup) %>% summarise(Cover = cover.agg(cover))
 
+#stratum summary ----
+# breaks <- c(0.1, 0.5, 2, 5, 10, 20, 30)
+# summary.strata <-  function(x, breaks){
+#   x <- x %>% mutate(stratum=0)
+#   for(i in 1:length(breaks)){
+#     x <- x %>% mutate(stratum= ifelse(ht.max >= breaks[i],breaks[i], stratum))
+#   }
+#   y <- x %>% group_by(vegplotid, planttypegroup, stratum) %>% summarise(Cover = cover.agg(cover))
+#   return(y)
+# }
+# y <- summary.strata(x, breaks)
 
+
+#stratum summary ----
+breaks <- c(0.1, 0.5, 2, 5, 10, 20, 30)
+summary.strata <-  function(x, breaks){
+  nbks <- length(breaks)+1
+  brks <- c(0,breaks,1000)
+  for(i in 1:(nbks)){#i = 8
+    y0 <- x %>% subset(ht.max < brks[i+1] & ht.max >= brks[i])
+    
+    if(nrow(y0)>0){
+      y0 <- y0 %>% mutate(stratum=i, stratum.label = paste0(brks[i], "-", ifelse(i==nbks, "+",brks[i+1])))
+      y1 <- y0 %>% group_by(vegplotid, planttypegroup, stratum, stratum.label) %>% summarise(Cover = cover.agg(cover))
+    }          
+    if(i==1){y <- y1}else{y <- rbind(y, y1)}                
+  }
+  return(y)
+}
+
+y1 <- summary.strata(x, breaks)
+
+#live crown thickness ----
+breaks <- c(0.1, 0.5, 2, 5, 10, 20, 30)
+summary.crown.thickness <-  function(x, breaks){
+  nbks <- length(breaks)+1
+  brks <- c(0,breaks,1000)
+  for(i in 1:(nbks)){#i = 5
+    y0 <- x %>% subset(ht.min < brks[i+1] & ht.max >= brks[i])
+    
+    if(nrow(y0)>0){
+      y0 <- y0 %>% mutate(stratum=i, stratum.label = paste0(brks[i], "-", ifelse(i==nbks, "+",brks[i+1])))
+      y1 <- y0 %>% group_by(vegplotid, planttypegroup, stratum, stratum.label) %>% summarise(Cover = cover.agg(cover))
+    }          
+    if(i==1){y <- y1}else{y <- rbind(y, y1)}                
+  }
+  return(y)
+}
+
+y2 <- summary.crown.thickness(x, breaks)
