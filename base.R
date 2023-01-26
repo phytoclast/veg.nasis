@@ -57,6 +57,7 @@ diam.medieval <- function(cm){
 
 syns <- read.csv('data/plants/m.ac.csv')
 
+cover.agg <- function(x){round(100*(1-10^(sum(log10(1-(x/100.001))))),1)}
 
 clean.veg <- function(x){
   plant.hts <- read.delim('data/plants/Plant_heights.txt')
@@ -135,13 +136,9 @@ clean.veg <- function(x){
 }
 
 
-
-
-
-
-
-
-
+ 
 x <- clean.veg(veg.spp)
+
+y<- x %>% group_by(vegplotid, planttypegroup) %>% summarise(Cover = cover.agg(cover))
 
 
