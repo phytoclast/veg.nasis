@@ -61,10 +61,10 @@ syns <- read.csv('data/plants/m.ac.csv')
 clean.veg <- function(x){
   plant.hts <- read.delim('data/plants/Plant_heights.txt')
   
-  x <- subset(x, select = c(vegplotiid, plantsym, plantsciname, planttypegroup, plantnativity, plantheightcllowerlimit, plantheightclupperlimit, livecanopyhtbottom, livecanopyhttop, 
-                                  overstorydbhmin, overstorydbhmax, speciestraceamtflag,
-                                  speciescancovpct, speciescancovclass, speciescomppct, speciescompbywtpct,
-                                  akstratumcoverclass, akstratumcoverclasspct)) 
+  # x <- subset(x, select = c(vegplotid, plantsym, plantsciname, planttypegroup, plantnativity, plantheightcllowerlimit, plantheightclupperlimit, livecanopyhtbottom, livecanopyhttop, 
+  #                                 overstorydbhmin, overstorydbhmax, speciestraceamtflag,
+  #                                 speciescancovpct, speciescancovclass, speciescomppct, speciescompbywtpct,
+  #                                 akstratumcoverclass, akstratumcoverclasspct)) 
   
   x <- x %>% left_join(plant.hts, by=c('plantsciname'='Scientific.Name'))
   x <- x %>% mutate(Ht_m = case_when(
@@ -96,8 +96,8 @@ clean.veg <- function(x){
     
     ht.max = case_when(
       !is.na(livecanopyhttop) ~ ht.metric(livecanopyhttop),
-      !is.na(plantheightclupperlimit) ~ pmin(plantheightclupperlimit,
-                                             pmax(Ht_m, plantheightcllowerlimit +
+      !is.na(plantheightclupperlimit) ~ pmin(ht.metric(plantheightclupperlimit),
+                                             pmax(Ht_m, ht.metric(plantheightcllowerlimit) +
                                                     pmax(Ht_m, ht.metric(plantheightcllowerlimit)/5))),
       akstratumcoverclass %in% "tree regeneration generally less than 4.5 m (15 ft) tall" ~ 4.5,
       akstratumcoverclass %in% "stunted tree generally less than 4.5 m (15 ft) tall" ~ 4.5,
@@ -129,12 +129,19 @@ clean.veg <- function(x){
     diam.min = diam.metric(overstorydbhmin),
     diam.max = diam.metric(overstorydbhmax))
   colnames(x)
-  x <- x %>% subset(select= c("vegplotiid","plantsym","plantsciname","planttypegroup",
+  x <- x %>% subset(select= c("vegplotid","plantsym","plantsciname","planttypegroup",
               "plantnativity","cover","ht.min","ht.max","diam.min","diam.max"))
   return(x)
 }
 
 
-new.veg <- clean.veg(veg.spp)
+
+
+
+
+
+
+
+x <- clean.veg(veg.spp)
 
 
