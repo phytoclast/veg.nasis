@@ -12,7 +12,7 @@ f3 <- read.delim('data/plants/BinomialGrowthHabits.txt')
 bm.geo <- read.csv('data/plants/bm.geo.csv')
 syns <- read.csv('data/plants/m.ac.csv')
 gho <- read.delim('data/plants/GrowthHabitOptions.txt')
-gho <-  gho %>% 
+gho <-  gho %>%
   mutate(First = substr(Revised.Symbol, 1,1), Second = substr(Revised.Symbol, 2,2), Last = substr(Revised.Symbol, 3,5))
 
 f1 <-  f1 %>% left_join(gho[,c("Revised.Symbol","First","Second","Last")], by=c("FinalHabits"="Revised.Symbol"))
@@ -40,8 +40,8 @@ FC.5 <- c("CA.AB","CA.BC","CA.MB","CA.SK","US.CA", "US.CO","US.ID","US.MT","US.N
 FC.6 <- c("CA.LB","CA.NB", "CA.NF", "CA.PE","CA.QU","CA.NS","CA.NT","CA.NU","CA.YT","GL","PM", "US.AK")
 FC.7 <- c("US.AL", "US.AR", "US.FL", "US.GA","US.KS", "US.LA", "US.MS", "US.OK","US.TX","US.SC")
 FC.8 <- c("CA.ON", "US.CT", "US.DE", "US.DC","US.IA", "US.IL", "US.IN", "US.KY","US.MA", "US.MD", "US.ME", "US.MI", "US.MN", "US.MO","US.NC","US.NH", "US.NJ",   "US.NY", "US.OH",   "US.PA", "US.RI", "US.TN", "US.WI", "US.VT","US.VA", "US.WV")
-#native ranges ---- 
-FC <- cbind(FC= "FC.1", STATECODE = FC.1 ) %>% 
+#native ranges ----
+FC <- cbind(FC= "FC.1", STATECODE = FC.1 ) %>%
   rbind(cbind(FC= "FC.2", FC.2 ))%>%
   rbind(cbind(FC= "FC.3", FC.3 ))%>%
   rbind(cbind(FC= "FC.4", FC.4 ))%>%
@@ -66,18 +66,18 @@ bm.geo.col <-  as.data.frame(cbind(ac.binomial=unique(bm.geo.sums$ac.binomial)))
   left_join(subset(bm.geo.sums %>% mutate(FC.8=pct), FC %in% 'FC.8', select=c(ac.binomial, FC.8)))
 
 f1.geo <- f1 %>% left_join(bm.geo.col, by=c('Binomial' = 'ac.binomial')) %>%
-  mutate(FC.1 = ifelse(is.na(FC.1),0,FC.1), 
-         FC.2 = ifelse(is.na(FC.2),0,FC.2), 
-         FC.3 = ifelse(is.na(FC.3),0,FC.3), 
-         FC.4 = ifelse(is.na(FC.4),0,FC.4), 
-         FC.5 = ifelse(is.na(FC.5),0,FC.5), 
-         FC.6 = ifelse(is.na(FC.6),0,FC.6), 
-         FC.7 = ifelse(is.na(FC.7),0,FC.7), 
+  mutate(FC.1 = ifelse(is.na(FC.1),0,FC.1),
+         FC.2 = ifelse(is.na(FC.2),0,FC.2),
+         FC.3 = ifelse(is.na(FC.3),0,FC.3),
+         FC.4 = ifelse(is.na(FC.4),0,FC.4),
+         FC.5 = ifelse(is.na(FC.5),0,FC.5),
+         FC.6 = ifelse(is.na(FC.6),0,FC.6),
+         FC.7 = ifelse(is.na(FC.7),0,FC.7),
          FC.8 = ifelse(is.na(FC.8),0,FC.8))
 
-#exotic ranges ---- 
+#exotic ranges ----
 
-FC <- cbind(FC= "FC.1", STATECODE = FC.1 ) %>% 
+FC <- cbind(FC= "FC.1", STATECODE = FC.1 ) %>%
   rbind(cbind(FC= "xFC.2", FC.2 ))%>%
   rbind(cbind(FC= "xFC.3", FC.3 ))%>%
   rbind(cbind(FC= "xFC.4", FC.4 ))%>%
@@ -86,7 +86,7 @@ FC <- cbind(FC= "FC.1", STATECODE = FC.1 ) %>%
   rbind(cbind(FC= "xFC.7", FC.7 ))%>%
   rbind(cbind(FC= "xFC.8", FC.8 ))%>% as.data.frame()
 
-bm.geo.FC <- bm.geo %>% left_join(FC) 
+bm.geo.FC <- bm.geo %>% left_join(FC)
 bm.geo.sums <- bm.geo.FC %>% group_by(ac.binomial, FC) %>% summarise(ct = length(FC))
 bm.geo.max <- bm.geo.sums %>% group_by(ac.binomial) %>% summarise(ctsum = sum(ct))
 bm.geo.sums <- bm.geo.sums %>% left_join(bm.geo.max) %>% mutate(pct = ct/ctsum*100)
@@ -103,13 +103,13 @@ bm.geo.col <-  as.data.frame(cbind(ac.binomial=unique(bm.geo.sums$ac.binomial)))
 
 
 f1.geo <- f1.geo %>% left_join(bm.geo.col, by=c('Binomial' = 'ac.binomial')) %>%
-  mutate(xFC.1 = ifelse(is.na(xFC.1),0,xFC.1), 
-         xFC.2 = ifelse(is.na(xFC.2),0,xFC.2), 
-         xFC.3 = ifelse(is.na(xFC.3),0,xFC.3), 
-         xFC.4 = ifelse(is.na(xFC.4),0,xFC.4), 
-         xFC.5 = ifelse(is.na(xFC.5),0,xFC.5), 
-         xFC.6 = ifelse(is.na(xFC.6),0,xFC.6), 
-         xFC.7 = ifelse(is.na(xFC.7),0,xFC.7), 
+  mutate(xFC.1 = ifelse(is.na(xFC.1),0,xFC.1),
+         xFC.2 = ifelse(is.na(xFC.2),0,xFC.2),
+         xFC.3 = ifelse(is.na(xFC.3),0,xFC.3),
+         xFC.4 = ifelse(is.na(xFC.4),0,xFC.4),
+         xFC.5 = ifelse(is.na(xFC.5),0,xFC.5),
+         xFC.6 = ifelse(is.na(xFC.6),0,xFC.6),
+         xFC.7 = ifelse(is.na(xFC.7),0,xFC.7),
          xFC.8 = ifelse(is.na(xFC.8),0,xFC.8))
 
 
@@ -120,7 +120,7 @@ rf <-  ranger(First ~ Genus+Family+Order+Superorder+Subclass+Class+Superclass+Su
 
 f1.geo$mod1 <-  predictions(predict(rf, f1.geo))
 
-f1.geo <- f1.geo %>% mutate(mod1 = ifelse(First %in% "", as.character(mod1), as.character(First)) %>% as.factor()) 
+f1.geo <- f1.geo %>% mutate(mod1 = ifelse(First %in% "", as.character(mod1), as.character(First)) %>% as.factor())
 
 rf <-  ranger(Second ~ mod1+Genus+Family+Order+Superorder+Subclass+Class+Superclass+Subdivision+
                 FC.1+FC.2+FC.3+FC.4+FC.5+FC.6+FC.7+FC.8+
@@ -134,3 +134,23 @@ rf <-  ranger(Last ~ mod1+Genus+Family+Order+Superorder+Subclass+Class+Superclas
                 xFC.1+xFC.2+xFC.3+xFC.4+xFC.5+xFC.6+xFC.7+xFC.8, always.split.variables = c('Genus','mod1'), data= subset(f1.geo, !Last %in% c("","B")))
 
 f1.geo$mod3 <-  predictions(predict(rf, f1.geo))
+
+f1.geo <- f1.geo %>% mutate(mod2 = ifelse(mod1 %in% c('E','L','N'), ".",as.character(mod2)), GH = paste0(mod1, mod2, mod3))
+
+taxon.habits <- subset(f1.geo, select = c(Scientific.Name, FinalHabits,Last, mod1,mod2,mod3,GH))
+
+colnames(taxon.habits) <- c('Scientific.Name', 'preGH', 'Last','Stem','Size','Leaf', 'GH')
+ghtest <- subset(taxon.habits, Last != Leaf & !Last %in% "")
+write.csv(ghtest, 'data/plants/ghtest.csv', row.names = F)
+ghtest2 <- read.csv('data/plants/ghtest2.csv') %>% filter(Leafnew != Leaf)
+
+taxon.habits <- taxon.habits |> mutate(Stem = ifelse(grepl('Dendrophthora', Scientific.Name), "E", as.character(Stem)),
+                                       Size = ifelse(grepl('Dendrophthora', Scientific.Name), ".", as.character(Size)),
+                                       Leaf = ifelse(grepl('Dendrophthora', Scientific.Name), "i", as.character(Leaf)),
+                                       Leaf = ifelse(grepl('Andropogon', Scientific.Name), "GW", as.character(Leaf)),
+                                       Leaf = ifelse(Scientific.Name %in% ghtest2$Scientific.Name, as.character(Last), as.character(Leaf)),
+                                       GH = paste0(Stem, Size, Leaf))
+taxon.habits <- subset(taxon.habits, select = c(-Last))
+
+write.csv(taxon.habits, 'data/plants/taxon.habits.csv', row.names = F)
+write.csv(gho, 'data/plants/gho.csv', row.names = F)

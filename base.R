@@ -2,10 +2,19 @@ library(soilDB)
 library(stringr)
 library(dplyr)
 
+
+remotes::install_github("phytoclast/vegnasis", dependencies = FALSE)
+library(vegnasis)
+veg.spp <- soilDB::get_vegplot_species_from_NASIS_db()
+veg <- clean.veg(veg.spp)
+breaks <- c(0.1, 0.5, 2, 5, 10, 20, 30)
+strat.summary <- vegnasis::summary.crown.thickness(veg, breaks)
+
+
 # remotes::install_github("natearoe/ecositer", dependencies = FALSE)
 # library(ecositer)
 # test <- veg_summary(veg_df = ecositer::vegetation_dataframe)
-# 
+#
 # test.R022AB006CA <- test$R022AB006CA$Raw_data
 
 
@@ -20,15 +29,18 @@ veg.data.veg <-  readRDS('data/veg.data.veg.RDS')
 veg.data.trans <-  readRDS('data/veg.data.trans.RDS')
 
 plant.hts <- read.delim('data/plants/Plant_heights.txt')
+veg <- clean.veg(veg.spp)
+breaks <- c(0.1, 0.5, 2, 5, 10, 20, 30)
+strat.summary <- vegnasis::summary.crown.thickness(veg, breaks)
 
-# 
+#
 # veg.plot <- soilDB::get_vegplot_from_NASIS_db()
 # veg.data <- soilDB::get_veg_data_from_NASIS_db()
 # veg.loc <- soilDB::get_vegplot_location_from_NASIS_db()
 # veg.spp <- soilDB::get_vegplot_species_from_NASIS_db()
 # veg.data.veg <- veg.data$veg
 # veg.data.trans <- veg.data$vegtransect
-# 
+#
 # saveRDS(veg.plot, 'data/veg.plot.RDS')
 # saveRDS(veg.data, 'data/veg.data.RDS')
 # saveRDS(veg.loc, 'data/veg.loc.RDS')
@@ -61,12 +73,12 @@ cover.agg <- function(x){round(100*(1-10^(sum(log10(1-(x/100.001))))),1)}
 
 clean.veg <- function(x){
   plant.hts <- read.delim('data/plants/Plant_heights.txt')
-  
-  # x <- subset(x, select = c(vegplotid, plantsym, plantsciname, planttypegroup, plantnativity, plantheightcllowerlimit, plantheightclupperlimit, livecanopyhtbottom, livecanopyhttop, 
+
+  # x <- subset(x, select = c(vegplotid, plantsym, plantsciname, planttypegroup, plantnativity, plantheightcllowerlimit, plantheightclupperlimit, livecanopyhtbottom, livecanopyhttop,
   #                                 overstorydbhmin, overstorydbhmax, speciestraceamtflag,
   #                                 speciescancovpct, speciescancovclass, speciescomppct, speciescompbywtpct,
-  #                                 akstratumcoverclass, akstratumcoverclasspct)) 
-  
+  #                                 akstratumcoverclass, akstratumcoverclasspct))
+
   x <- x %>% left_join(plant.hts, by=c('plantsciname'='Scientific.Name'))
   x <- x %>% mutate(Ht_m = case_when(
     !is.na(Ht_m) ~ Ht_m,
@@ -92,9 +104,9 @@ clean.veg <- function(x){
       speciescancovclass %in% "> 95%" ~ (95+100)/2,
       !is.na(speciescomppct) ~ as.numeric(speciescomppct),
       TRUE ~ 0),
-    
+
     ht.min = 0,
-    
+
     ht.max = case_when(
       !is.na(livecanopyhttop) ~ ht.metric(livecanopyhttop),
       !is.na(plantheightclupperlimit) ~ pmin(ht.metric(plantheightclupperlimit),
@@ -103,28 +115,28 @@ clean.veg <- function(x){
       akstratumcoverclass %in% "tree regeneration generally less than 4.5 m (15 ft) tall" ~ 4.5,
       akstratumcoverclass %in% "stunted tree generally less than 4.5 m (15 ft) tall" ~ 4.5,
       akstratumcoverclass %in% "medium tree generally between 4.5 and 12 m (15 and 40 ft) tall" ~ 12,
-      akstratumcoverclass %in% "tall tree generally greater than 12 m (40 ft) tall" ~ 
+      akstratumcoverclass %in% "tall tree generally greater than 12 m (40 ft) tall" ~
         pmax(Ht_m*0.9, 12+3),
       akstratumcoverclass %in% "dwarf shrub layer less than about 20 cm (8 in) tall" ~ 0.2,
-      akstratumcoverclass %in% "low shrub between about 20 and 100 cm (8 and 36 in) tall" ~ 1,    
+      akstratumcoverclass %in% "low shrub between about 20 and 100 cm (8 and 36 in) tall" ~ 1,
       akstratumcoverclass %in% "medium shrub between about 1 and 3 m (3 and 10 ft) tall" ~ 3,
-      akstratumcoverclass %in% "tall shrub greater than about 3 m (10 ft) tall" ~ 
+      akstratumcoverclass %in% "tall shrub greater than about 3 m (10 ft) tall" ~
         pmin(5,pmax(Ht_m*0.9, 3+1)),
-      akstratumcoverclass %in% "low and dwarf graminoid less than about 10 cm (4 in) tall" ~ 0.1,    
+      akstratumcoverclass %in% "low and dwarf graminoid less than about 10 cm (4 in) tall" ~ 0.1,
       akstratumcoverclass %in% "medium graminoid between about 10 and 60 cm (4 and 24 in) tall" ~ 0.6,
-      akstratumcoverclass %in% "tall graminoid generally greater than 60 cm (24 in) tall" ~ 
+      akstratumcoverclass %in% "tall graminoid generally greater than 60 cm (24 in) tall" ~
         pmin(2,pmax(Ht_m*0.9, 0.6+0.6)),
       akstratumcoverclass %in% "low and dwarf forb generally less than 10 cm (4 in) tall" ~ 0.1,
       akstratumcoverclass %in% "medium forb between about 10 and 60 cm (4 and 24 in) tall" ~ 0.6,
-      akstratumcoverclass %in% "tall forb generally greater than 60 cm (24 in) tall" ~ 
+      akstratumcoverclass %in% "tall forb generally greater than 60 cm (24 in) tall" ~
         pmin(2,pmax(Ht_m*0.9, 0.6+0.6)),
       akstratumcoverclass %in% "mosses" ~ 0,
       TRUE ~ NA_real_),
-    
+
     ht.min = case_when(
       !is.na(livecanopyhtbottom) ~ ht.metric(livecanopyhtbottom),
       TRUE ~ ht.max/2),
-    
+
     ht.max = ht.round(ht.max),
     ht.min = ht.round(ht.min),
     diam.min = diam.metric(overstorydbhmin),
@@ -136,7 +148,7 @@ clean.veg <- function(x){
 }
 
 
- 
+
 x <- clean.veg(veg.spp)
 
 y<- x %>% group_by(vegplotid, planttypegroup) %>% summarise(Cover = cover.agg(cover))
@@ -161,12 +173,12 @@ summary.strata <-  function(x, breaks){
   brks <- c(0,breaks,1000)
   for(i in 1:(nbks)){#i = 8
     y0 <- x %>% subset(ht.max < brks[i+1] & ht.max >= brks[i])
-    
+
     if(nrow(y0)>0){
       y0 <- y0 %>% mutate(stratum=i, stratum.label = paste0(brks[i], "-", ifelse(i==nbks, "+",brks[i+1])))
       y1 <- y0 %>% group_by(vegplotid, planttypegroup, stratum, stratum.label) %>% summarise(Cover = cover.agg(cover))
-    }          
-    if(i==1){y <- y1}else{y <- rbind(y, y1)}                
+    }
+    if(i==1){y <- y1}else{y <- rbind(y, y1)}
   }
   return(y)
 }
@@ -180,12 +192,12 @@ summary.crown.thickness <-  function(x, breaks){
   brks <- c(0,breaks,1000)
   for(i in 1:(nbks)){#i = 5
     y0 <- x %>% subset(ht.min < brks[i+1] & ht.max >= brks[i])
-    
+
     if(nrow(y0)>0){
       y0 <- y0 %>% mutate(stratum=i, stratum.label = paste0(brks[i], "-", ifelse(i==nbks, "+",brks[i+1])))
       y1 <- y0 %>% group_by(vegplotid, planttypegroup, stratum, stratum.label) %>% summarise(Cover = cover.agg(cover))
-    }          
-    if(i==1){y <- y1}else{y <- rbind(y, y1)}                
+    }
+    if(i==1){y <- y1}else{y <- rbind(y, y1)}
   }
   return(y)
 }
