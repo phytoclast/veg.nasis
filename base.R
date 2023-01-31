@@ -17,6 +17,10 @@ strat.summary <- vegnasis::summary.crown.thickness(veg, breaks)
 #
 # test.R022AB006CA <- test$R022AB006CA$Raw_data
 
+# taxon.habits <- read.csv('data_raw/taxon.habits.csv')
+# usethis::use_data(taxon.habits)
+# gho <- read.csv('data_raw/gho.csv')
+# usethis::use_data(gho)
 
 
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
