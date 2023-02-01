@@ -15,8 +15,11 @@ gho <- read.delim('data/plants/GrowthHabitOptions.txt')
 gho <-  gho %>%
   mutate(First = substr(Revised.Symbol, 1,1), Second = substr(Revised.Symbol, 2,2), Last = substr(Revised.Symbol, 3,5))
 
-f1 <-  f1 %>% left_join(gho[,c("Revised.Symbol","First","Second","Last")], by=c("FinalHabits"="Revised.Symbol"))
 
+fsyn <- f1 |> left_join(syns[,c('acc','syn')], by= c('Scientific.Name'='syn')) |> mutate(Scientific.Name = ifelse(is.na(acc),Scientific.Name, acc))
+
+f1 <-  fsyn %>% left_join(gho[,c("Revised.Symbol","First","Second","Last")], by=c("FinalHabits"="Revised.Symbol"))
+ferns <- subset(f1, Subdivision %in% c('Lycopodiophytina','Polypodiophytina'), select = 'Genus') |> unique()
 
 f1$First <- as.factor(f1$First)
 f1$Second <- as.factor(f1$Second)
@@ -143,14 +146,89 @@ colnames(taxon.habits) <- c('Scientific.Name', 'preGH', 'Last','Stem','Size','Le
 ghtest <- subset(taxon.habits, Last != Leaf & !Last %in% "")
 write.csv(ghtest, 'data/plants/ghtest.csv', row.names = F)
 ghtest2 <- read.csv('data/plants/ghtest2.csv') %>% filter(Leafnew != Leaf)
+taxon.habits <- taxon.habits |> mutate(genus = str_split_fixed(Scientific.Name , '[[:blank:]]',3)[,1])
 
-taxon.habits <- taxon.habits |> mutate(Stem = ifelse(grepl('Dendrophthora', Scientific.Name), "E", as.character(Stem)),
-                                       Size = ifelse(grepl('Dendrophthora', Scientific.Name), ".", as.character(Size)),
-                                       Leaf = ifelse(grepl('Dendrophthora', Scientific.Name), "i", as.character(Leaf)),
-                                       Leaf = ifelse(grepl('Andropogon', Scientific.Name), "GW", as.character(Leaf)),
+taxon.habits <- taxon.habits |> mutate(Stem = ifelse(genus %in% c('Cuscuta', 'Dendrophthora'), "E", as.character(Stem)),
+                                       Size = ifelse(genus %in% c('Cuscuta', 'Dendrophthora'), ".", as.character(Size)),
+                                       Leaf = ifelse(genus %in% c('Cuscuta', 'Dendrophthora'), "i", as.character(Leaf)),
+                                       Stem = ifelse(genus %in% c('Tillandsia', 'Epidendrum'), "E", as.character(Stem)),
+                                       Size = ifelse(genus %in% c('Tillandsia', 'Epidendrum'), ".", as.character(Size)),
+                                       Leaf = ifelse(genus %in% c('Tillandsia', 'Epidendrum'), "F", as.character(Leaf)),
+                                       Leaf = ifelse(genus %in% c('Andropogon'), "GW", as.character(Leaf)),
+                                       Leaf = ifelse(genus %in% ferns$Genus & Stem %in% 'H' & Leaf %in% 'F', "FE", as.character(Leaf)),
+                                       Size = ifelse(Leaf %in% 'FE' & Stem %in% 'H', '.', as.character(Size)),
+                                    
                                        Leaf = ifelse(Scientific.Name %in% ghtest2$Scientific.Name, as.character(Last), as.character(Leaf)),
                                        GH = paste0(Stem, Size, Leaf))
-taxon.habits <- subset(taxon.habits, select = c(-Last))
+taxon.habits <- subset(taxon.habits, select = c(-Last)) |> unique()
 
 write.csv(taxon.habits, 'data/plants/taxon.habits.csv', row.names = F)
 write.csv(gho, 'data/plants/gho.csv', row.names = F)
+
+#append habits ----
+taxon.habits <-  read.csv('data/plants/taxon.habits.csv')
+
+
+
+bm.geo.FC <- bm.geo %>% left_join(FC) |> subset(!ac.binomial %in% "" & !is.na(ac.binomial))
+bm.geo.sums <- bm.geo.FC %>% group_by(ac.binomial, FC) %>% summarise(ct = length(FC))
+bm.geo.max <- bm.geo.sums %>% group_by(FC) %>% summarise(fcsum = max(ct))
+bm.geo.sums <- bm.geo.sums %>% left_join(bm.geo.max) %>% mutate(pct = ct/fcsum*100)
+
+
+
+taxon.habits.geo <- taxon.habits %>% left_join(bm.geo.sums, by=c('Scientific.Name' = 'ac.binomial'), multiple = "all") |> mutate(pct = ifelse(is.na(pct), 0.5,pct))
+
+taxon.habits.genus.stem <- taxon.habits.geo |> group_by(genus, Stem) |> summarise(pct= sum(pct)) 
+taxon.habits.genus.stem.max <- taxon.habits.genus.stem |> group_by(genus) |> summarise(pctmax= max(pct)) 
+taxon.habits.genus.stem <- taxon.habits.genus.stem |> left_join(taxon.habits.genus.stem.max) |> subset(pctmax == pct)
+
+taxon.habits.genus.GH <- taxon.habits.geo |> inner_join(taxon.habits.genus.stem[,c('genus','Stem')]) |> group_by(genus, GH) |> summarise(pct= sum(pct)) 
+taxon.habits.genus.GH.max <- taxon.habits.genus.GH |> group_by(genus) |> summarise(pctmax= max(pct)) 
+taxon.habits.genus.GH <- taxon.habits.genus.GH |> left_join(taxon.habits.genus.GH.max) |> subset(pctmax == pct)
+
+
+
+
+
+genus.habits <- f2 |> subset(!AcGenus %in% "" & grepl('^N',Form), select = c(AcGenus, Form)) |> unique()
+genus.habits <- genus.habits |> mutate(genus = AcGenus, GH = ifelse(Form %in% 'NB', "N.B", "N.L")) 
+genus.habits <- genus.habits |> subset(select=c(genus, GH)) |> rbind(taxon.habits.genus.GH[,c("genus","GH")]) |>
+  rbind(cbind(genus=c('Nostoc','Chara','Lyngbya','Agardhiella', 'Alaria', 'Ascophyllum','Bryopsis',
+                      'Ceramium', 'Chaetomorpha', 'Champia', 'Chondrus', 'Cladophora', 'Codium', 
+                      'Colpomenia', 'Desmarestia', 'Ectocarpus', 'Enteromorpha', 'Fucus', 'Gracilaria',
+                      'Hildenbrandtia', 'Hypnea', 'Laminaria','Nitella', 'Phyllitis', 'Polysiphonia', 
+                      'Porphyra', 'Rhizoclonium', 'Spyridia', 'Ulva', 'Vaucheria','Postelsia','Phyllospadix', 'Nemalion','Callithamnion','Pylaiella'), GH='N.A'))
+
+write.csv(genus.habits, 'data/plants/genus.habits.csv', row.names = F)
+
+ 
+
+
+taxa <- c('Osmunda cinnamomea', 'Osmunda sp', 'Osmundastrum cinnamomeum', 'Washingtonia divaricata', 'Washingtonia filifera', 'Washingtonia', 'Washingtonia rubra', '')
+
+get.habit.code <- function(taxa){
+x  <-  as.data.frame(cbind(taxa=taxa)) |> mutate(GH0 = '', genus = str_split_fixed(taxa , '[[:blank:]]',3)[,1]) 
+#first try straight join ----
+x <- x |> left_join(taxon.habits[,c('Scientific.Name','GH')], by = c('taxa'='Scientific.Name'), multiple = 'first')
+x <- x |> mutate(GH0 = ifelse(is.na(GH0)| GH0 %in% "", GH, as.character(GH0)))
+x <- x[,1:3]
+#then try synonym join ----
+x <- x |> left_join(syns[,c('acc','syn')], by=c('taxa'='syn'), multiple = 'first') |> left_join(taxon.habits[,c('Scientific.Name','GH')], by = c('acc'='Scientific.Name'), multiple = 'first')
+x <- x |> mutate(GH0 = ifelse(is.na(GH0)| GH0 %in% "", GH, as.character(GH0)))
+x <- x[,1:3]
+#finally try genus only ----
+x <- x |> left_join(genus.habits, by = c('genus'='genus'), multiple = 'first')
+x <- x |> mutate(GH0 = ifelse(is.na(GH0)| GH0 %in% "", GH, as.character(GH0)))
+x <- x[,1:2]
+return(x$GH0) }
+code=c('T.BE','T2BD', 'E.i','E.F')
+type = c('name', 'stem', 'ESIS')
+get.habit <- function(code,type='name'){
+  x  <-  as.data.frame(cbind(code=code)) |>
+    left_join(gho, by = c('code'='Revised.Symbol'), multiple = 'first')
+  if(type %in% 'stem'){return(x$First)}else if(type %in% 'ESIS'){return(x$ESIS.Group)}else{return(x$Habitname)}
+}
+
+get.habit(type='stem', code=code)
+get.habit.code('Asimina triloba') |> get.habit('ESIS')
