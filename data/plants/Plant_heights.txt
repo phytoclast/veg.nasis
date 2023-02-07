@@ -23,7 +23,7 @@ Acacia koaia	12
 Acacia longifolia	6
 Acacia mearnsii	15
 Acacia melanoxylon	15
-Acalypha virginica	1
+Acalypha virginica	0.3
 Acer barbatum	20
 Acer circinatum	20
 Acer floridanum	20

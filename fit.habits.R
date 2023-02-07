@@ -171,6 +171,81 @@ taxon.habits <- taxon.habits |> mutate(Stem = ifelse(genus %in% c('Cuscuta', 'De
                                        GH = paste0(Stem, Size, Leaf))
 taxon.habits <- subset(taxon.habits, select = c(-Last)) |> unique()
 
+#bring in max heights ----
+
+ht.round <- function(ht){
+  ifelse(ht >= 8,round(ht,0),
+         ifelse(ht >= 3, floor(ht*2+0.499)/2,round(ht,1)
+         ))}
+
+plant.hts <- read.delim('data/plants/Plant_heights.txt')
+dbplanthts <- read.delim('data/plants/databaseherbhts.txt')
+colnames(dbplanthts) <- colnames(plant.hts)
+dbplanthts$Ht_m <- ht.round(dbplanthts$Ht_m)
+dbplanthts <- subset(dbplanthts, !Scientific.Name %in% plant.hts$Scientific.Name & grepl(' ',Scientific.Name))
+plant.hts <-rbind(plant.hts, dbplanthts)
+
+
+x <- taxon.habits  |> mutate(ht.max = NA_real_)
+x <- x |> left_join(plant.hts[,c('Scientific.Name','Ht_m')], by = c('Scientific.Name'='Scientific.Name'), multiple = 'first')
+x <- x |> mutate(ht.max = Ht_m)
+x <- x[,1:8]
+x <- x |> left_join(syns[,c('acc','syn')], by=c('Scientific.Name'='syn'), multiple = 'first') |> left_join(plant.hts[,c('Scientific.Name','Ht_m')], by = c('acc'='Scientific.Name'), multiple = 'first')
+x <- x |> mutate(ht.max = ifelse(is.na(ht.max), Ht_m, ht.max))
+x <- x[,1:8]
+
+
+x <- x  |> mutate(ht.max = case_when(
+  # is.na(ht.max) & Stem %in%  "T" & Size %in% c('2','') ~ 24,
+  # is.na(ht.max) & Stem %in%  "T" & Size %in% c('1') ~ 12,
+  # is.na(ht.max) & Stem %in%  c("L","E")  ~ 12,
+  # is.na(ht.max) & Stem %in%  "S" & Size %in% c('2','') ~ 3,
+  # is.na(ht.max) & Stem %in%  "S" & Size %in% c('1') ~ 0.3,
+  # is.na(ht.max) & Stem %in%  "H" & Leaf %in% "FV" ~ 3,
+  # is.na(ht.max) & Stem %in%  "H" & Leaf %in% "A" ~ 0,
+  # is.na(ht.max) & Stem %in%  "H" ~ 0.6,
+  # is.na(ht.max) & Stem %in%  "N" ~ 0,
+  ht.max <= 15 & Stem %in%  "T" & Size %in% c('2','') ~ 20,
+  ht.max <= 5 & Stem %in%  "T" & Size %in% c('1') ~ 6,
+  ht.max <= 0.5 & Stem %in%  "S" & Size %in% c('2','') ~ 1,
+  ht.max > 15 & Stem %in%  "T" & Size %in% c('1') ~ 15,
+  ht.max > 5 & Stem %in%  "S" & Size %in% c('2','') ~ 5,
+  ht.max > 0.5 & Stem %in%  "S" & Size %in% c('1') ~ 0.5,
+  TRUE ~ ht.max))
+
+f1.geo2 <- f1.geo[,c(1:31)] |> left_join(x) |> mutate(StemSize=paste0(Stem,Size))
+
+rf <-  ranger(ht.max ~ StemSize+Stem+GH+Genus+Family+Order+Superorder+Subclass+Class+Superclass+Subdivision+
+                FC.1+FC.2+FC.3+FC.4+FC.5+FC.6+FC.7+FC.8+
+                xFC.1+xFC.2+xFC.3+xFC.4+xFC.5+xFC.6+xFC.7+xFC.8
+              , always.split.variables = c('Genus','Family','StemSize','GH','Stem'), 
+              min.node.size = 1, data= subset(f1.geo2, !is.na(ht.max)), num.trees = 500, sample.fraction = 1,
+              alpha = 0.5,)
+
+f1.geo2$ht.max.pred <-  predictions(predict(rf, f1.geo2))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 write.csv(taxon.habits, 'data/plants/taxon.habits.csv', row.names = F)
 write.csv(gho, 'data/plants/gho.csv', row.names = F)
 
@@ -210,6 +285,23 @@ genus.habits <- genus.habits |> subset(select=c(genus, GH)) |> rbind(taxon.habit
                       'Porphyra', 'Rhizoclonium', 'Spyridia', 'Ulva', 'Vaucheria','Postelsia','Phyllospadix', 'Nemalion','Callithamnion','Pylaiella'), GH='N.A'))
 
 write.csv(genus.habits, 'data/plants/genus.habits.csv', row.names = F)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
