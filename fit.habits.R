@@ -219,8 +219,8 @@ rf <-  ranger(ht.max ~ StemSize+Stem+GH+Genus+Family+Order+Superorder+Subclass+C
                 FC.1+FC.2+FC.3+FC.4+FC.5+FC.6+FC.7+FC.8+
                 xFC.1+xFC.2+xFC.3+xFC.4+xFC.5+xFC.6+xFC.7+xFC.8
               , always.split.variables = c('Genus','Family','StemSize','GH','Stem'), 
-              min.node.size = 1, data= subset(f1.geo2, !is.na(ht.max)), num.trees = 500, sample.fraction = 1,
-              alpha = 0.5,)
+              data= subset(f1.geo2, !is.na(ht.max)), num.trees = 500, sample.fraction = 0.5,
+              respect.unordered.factors = T)
 
 f1.geo2$ht.max.pred <-  predictions(predict(rf, f1.geo2))
 
