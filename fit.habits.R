@@ -128,7 +128,8 @@ f1.geo <- f1.geo %>% left_join(bm.geo.col, by=c('Binomial' = 'ac.binomial')) %>%
 
 rf <-  ranger(First ~ Genus+Family+Order+Superorder+Subclass+Class+Superclass+Subdivision+
                 FC.1+FC.2+FC.3+FC.4+FC.5+FC.6+FC.7+FC.8+
-                xFC.1+xFC.2+xFC.3+xFC.4+xFC.5+xFC.6+xFC.7+xFC.8, always.split.variables = 'Genus', data= subset(f1.geo, !First %in% c("",".")))
+                xFC.1+xFC.2+xFC.3+xFC.4+xFC.5+xFC.6+xFC.7+xFC.8, always.split.variables = 'Genus', data= subset(f1.geo, !First %in% c("",".")),
+              respect.unordered.factors = T)
 
 f1.geo$mod1 <-  predictions(predict(rf, f1.geo))
 
@@ -136,14 +137,16 @@ f1.geo <- f1.geo %>% mutate(mod1 = ifelse(First %in% "", as.character(mod1), as.
 
 rf <-  ranger(Second ~ mod1+Genus+Family+Order+Superorder+Subclass+Class+Superclass+Subdivision+
                 FC.1+FC.2+FC.3+FC.4+FC.5+FC.6+FC.7+FC.8+
-                xFC.1+xFC.2+xFC.3+xFC.4+xFC.5+xFC.6+xFC.7+xFC.8, always.split.variables = c('Genus','mod1'), data= subset(f1.geo, !Second %in% c("",".")))
+                xFC.1+xFC.2+xFC.3+xFC.4+xFC.5+xFC.6+xFC.7+xFC.8, always.split.variables = c('Genus','mod1'), data= subset(f1.geo, !Second %in% c("",".")),
+              respect.unordered.factors = T)
 
 f1.geo$mod2 <-  predictions(predict(rf, f1.geo))
 
 
 rf <-  ranger(Last ~ mod1+Genus+Family+Order+Superorder+Subclass+Class+Superclass+Subdivision+
                 FC.1+FC.2+FC.3+FC.4+FC.5+FC.6+FC.7+FC.8+
-                xFC.1+xFC.2+xFC.3+xFC.4+xFC.5+xFC.6+xFC.7+xFC.8, always.split.variables = c('Genus','mod1'), data= subset(f1.geo, !Last %in% c("","B")))
+                xFC.1+xFC.2+xFC.3+xFC.4+xFC.5+xFC.6+xFC.7+xFC.8, always.split.variables = c('Genus','mod1'), data= subset(f1.geo, !Last %in% c("","B")),
+              respect.unordered.factors = T)
 
 f1.geo$mod3 <-  predictions(predict(rf, f1.geo))
 
@@ -154,12 +157,13 @@ taxon.habits <- subset(f1.geo, select = c(Scientific.Name, FinalHabits,Last, mod
 colnames(taxon.habits) <- c('Scientific.Name', 'preGH', 'Last','Stem','Size','Leaf', 'GH')
 ghtest <- subset(taxon.habits, Last != Leaf & !Last %in% "")
 write.csv(ghtest, 'data/plants/ghtest.csv', row.names = F)
-ghtest2 <- read.csv('data/plants/ghtest2.csv') %>% filter(Leafnew != Leaf)
+# ghtest2 <- read.csv('data/plants/ghtest2.csv') %>% filter(Leafnew != Leaf)
 taxon.habits <- taxon.habits |> mutate(genus = str_split_fixed(Scientific.Name , '[[:blank:]]',3)[,1])
 
-taxon.habits <- taxon.habits |> mutate(Stem = ifelse(genus %in% c('Cuscuta', 'Dendrophthora'), "E", as.character(Stem)),
-                                       Size = ifelse(genus %in% c('Cuscuta', 'Dendrophthora'), ".", as.character(Size)),
-                                       Leaf = ifelse(genus %in% c('Cuscuta', 'Dendrophthora'), "i", as.character(Leaf)),
+taxon.habits <- taxon.habits |> mutate(Stem = ifelse(genus %in% c('Cuscuta', 'Dendrophthora', 'Phoradendron'), "E", as.character(Stem)),
+                                       Size = ifelse(genus %in% c('Cuscuta', 'Dendrophthora', 'Phoradendron'), ".", as.character(Size)),
+                                       Leaf = ifelse(!Last %in% c("","B","G"), as.character(Last), as.character(Leaf)),
+                                       Leaf = ifelse(genus %in% c('Cuscuta', 'Dendrophthora', 'Phoradendron'), "i", as.character(Leaf)),
                                        Stem = ifelse(genus %in% c('Tillandsia', 'Epidendrum'), "E", as.character(Stem)),
                                        Size = ifelse(genus %in% c('Tillandsia', 'Epidendrum'), ".", as.character(Size)),
                                        Leaf = ifelse(genus %in% c('Tillandsia', 'Epidendrum'), "F", as.character(Leaf)),
@@ -167,7 +171,7 @@ taxon.habits <- taxon.habits |> mutate(Stem = ifelse(genus %in% c('Cuscuta', 'De
                                        Leaf = ifelse(genus %in% ferns$Genus & Stem %in% 'H' & Leaf %in% 'F', "FE", as.character(Leaf)),
                                        Size = ifelse(Leaf %in% 'FE' & Stem %in% 'H', '.', as.character(Size)),
 
-                                       Leaf = ifelse(Scientific.Name %in% ghtest2$Scientific.Name, as.character(Last), as.character(Leaf)),
+
                                        GH = paste0(Stem, Size, Leaf))
 taxon.habits <- subset(taxon.habits, select = c(-Last)) |> unique()
 
@@ -212,24 +216,64 @@ x <- x  |> mutate(ht.max = case_when(
   ht.max > 5 & Stem %in%  "S" & Size %in% c('2','') ~ 5,
   ht.max > 0.5 & Stem %in%  "S" & Size %in% c('1') ~ 0.5,
   TRUE ~ ht.max))
+x <- x <- x  |> mutate(ht.train = case_when(
+  is.na(ht.max) & Stem %in%  "T" & Size %in% c('2','') ~ 24,
+  is.na(ht.max) & Stem %in%  "T" & Size %in% c('1') ~ 12,
+  is.na(ht.max) & Stem %in%  c("L","E")  ~ 12,
+  is.na(ht.max) & Stem %in%  "S" & Size %in% c('2','') ~ 3,
+  is.na(ht.max) & Stem %in%  "S" & Size %in% c('1') ~ 0.3,
+  is.na(ht.max) & Stem %in%  "H" & Leaf %in% "FV" ~ 3,
+  is.na(ht.max) & Stem %in%  "H" & Leaf %in% "A" ~ 0,
+  is.na(ht.max) & Stem %in%  "H" ~ 0.6,
+  is.na(ht.max) & Stem %in%  "N" ~ 0,
+  TRUE ~ ht.max),
+  wt = ifelse(is.na(ht.max), 1,10000))
 
-f1.geo2 <- f1.geo[,c(1:31)] |> left_join(x) |> mutate(StemSize=paste0(Stem,Size))
+f1.geo2 <- f1.geo[,c(1:31)] |> left_join(x,multiple = "all") |> mutate(StemSize=paste0(Stem,Size))
 
-rf <-  ranger(ht.max ~ StemSize+Stem+GH+Genus+Family+Order+Superorder+Subclass+Class+Superclass+Subdivision+
-                FC.1+FC.2+FC.3+FC.4+FC.5+FC.6+FC.7+FC.8+
-                xFC.1+xFC.2+xFC.3+xFC.4+xFC.5+xFC.6+xFC.7+xFC.8
-              , always.split.variables = c('Genus','Family','StemSize','GH','Stem'), 
-              data= subset(f1.geo2, !is.na(ht.max)), num.trees = 500, sample.fraction = 0.5,
-              respect.unordered.factors = T)
+rf <-  ranger(ht.train ~ StemSize+Stem+GH+Genus+Family+Order+Superorder+Subclass+Class+Superclass+Subdivision#+
+                  # FC.1+FC.2+FC.3+FC.4+FC.5+FC.6+FC.7+FC.8+
+                  # xFC.1+xFC.2+xFC.3+xFC.4+xFC.5+xFC.6+xFC.7+xFC.8
+                , always.split.variables = c('Genus','Family','StemSize','GH','Stem'),mtry = NULL,
+                data= subset(f1.geo2, !is.na(ht.train)), num.trees = 1000, sample.fraction = 0.1,
+                respect.unordered.factors = T, case.weights = subset(f1.geo2, !is.na(ht.train), select = wt))
 
-f1.geo2$ht.max.pred <-  predictions(predict(rf, f1.geo2))
+f1.geo2 <- f1.geo2 |> mutate(ht.max.pred = predictions(predict(rf, f1.geo2)))
+
+x <- f1.geo2  |> mutate(ht.max = case_when(
+  is.na(ht.max)  ~ ht.max.pred,
+  is.na(ht.max) & Stem %in%  "T" & Size %in% c('2','') ~ 24,
+  is.na(ht.max) & Stem %in%  "T" & Size %in% c('1') ~ 12,
+  is.na(ht.max) & Stem %in%  c("L","E")  ~ 12,
+  is.na(ht.max) & Stem %in%  "S" & Size %in% c('2','') ~ 3,
+  is.na(ht.max) & Stem %in%  "S" & Size %in% c('1') ~ 0.3,
+  is.na(ht.max) & Stem %in%  "H" & Leaf %in% "FV" ~ 3,
+  is.na(ht.max) & Stem %in%  "H" & Leaf %in% "A" ~ 0,
+  is.na(ht.max) & Stem %in%  "H" ~ 0.6,
+  is.na(ht.max) & Stem %in%  "N" ~ 0,
+  ht.max <= 15 & Stem %in%  "T" & Size %in% c('2','') ~ 20,
+  ht.max <= 5 & Stem %in%  "T" & Size %in% c('1') ~ 6,
+  ht.max <= 0.5 & Stem %in%  "S" & Size %in% c('2','') ~ 1,
+  ht.max > 15 & Stem %in%  "T" & Size %in% c('1') ~ 15,
+  ht.max > 5 & Stem %in%  "S" & Size %in% c('2','') ~ 5,
+  ht.max > 0.5 & Stem %in%  "S" & Size %in% c('1') ~ 0.5,
+  TRUE ~ ht.max),
+  ht.max = ht.round(ht.max)) |> subset(select=c(Scientific.Name, ht.max)) |> unique()
 
 
+# linmod <-  lm(ht.train ~ StemSize+Stem+GH+Genus+Family+Order+Superorder+Subclass+Class+Superclass+Subdivision+
+#                 FC.1+FC.2+FC.3+FC.4+FC.5+FC.6+FC.7+FC.8+
+#                 xFC.1+xFC.2+xFC.3+xFC.4+xFC.5+xFC.6+xFC.7+xFC.8
+#               ,
+#               data= subset(f1.geo2, !is.na(ht.train)), weights = subset(f1.geo2, !is.na(ht.train), select = wt)[,1])
+#
+# f1.geo2$ht.max.predlm <-  predict(linmod, f1.geo2, na.exclude = T)
+#
+#
+# summary(linmod)
 
 
-
-
-
+taxon.habits <- taxon.habits |>  unique() |> left_join(x)
 
 
 
@@ -267,22 +311,25 @@ taxon.habits.genus.stem <- taxon.habits.geo |> group_by(genus, Stem) |> summaris
 taxon.habits.genus.stem.max <- taxon.habits.genus.stem |> group_by(genus) |> summarise(pctmax= max(pct))
 taxon.habits.genus.stem <- taxon.habits.genus.stem |> left_join(taxon.habits.genus.stem.max) |> subset(pctmax == pct)
 
-taxon.habits.genus.GH <- taxon.habits.geo |> inner_join(taxon.habits.genus.stem[,c('genus','Stem')]) |> group_by(genus, GH) |> summarise(pct= sum(pct))
+
+
+
+taxon.habits.genus.GH <- taxon.habits.geo |> inner_join(taxon.habits.genus.stem[,c('genus','Stem')]) |> group_by(genus, GH) |> summarise(ht.max= weighted.mean(ht.max, pct), pct= sum(pct))
 taxon.habits.genus.GH.max <- taxon.habits.genus.GH |> group_by(genus) |> summarise(pctmax= max(pct))
 taxon.habits.genus.GH <- taxon.habits.genus.GH |> left_join(taxon.habits.genus.GH.max) |> subset(pctmax == pct)
-
+taxon.habits.genus.GH$ht.max <- ht.round(taxon.habits.genus.GH$ht.max)
 
 
 
 
 genus.habits <- f2 |> subset(!AcGenus %in% "" & grepl('^N',Form), select = c(AcGenus, Form)) |> unique()
-genus.habits <- genus.habits |> mutate(genus = AcGenus, GH = ifelse(Form %in% 'NB', "N.B", "N.L"))
-genus.habits <- genus.habits |> subset(select=c(genus, GH)) |> rbind(taxon.habits.genus.GH[,c("genus","GH")]) |>
+genus.habits <- genus.habits |> mutate(genus = AcGenus, GH = ifelse(Form %in% 'NB', "N.B", "N.L"), ht.max= 0)
+genus.habits <- genus.habits |> subset(select=c(genus, GH, ht.max)) |> rbind(taxon.habits.genus.GH[,c("genus","GH","ht.max")]) |>
   rbind(cbind(genus=c('Nostoc','Chara','Lyngbya','Agardhiella', 'Alaria', 'Ascophyllum','Bryopsis',
                       'Ceramium', 'Chaetomorpha', 'Champia', 'Chondrus', 'Cladophora', 'Codium',
                       'Colpomenia', 'Desmarestia', 'Ectocarpus', 'Enteromorpha', 'Fucus', 'Gracilaria',
                       'Hildenbrandtia', 'Hypnea', 'Laminaria','Nitella', 'Phyllitis', 'Polysiphonia',
-                      'Porphyra', 'Rhizoclonium', 'Spyridia', 'Ulva', 'Vaucheria','Postelsia','Phyllospadix', 'Nemalion','Callithamnion','Pylaiella'), GH='N.A'))
+                      'Porphyra', 'Rhizoclonium', 'Spyridia', 'Ulva', 'Vaucheria','Postelsia','Phyllospadix', 'Nemalion','Callithamnion','Pylaiella'), GH='N.A', ht.max=0))
 
 write.csv(genus.habits, 'data/plants/genus.habits.csv', row.names = F)
 

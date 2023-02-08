@@ -76,6 +76,7 @@
 75	300.00	74.00	"graminoid vine"	"Vine/Liana"	"Gv"	"LG"	"L.G"
 76	300.00	75.00	"microphyllous evergreen vine"	"Vine/Liana"	"Ev"	"LNE"	"L.ME"
 77	300.00	76.00	"succulent vine"	"Vine/Liana"	"Cv"	"LU"	"L.U"
+106	300.00	76.50	"parasitic vine"	"Shrub/Subshrub"	"Pv"	"LBP"	"L.Bi"
 78	400.00	77.00	"aquatic herb"	"Forb/Herb"	"Ah"	"HA"	"H.A"
 79	400.00	78.00	"annual aquatic herb"	"Forb/Herb"	"Ah1"	"HA1"	"H1A"
 80	400.00	79.00	"perennial aquatic herb"	"Forb/Herb"	"Ah2"	"HA2"	"H2A"

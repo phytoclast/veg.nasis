@@ -246,7 +246,7 @@ Artemisia furcata var. heterophylla	1
 Artemisia ludoviciana	1
 Artemisia nova	0.6
 Artemisia rigida	0.6
-Artemisia tilesii	12
+Artemisia tilesii	0.8
 Artemisia tridentata	10
 Artemisia tridentata ssp. tridentata	2.5
 Artemisia tridentata ssp. vaseyana	2
@@ -1201,7 +1201,7 @@ Gutierrezia sarothrae	0.5
 Gyminda latifolia	12
 Gymnanthes lucida	15
 Gymnocladus dioicus	30
-Gynerium sagittatum	7
+Gynerium sagittatum	6
 Halesia carolina	30
 Halesia diptera	15
 Hamamelis virginiana	9
@@ -1512,7 +1512,7 @@ Lolium pratense	0.6
 Lolium rigidum	1
 Lomatium canbyi	0.2
 Lomatium cous	0.2
-Lomatium dissectum	5
+Lomatium dissectum	1.2
 Lomatium macrocarpum	0.2
 Lomatium triternatum	0.7
 Lonchocarpus heptaphyllus	20
@@ -1537,19 +1537,19 @@ Lupinus angustifolius	1
 Lupinus arboreus	2
 Lupinus arcticus	0.6
 Lupinus argenteus	0.5
-Lupinus caudatus	1.5
+Lupinus caudatus	0.4
 Lupinus covillei	3
 Lupinus elegans	1
 Lupinus elmeri	0.5
-Lupinus havardii	6
-Lupinus latifolius	8
+Lupinus havardii	1.2
+Lupinus latifolius	2.4
 Lupinus lepidus	2
 Lupinus luteolus	0.9
 Lupinus luteus	0.6
 Lupinus nevadensis	0.4
 Lupinus nootkatensis	0.6
-Lupinus sericeus	2
-Lupinus sulphureus	3
+Lupinus sericeus	0.5
+Lupinus sulphureus	0.8
 Luzula parviflora	0.6
 Luzula spicata	0.4
 Lycium carolinianum	2.5
@@ -2560,7 +2560,7 @@ Sporobolus interruptus	0.8
 Sporobolus virginicus	0.6
 Sporobolus wrightii	1.5
 Stachys palustris	1
-Stachys tenuifolia	8
+Stachys tenuifolia	1
 Stahlia monosperma	20
 Staphylea bolanderi	10
 Staphylea trifolia	10

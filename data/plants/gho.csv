@@ -76,6 +76,7 @@
 75,300,74,"graminoid vine","Vine/Liana","Gv","LG","L.G","L",".","G",12
 76,300,75,"microphyllous evergreen vine","Vine/Liana","Ev","LNE","L.ME","L",".","ME",12
 77,300,76,"succulent vine","Vine/Liana","Cv","LU","L.U","L",".","U",12
+106,300,76.5,"parasitic vine","Shrub/Subshrub","Pv","LBP","L.Bi","L",".","Bi",12
 78,400,77,"aquatic herb","Forb/Herb","Ah","HA","H.A","H",".","A",0.6
 79,400,78,"annual aquatic herb","Forb/Herb","Ah1","HA1","H1A","H","1","A",0.6
 80,400,79,"perennial aquatic herb","Forb/Herb","Ah2","HA2","H2A","H","2","A",0.6
