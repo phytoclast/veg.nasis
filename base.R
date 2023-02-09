@@ -40,6 +40,7 @@ veg.data.trans <-  readRDS('data/veg.data.trans.RDS')
 
 plant.hts <- read.delim('data/plants/Plant_heights.txt')
 veg <- clean.veg(veg.spp)
+veg <- fill.hts.df(veg)
 breaks <- c(0.1, 0.5, 2, 5, 10, 20, 30)
 strat.summary <- vegnasis::summary.crown.thickness(veg, breaks)
 
