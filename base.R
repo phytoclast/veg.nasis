@@ -6,7 +6,8 @@ library(dplyr)
 remotes::install_github("phytoclast/vegnasis", dependencies = FALSE)
 library(vegnasis)
 veg.spp <- soilDB::get_vegplot_species_from_NASIS_db()
-veg <- clean.veg(veg.spp)
+veg <- clean.veg(veg.spp) |> fill.hts.df()
+
 breaks <- c(0.1, 0.5, 2, 5, 10, 20, 30)
 strat.summary <- vegnasis::summary.crown.thickness(veg, breaks)
 veg$new <- get.habit.code(veg$plantsciname)
@@ -290,29 +291,58 @@ clean.veg <- function(x){
 
 
 veg <- clean.veg(veg.spp)
+veg2 <- fill.hts.df(veg)
+veg3 <- vegnasis::summary.crown.thickness(veg2, c(0.5,2,5,10))
+x <- veg
+plot <- x$vegplotid
+taxon <- x$taxon
+type <- x$type
+stratum.min <- x$stratum.min
+stratum.max <- x$stratum.max
+crown.min <- x$crown.min
+crown.max <- x$crown.max
 
-taxa <- veg$plantsciname
+harmonize.heights <- function(plot = NA_character_ ,
+                              taxon = NA_character_ ,
+                              type = NA_character_ ,
+                              stratum.min = NA_real_,
+                              stratum.max = NA_real_,
+                              crown.min = NA_real_,
+                              crown.max = NA_real_){
+taxon.max = get.ht.max(taxon)
 
-get.ht.max <- function(taxa){
-  x  <-  as.data.frame(cbind(taxa=taxa)) |> mutate(ht0 = NA_real_, genus = str_split_fixed(taxa , '[[:blank:]]',3)[,1])
-  #first try straight join ----
-  x <- x |> left_join(taxon.habits[,c('Scientific.Name','ht.max')], by = c('taxa'='Scientific.Name'), multiple = 'first')
-  x <- x |> mutate(ht0 = ifelse(is.na(ht0)| ht0 %in% NA_real_, ht.max, as.character(ht0)))
-  x <- x[,1:3]
-  #then try synonym join ----
-  x <- x |> left_join(syns[,c('acc','syn')], by=c('taxa'='syn'), multiple = 'first') |> left_join(taxon.habits[,c('Scientific.Name','ht.max')], by = c('acc'='Scientific.Name'), multiple = 'first')
-  x <- x |> mutate(ht0 = ifelse(is.na(ht0)| ht0 %in% "", ht.max, as.character(ht0)))
-  x <- x[,1:3]
-  #finally try genus only ----
-  x <- x |> left_join(genus.habits, by = c('genus'='genus'), multiple = 'first')
-  x <- x |> mutate(ht0 = ifelse(is.na(ht0)| ht0 %in% "", ht.max, as.character(ht0)))
-  x <- x[,1:2]
-  return(as.numeric(x$ht0)) }
+df <- data.frame(plot, taxon, type, stratum.min, stratum.max, crown.min, crown.max, taxon.max) |> as.data.frame()
+
+df <- df |> group_by(plot) |> mutate(stand.max = pmax(max(stratum.max, na.rm = TRUE, warnings =FALSE), max(crown.max, na.rm = TRUE, warnings =FALSE), na.rm = TRUE, warnings =FALSE),
+                                     base.max = pmax(max(stratum.min, na.rm = TRUE, warnings =FALSE), max(crown.min, na.rm = TRUE, warnings =FALSE), na.rm = TRUE, warnings =FALSE ),
+                                     stand.max =  ifelse(is.na(stand.max) | base.max >= stand.max, NA_real_, stand.max),
+                                     base.max = NULL)
+df <- df |> mutate(ht.max = case_when(
+  !is.na(crown.max) ~ crown.max,
+  !is.na(stratum.max) ~ pmin(stratum.max, taxon.max),
+  TRUE ~ pmin(taxon.max, stand.max)),
+  ht.max = case_when(
+    !is.na(ht.max) ~ ht.max,
+    type %in%  "tree" ~ 24,
+    type %in%  "shrub/vine" ~ 3,
+    type %in%  "forb" ~ 0.6,
+    type %in%  "grass/grasslike" ~ 0.6,
+    type %in%  "moss" ~ 0,
+    TRUE ~ 0))
+
+df <- df |> mutate(
+  ht.max = ifelse(!is.na(stratum.min) & stratum.min >=  ht.max, stratum.min + (stratum.max-stratum.min)/10, ht.max),
+                   ht.min =  case_when(
+                     !is.na(crown.min) ~ crown.min,
+                     TRUE ~ ht.max/2))
+return(data.frame(ht.min = ht.round(df$ht.min),ht.max = ht.round(df$ht.max)))
+}
 
 
-
-get.ht.max(taxa)
-
-
-
-
+hts <- harmonize.heights(plot = plot ,
+                  taxon = taxon ,
+                  type = type ,
+                  stratum.min = stratum.min,
+                  stratum.max = stratum.max,
+                  crown.min = crown.min,
+                  crown.max = crown.max)
