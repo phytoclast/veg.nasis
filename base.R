@@ -347,3 +347,14 @@ hts <- harmonize.heights(plot = plot ,
                   stratum.max = stratum.max,
                   crown.min = crown.min,
                   crown.max = crown.max)
+
+
+x <- veg |> mutate(stratum = case_when(
+  (ht.max > 15 & (type %in% c('tree') | is.na(type)))| (type %in% 'tree' & is.na(ht.max)) ~ 'tree2',
+  (ht.max > 5 & (type %in% c('shrub/vine', 'tree') | is.na(type)))| (type %in% 'tree' & is.na(ht.max)) ~ 'tree1',
+  (ht.max > 0.5 & (type %in% c('shrub/vine', 'tree') | is.na(type)))| (type %in% 'shrub/vine' & is.na(ht.max)) ~ 'shrub',
+  (ht.max > 0 & (type %in% c('shrub/vine') | is.na(type)))| (type %in% c('forb','grass/grasslike')) ~ 'field',
+  !type %in% c('tree', 'shrub/vine', 'forb','grass/grasslike') ~ 'ground',
+  TRUE ~ 'none'))
+
+x2 <- x |> group_by(plot, taxon, stratum) |> summarise(cover = cover.agg(cover))
