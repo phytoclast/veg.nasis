@@ -421,34 +421,7 @@ x3 <- x3 |> left_join(subset(x2, stratum %in% 'sapling')) |> mutate(sapling=ifel
 x3 <- x3 |> left_join(subset(x2, stratum %in% 'shrub')) |> mutate(shrub=ifelse(is.na(cover),0,cover), stratum=NULL, cover=NULL)
 x3 <- x3 |> left_join(subset(x2, stratum %in% 'herb')) |> mutate(herb=ifelse(is.na(cover),0,cover), stratum=NULL, cover=NULL)
 x3 <- x3 |> left_join(subset(x2, stratum %in% 'moss')) |> mutate(moss=ifelse(is.na(cover),0,cover), stratum=NULL, cover=NULL)
-X3 <- x3 |> left_join(x.ht)
-# x3 <- x3 |> mutate(structure =
-#                      ifelse(tree < 10,
-#                             ifelse(shrub+sapling < 10,
-#                                    'open grassland',
-#                                    ifelse(tree+shrub+sapling < 75,
-#                                           ifelse(sapling > shrub, 'woodland regen', 'open shrubland',
-#                                                  ifelse(sapling > shrub, 'forest regen', 'shrub thicket')))),
-#                             ifelse(tree < 65,
-#                                    ifelse(shrub+sapling < 10,
-#                                           case_when(ht.max < 15 ~ 'open low woodland',
-#                                                     ht.max < 30 ~ 'open medium woodland',
-#                                                     TRUE ~ 'open high woodland'),
-#
-#                                           ifelse(shrub+sapling < 75,
-#                                                  case_when(ht.max < 15 ~ 'open shrubby low woodland',
-#                                                            ht.max < 30 ~ 'open shrubby medium woodland',
-#                                                            TRUE ~ 'open shrubby high woodland'),
-#                                                  case_when(ht.max < 15 ~ 'shrubby low woodland',
-#                                                            ht.max < 30 ~ 'shrubby medium woodland',
-#                                                            TRUE ~ 'shrubby high woodland'))
-#                                    ),
-#                                    case_when(ht.max < 15 ~ 'low forest',
-#                                              ht.max < 30 ~ 'medium forest',
-#                                              ht.max < 45  ~ 'high forest',
-#                                              ht.max < 60  ~ 'tall forest',
-#                                              TRUE  ~ 'giant forest'))))
-
+x3 <- x3 |> left_join(x.ht)
 
 x3 <- x3 |> mutate(structure =
                      case_when(tree < 10 ~
@@ -460,37 +433,29 @@ x3 <- x3 |> mutate(structure =
                                                                              TRUE ~ 'shrub thicket')
                                            )
                                  ),
-                               TRUE ~ 'next'))
-x3 <- x3 |> mutate(structure =case_when(
-  !structure %in% 'next' ~ structure,
-  TRUE ~   case_when(tree < 65 ~
-                       case_when(shrub+sapling < 10 ~
-                                   case_when(ht.max < 15 ~ 'open low woodland',
-                                             ht.max < 30 ~ 'open medium woodland',
-                                             TRUE ~ 'open high woodland'),
-                                 TRUE ~ case_when(shrub+sapling < 75 ~
-                                                    case_when(ht.max < 15 ~ 'open shrubby low woodland',
-                                                              ht.max < 30 ~ 'open shrubby medium woodland',
-                                                              TRUE ~ 'open shrubby high woodland'),
-                                                  TRUE ~ case_when(ht.max < 15 ~ 'shrubby low woodland',
-                                                                   ht.max < 30 ~ 'shrubby medium woodland',
-                                                                   TRUE ~ 'shrubby high woodland')
-                                 )
-                       ),
-                     TRUE ~ 'next')))
-
-x3 <- x3 |> mutate(structure =
-                     case_when(
-                       !structure %in% 'next' ~ structure,
-                       TRUE ~ case_when(ht.max < 15 ~ 'low forest',
-                                        ht.max < 30 ~ 'medium forest',
-                                        ht.max < 45 ~ 'high forest',
-                                        ht.max < 60 ~ 'tall forest',
-                                        TRUE  ~ 'giant forest')
-                     )
-                   )
-
-
-
+                               TRUE ~ case_when(tree < 65 ~
+                                                  case_when(shrub+sapling < 10 ~
+                                                              case_when(ht.max < 15 ~ 'open low woodland',
+                                                                        ht.max < 30 ~ 'open medium woodland',
+                                                                        TRUE ~ 'open high woodland'),
+                                                            TRUE ~ case_when(shrub+sapling < 75 ~
+                                                                               case_when(ht.max < 15 ~ 'open shrubby low woodland',
+                                                                                         ht.max < 30 ~ 'open shrubby medium woodland',
+                                                                                         TRUE ~ 'open shrubby high woodland'),
+                                                                             TRUE ~ case_when(ht.max < 15 ~ 'shrubby low woodland',
+                                                                                              ht.max < 30 ~ 'shrubby medium woodland',
+                                                                                              TRUE ~ 'shrubby high woodland')
+                                                            )
+                                                  ),
+                                                TRUE ~ case_when(ht.max < 15 ~ 'low forest',
+                                                                 ht.max < 30 ~ 'medium forest',
+                                                                 ht.max < 45 ~ 'high forest',
+                                                                 ht.max < 60 ~ 'tall forest',
+                                                                 TRUE  ~ 'giant forest')
+                               )
+                     ))
+                   
+                   
+                   
 
 
