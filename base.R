@@ -348,7 +348,7 @@ hts <- harmonize.heights(plot = plot ,
                   crown.min = crown.min,
                   crown.max = crown.max)
 
-
+system.time(
 x <- veg |> mutate(stratum = case_when(
   (ht.max > 15 & (type %in% c('tree') | is.na(type)))| (type %in% 'tree' & is.na(ht.max)) ~ 'tree2',
   (ht.max > 5 & (type %in% c('shrub/vine', 'tree') | is.na(type)))| (type %in% 'tree' & is.na(ht.max)) ~ 'tree1',
@@ -356,5 +356,141 @@ x <- veg |> mutate(stratum = case_when(
   (ht.max > 0 & (type %in% c('shrub/vine') | is.na(type)))| (type %in% c('forb','grass/grasslike')) ~ 'field',
   !type %in% c('tree', 'shrub/vine', 'forb','grass/grasslike') ~ 'ground',
   TRUE ~ 'none'))
+)
+system.time(
+  x <- veg |> mutate(stratum = case_when(
+    is.na(ht.max) | is.na(type) ~ 'excluded',
+    ht.max > 15 & type %in% c('shrub/vine', 'tree')  ~ '4',
+    ht.max > 5  & type %in% c('shrub/vine', 'tree')  ~ '3',
+    ht.max > 0.5 & type %in% c('shrub/vine', 'tree') ~ '2',
+    ht.max > 0 & type %in% c('shrub/vine', 'forb','grass/grasslike') ~ '1',
+    !type %in% c('tree', 'shrub/vine', 'forb','grass/grasslike') ~ '0',
+    TRUE ~ 'excluded'))
+)
 
-x2 <- x |> group_by(plot, taxon, stratum) |> summarise(cover = cover.agg(cover))
+x2 <- x |> subset(!stratum %in% 'excluded')
+
+x2 <- x2 |> group_by(plot, taxon, stratum) |> summarise(cover = cover.agg(cover), ht.min = mean(ht.min), ht.max = mean(ht.max))
+x2 <- x2 |> group_by(plot,taxon) |> mutate(maxcover = max(cover), maxht = max(ht.max))
+x2 <- x2 |> subset((ht.max == maxht & cover >= 10) | (maxcover < 10 & maxcover == cover))
+x2 <- x2 |> group_by(plot,taxon) |> mutate(maxcover = max(cover), maxht = max(ht.max))
+x2 <- x2 |> subset((ht.max == maxht & !taxon %in% "" & !is.na(taxon)))
+
+x2 <- x2 |> group_by(plot,stratum) |> mutate(srank = order(order(-cover,-ht.max)))
+x2 <- x2 |> group_by(plot) |> mutate(rank = order(order(-cover,-ht.max)))
+x2 <- x2 |> group_by(plot, stratum) |> mutate(maxcover = max(cover), maxht = NULL)
+x2 <- x2 |> subset(((maxcover == cover & cover >= 10) | rank <=5) & srank <=3)
+x2 <- x2 |> group_by(plot) |> mutate(rank = order(order(-as.numeric(stratum), srank)))
+
+associations <- x2 |> subset(select = c(plot)) |> unique()
+plots <- associations$plot
+associations$association <- ''
+for (i in 1:length(plots)){#i=1
+  Com.B <- subset(x2, plot %in% plots[i])
+  nrank <- length(unique(Com.B$rank))
+  assname <- ""
+  for (j in 1:nrank){#j=1
+    assname <- ifelse(j == 1,Com.B[Com.B$rank %in% j,]$taxon,
+                      ifelse(Com.B[Com.B$rank %in% j,]$stratum == Com.B[Com.B$rank %in% (j-1),]$stratum,
+                             paste0(assname, '-',Com.B[Com.B$rank %in% j,]$taxon),paste0(assname, '/',Com.B[Com.B$rank %in% j,]$taxon)))
+
+  }
+  associations[associations$plot %in% plots[i],]$association <- assname
+}
+
+x3 <- x2 |> left_join(associations)
+
+
+#structure
+
+x <- veg |> mutate(stratum = case_when(
+  is.na(ht.max) | is.na(type) ~ 'excluded',
+  ht.max > 5  & type %in% c('shrub/vine', 'tree')  ~ 'tree',
+  type %in% c('tree') ~ 'saplings',
+  type %in% c('shrub/vine') ~ 'shrub',
+  type %in% c('shrub/vine', 'herb') ~ 'herb',
+  !type %in% c('tree', 'shrub/vine', 'forb','grass/grasslike') ~ 'moss',
+  TRUE ~ 'excluded'))
+
+x.ht <- veg |> group_by(plot) |> summarise(ht.max = max(ht.max))
+
+x2 <- x |> group_by(plot, stratum) |> summarise(cover = cover.agg(cover))
+x3 <- data.frame(plot = unique(x2$plot), tree = 0, sapling = 0, shrub=0, herb=0, moss=0)
+x3 <- x3 |> left_join(subset(x2, stratum %in% 'tree')) |> mutate(tree=ifelse(is.na(cover),0,cover), stratum=NULL, cover=NULL)
+x3 <- x3 |> left_join(subset(x2, stratum %in% 'sapling')) |> mutate(sapling=ifelse(is.na(cover),0,cover), stratum=NULL, cover=NULL)
+x3 <- x3 |> left_join(subset(x2, stratum %in% 'shrub')) |> mutate(shrub=ifelse(is.na(cover),0,cover), stratum=NULL, cover=NULL)
+x3 <- x3 |> left_join(subset(x2, stratum %in% 'herb')) |> mutate(herb=ifelse(is.na(cover),0,cover), stratum=NULL, cover=NULL)
+x3 <- x3 |> left_join(subset(x2, stratum %in% 'moss')) |> mutate(moss=ifelse(is.na(cover),0,cover), stratum=NULL, cover=NULL)
+X3 <- x3 |> left_join(x.ht)
+# x3 <- x3 |> mutate(structure =
+#                      ifelse(tree < 10,
+#                             ifelse(shrub+sapling < 10,
+#                                    'open grassland',
+#                                    ifelse(tree+shrub+sapling < 75,
+#                                           ifelse(sapling > shrub, 'woodland regen', 'open shrubland',
+#                                                  ifelse(sapling > shrub, 'forest regen', 'shrub thicket')))),
+#                             ifelse(tree < 65,
+#                                    ifelse(shrub+sapling < 10,
+#                                           case_when(ht.max < 15 ~ 'open low woodland',
+#                                                     ht.max < 30 ~ 'open medium woodland',
+#                                                     TRUE ~ 'open high woodland'),
+#
+#                                           ifelse(shrub+sapling < 75,
+#                                                  case_when(ht.max < 15 ~ 'open shrubby low woodland',
+#                                                            ht.max < 30 ~ 'open shrubby medium woodland',
+#                                                            TRUE ~ 'open shrubby high woodland'),
+#                                                  case_when(ht.max < 15 ~ 'shrubby low woodland',
+#                                                            ht.max < 30 ~ 'shrubby medium woodland',
+#                                                            TRUE ~ 'shrubby high woodland'))
+#                                    ),
+#                                    case_when(ht.max < 15 ~ 'low forest',
+#                                              ht.max < 30 ~ 'medium forest',
+#                                              ht.max < 45  ~ 'high forest',
+#                                              ht.max < 60  ~ 'tall forest',
+#                                              TRUE  ~ 'giant forest'))))
+
+
+x3 <- x3 |> mutate(structure =
+                     case_when(tree < 10 ~
+                                 case_when(shrub+sapling < 10 ~ 'open grassland',
+                                           TRUE ~ case_when(tree+shrub+sapling < 75 ~
+                                                              case_when(sapling > shrub ~ 'woodland regen',
+                                                                        TRUE ~ 'open shrubland'),
+                                                            TRUE ~ case_when(sapling > shrub ~ 'forest regen',
+                                                                             TRUE ~ 'shrub thicket')
+                                           )
+                                 ),
+                               TRUE ~ 'next'))
+x3 <- x3 |> mutate(structure =case_when(
+  !structure %in% 'next' ~ structure,
+  TRUE ~   case_when(tree < 65 ~
+                       case_when(shrub+sapling < 10 ~
+                                   case_when(ht.max < 15 ~ 'open low woodland',
+                                             ht.max < 30 ~ 'open medium woodland',
+                                             TRUE ~ 'open high woodland'),
+                                 TRUE ~ case_when(shrub+sapling < 75 ~
+                                                    case_when(ht.max < 15 ~ 'open shrubby low woodland',
+                                                              ht.max < 30 ~ 'open shrubby medium woodland',
+                                                              TRUE ~ 'open shrubby high woodland'),
+                                                  TRUE ~ case_when(ht.max < 15 ~ 'shrubby low woodland',
+                                                                   ht.max < 30 ~ 'shrubby medium woodland',
+                                                                   TRUE ~ 'shrubby high woodland')
+                                 )
+                       ),
+                     TRUE ~ 'next')))
+
+x3 <- x3 |> mutate(structure =
+                     case_when(
+                       !structure %in% 'next' ~ structure,
+                       TRUE ~ case_when(ht.max < 15 ~ 'low forest',
+                                        ht.max < 30 ~ 'medium forest',
+                                        ht.max < 45 ~ 'high forest',
+                                        ht.max < 60 ~ 'tall forest',
+                                        TRUE  ~ 'giant forest')
+                     )
+                   )
+
+
+
+
+
