@@ -11,6 +11,57 @@ f2 <- read.delim('data/plants/List_Species2011.txt')
 f3 <- read.delim('data/plants/BinomialGrowthHabits.txt')
 bm.geo <- read.csv('data/plants/bm.geo.csv')
 syns <- read.csv('data/plants/m.ac.csv')
+
+#clean hydric ----
+hydric <- read.delim('data/plants/hydric.taxa.txt')
+hydric <- sapply(hydric, str_trim) |> as.data.frame()
+colnames(hydric) <- colnames(hydric) |> stringr::str_replace('^X.','') |> stringr::str_replace('^\\.','') |> stringr::str_replace('\\.\\.$','')
+
+replacehydric <- function(x){
+  x = case_when(
+    x %in% 'UPL' ~ 0,
+    x %in% 'FACU' ~ 0.25,
+    x %in% 'FAC' ~ 0.5,
+    x %in% 'FACW' ~ 0.75,
+    x %in% 'OBL' ~ 1,
+    TRUE ~ NA_real_)}
+
+hydric2 <- hydric |> mutate(across(2:11, replacehydric))
+
+PLANTS <- read.csv('data/plants/PLANTSdownloadData.txt')
+PLANTS.legit <- PLANTS |> subset(!grepl('auct.',Genera.Binomial.Author) &
+                                   !grepl('illeg.',Genera.Binomial.Author) &
+                                   !grepl(' non',Genera.Binomial.Author) &
+                                   !grepl('auct',Trinomial.Author) &
+                                   !grepl('illeg.',Trinomial.Author) &
+                                   !grepl(' non',Trinomial.Author),
+                                 select=c(Accepted.Symbol, Symbol, Scientific.Name))
+PLANTS.legit1 <- PLANTS.legit |> mutate(binomial = paste(    str_split_fixed(Scientific.Name, '[[:blank:]]',3)[,1],
+                                                            str_split_fixed(Scientific.Name, '[[:blank:]]',3)[,2]))
+
+hydric.syns <-  hydric2 |> left_join(PLANTS.legit, multiple = "all")
+
+missing <- PLANTS.legit |> subset(!Symbol %in% hydric.syns$Accepted.Symbol)
+missing <- missing |> left_join(PLANTS.legit1[,c('Symbol','binomial'),], by=c('Accepted.Symbol'='Symbol'))
+library(vegnasis)
+missing <- missing |> mutate(GH = get.habit.code(missing$Scientific.Name)) |> subset(!grepl('^N',GH))
+#add missing as presumed UPL taxa
+hydric3 <-  hydric2 |> bind_rows(data.frame(Scientific.Name = unique(missing$binomial), other=0))
+
+
+
+
+
+
+
+
+
+
+
+
+#clean gho ----
+
+
 gho <- read.delim('data/plants/GrowthHabitOptions.txt')
 gho <-  gho %>%
   mutate(First = substr(Revised.Symbol, 1,1), Second = substr(Revised.Symbol, 2,2), Last = substr(Revised.Symbol, 3,5))
