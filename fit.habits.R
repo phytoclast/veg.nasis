@@ -44,13 +44,9 @@ hydric.syns <-  hydric2 |> left_join(PLANTS.legit, multiple = "all")
 missing <- PLANTS.legit |> subset(!Symbol %in% hydric.syns$Accepted.Symbol)
 missing <- missing |> left_join(PLANTS.legit1[,c('Symbol','binomial'),], by=c('Accepted.Symbol'='Symbol'))
 library(vegnasis)
-missing <- missing |> mutate(GH = get.habit.code(missing$Scientific.Name)) |> subset(!grepl('^N',GH))
+missing <- missing |> mutate(GH = get.habit.code(missing$Scientific.Name)) |> subset(!grepl('^N',GH) & str_count(binomial, '. .') >= 1)
 #add missing as presumed UPL taxa
 hydric3 <-  hydric2 |> bind_rows(data.frame(Scientific.Name = unique(missing$binomial), other=0))
-
-
-
-
 
 
 
