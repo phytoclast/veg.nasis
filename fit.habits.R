@@ -13,6 +13,7 @@ bm.geo <- read.csv('data/plants/bm.geo.csv')
 syns <- read.csv('data/plants/m.ac.csv')
 
 #clean hydric ----
+#Downloaded 2020 wetland plant list from Excel spreadsheet from Army Corps website, pasted into text file.
 hydric <- read.delim('data/plants/hydric.taxa.txt')
 hydric <- sapply(hydric, str_trim) |> as.data.frame()
 colnames(hydric) <- colnames(hydric) |> stringr::str_replace('^X.','') |> stringr::str_replace('^\\.','') |> stringr::str_replace('\\.\\.$','')
@@ -27,7 +28,7 @@ replacehydric <- function(x){
     TRUE ~ NA_real_)}
 
 hydric2 <- hydric |> mutate(across(2:11, replacehydric))
-
+#Downloaded full PLANTS database as text file.
 PLANTS <- read.csv('data/plants/PLANTSdownloadData.txt')
 PLANTS.legit <- PLANTS |> subset(!grepl('auct.',Genera.Binomial.Author) &
                                    !grepl('illeg.',Genera.Binomial.Author) &
@@ -39,16 +40,62 @@ PLANTS.legit <- PLANTS |> subset(!grepl('auct.',Genera.Binomial.Author) &
 PLANTS.legit1 <- PLANTS.legit |> mutate(binomial = paste(    str_split_fixed(Scientific.Name, '[[:blank:]]',3)[,1],
                                                             str_split_fixed(Scientific.Name, '[[:blank:]]',3)[,2]))
 
-hydric.syns <-  hydric2 |> left_join(PLANTS.legit, multiple = "all")
+PLANTS.binomials <- PLANTS.legit1
+PLANTS.binomials1 <- PLANTS.binomials
+colnames(PLANTS.binomials1) <-  paste0(colnames(PLANTS.binomials1),".1")
+PLANTS.binomials <- PLANTS.binomials |> left_join(PLANTS.binomials1, by=c('Accepted.Symbol'='Symbol.1'), multiple = "all")
+hydric.syns <-  hydric2 |> left_join(PLANTS.binomials, by=c('Scientific.Name'='Scientific.Name'), multiple = "all")
 
-missing <- PLANTS.legit |> subset(!Symbol %in% hydric.syns$Accepted.Symbol)
-missing <- missing |> left_join(PLANTS.legit1[,c('Symbol','binomial'),], by=c('Accepted.Symbol'='Symbol'))
+missing <- PLANTS.binomials |> subset(!binomial.1 %in% hydric.syns$binomial.1)
+
 library(vegnasis)
-missing <- missing |> mutate(GH = get.habit.code(missing$Scientific.Name)) |> subset(!grepl('^N',GH) & str_count(binomial, '. .') >= 1)
+missing <- missing |> mutate(GH = get.habit.code(missing$Scientific.Name)) |> subset(!grepl('^N',GH) & str_count(binomial.1, '. .') >= 1)
 #add missing as presumed UPL taxa
-hydric3 <-  hydric2 |> bind_rows(data.frame(Scientific.Name = unique(missing$binomial), other=0))
+hydric3 <-  hydric2 |> bind_rows(data.frame(Scientific.Name = unique(missing$binomial.1), other=0))
+
+write.csv(hydric3, 'data/plants/hydric.csv', row.names = F)
+#write hydric function ----
+data('nasis.veg')
+x <- nasis.veg |> clean.veg()
+x <- x |> mutate(type=fill.type(taxon, type)) |> fill.hts.df()
+
+get.wetness <- function(x, region = 'NCNE'){
+  x <- x |> group_by(plot, taxon) |> summarise(cover=cover.agg(cover))
+
+  #Lookup default plant hydric indicator status ----
+  region = 'NCNE'
+  hydric <- hydric |> mutate(status = case_when(
+    region == 'AGCP' ~ AGCP,
+    region == 'AW' ~ AW,
+    region == 'CB' ~ CB,
+    region == 'EMP' ~ EMP,
+    region == 'HI' ~ HI,
+    region == 'MW' ~ MW,
+    region == 'NCNE' ~ NCNE,
+    region == 'WMVC' ~ WMVC,
+    region == 'AK' ~ AK,
+    TRUE ~ other))
+
+  hydric <- hydric |> mutate(
+    status = ifelse(is.na(status), rowMeans(select(hydric,
+                                                   c('AGCP','AW','CB','EMP','GP','HI','MW','NCNE','WMVC','AK','other')), na.rm = TRUE),status))
 
 
+  x$status0 = NA_real_
+  #first try straight join ----
+  x <- x |> left_join(hydric[,c('Scientific.Name','status')], by = c('taxon'='Scientific.Name'), multiple = 'first')
+  x <- x |> mutate(status0 = ifelse(is.na(status0)| status0 %in% NA_real_, status, status0))
+  x <- x[,1:4]
+  #then try synonym join ----
+  x <- x |> left_join(syns[,c('acc','syn')], by=c('taxon'='syn'), multiple = 'first') |> left_join(hydric[,c('Scientific.Name','status')], by = c('taxon'='Scientific.Name'), multiple = 'first')
+  x <- x |> mutate(status0 = ifelse(is.na(status0)| status0 %in% NA_real_, status, status0))
+  x <- x[,1:4]
+  #finally try genus only ----
+  #not implemented
+
+  x <- x|> subset(!is.na(status0) & !is.na(cover)) |> group_by(plot) |> summarise(wetness = sum(cover*status0+0.0005)/sum(cover+0.001))
+  return(x)
+}
 
 
 

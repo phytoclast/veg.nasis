@@ -7,7 +7,7 @@ remotes::install_github("phytoclast/vegnasis", dependencies = FALSE)
 library(vegnasis)
 veg.spp <- soilDB::get_vegplot_species_from_NASIS_db(SS = FALSE)
 veg <- clean.veg(veg.spp) |> fill.hts.df()
-
+hydric <- get.wetness(veg, region = 'NCNE')
 breaks <- c(0.1, 0.5, 2, 5, 10, 20, 30)
 strat.summary <- vegnasis::summary.crown.thickness(veg, breaks)
 veg$new <- get.habit.code(veg$plantsciname)
@@ -27,7 +27,11 @@ veg$new2 <- get.habit(veg$new)
 # usethis::use_data(genus.habits, overwrite = T)
 # syns <- read.csv('data_raw/m.ac.csv')
 # usethis::use_data(syns, overwrite = T)
-#
+# nasis.veg <- readRDS('data_raw/veg.spp.RDS')
+# usethis::use_data(nasis.veg, overwrite = T)
+# hydric <- read.csv('data_raw/hydric.csv')
+# usethis::use_data(hydric, overwrite = T)
+
 
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
