@@ -31,6 +31,20 @@ veg$new2 <- get.habit(veg$new)
 # usethis::use_data(nasis.veg, overwrite = T)
 # hydric <- read.csv('data_raw/hydric.csv')
 # usethis::use_data(hydric, overwrite = T)
+# usdaplants <- read.csv('data_raw/plantssym.csv')
+# PLANTS <- read.csv('data_raw/PLANTSdownloadData.txt')
+# PLANTS.illegit <- PLANTS |> subset(grepl('auct.',Genera.Binomial.Author) |
+#                                      grepl('illeg.',Genera.Binomial.Author) |
+#                                      grepl(' non',Genera.Binomial.Author) |
+#                                      grepl('auct',Trinomial.Author) |
+#                                      grepl('illeg.',Trinomial.Author) |
+#                                      grepl(' non',Trinomial.Author),
+#                                    select=c(Accepted.Symbol, Symbol, Scientific.Name, Genera.Binomial.Author, Trinomial.Author))
+# usdaplants <- usdaplants |> subset(!sym %in% PLANTS.illegit$Symbol)
+# usethis::use_data(usdaplants, overwrite = T)
+# natdat <- read.csv('data_raw/nativity.csv')
+# usethis::use_data(natdat, overwrite = T)
+
 
 
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
@@ -520,6 +534,81 @@ x <- veg |> mutate(stratum = case_when(
     ))
     nasis <- ifelse(is.na(x$type), x$nasis, x$type)
     return(nasis) }
+  #upgrade taxonomy ----
+  taxa <- veg$taxon
+  harmonize.taxa <- function(taxa){
+    x  <-  data.frame(taxa=taxa)
+    x <- x |> left_join(syns[,c('acc','syn','ac.binomial')], by=c('taxa'='syn'), multiple = 'first')
+    x <- x |> mutate(ac.binomial = ifelse(is.na(ac.binomial), taxa, ac.binomial))
+    return(x$ac.binomial)}
+
+  harmonize.taxa(taxa)
+  #fill USDA PLANTS Symbols ----
+  taxa <- veg$taxon
+  fill.usda.symbols <- function(taxa, symbol=NA){
+    x  <-  data.frame(taxa=taxa, symbol=symbol)
+    x <- x |> left_join(usdaplants[,c('taxon','sym')], by=c('taxa'='taxon'), multiple = 'first')
+    x <- x |> mutate(symbol = ifelse(is.na(symbol), sym, symbol))
+    return(x$symbol)}
+
+  fill.usda.symbols(taxa)
+  #fill nativity ----
+  library(vegnasis)
+  veg <- clean.veg(vegnasis::nasis.veg)
+  taxa <- veg$taxon
+  region <- 'Northeast'
+  nativity=NA
+  fill.nativity <- function(taxa, nativity=NA, region=NA){
+  x  <-  data.frame(taxa=taxa, nativity = nativity)
+  #first try straight join ----
+  x <- x |> left_join(natdat, by = c('taxa'='ac.binomial'), multiple = 'first')
+   x <- x |> mutate(nativity0 = case_when(
+    region %in% 'Northwest' ~ Northwest,
+    region %in% 'Southwest' ~ Southwest,
+    region %in% 'NorthCentral' ~ NorthCentral,
+    region %in% 'Southcentral' ~ Southcentral,
+    region %in% 'Northeast' ~ Northeast,
+    region %in% 'Southeast' ~ Southeast,
+    region %in% 'Alaska' ~ Alaska,
+    region %in% 'Hawaii' ~ Hawaii,
+    region %in% 'Caribbean' ~ Caribbean,
+    region %in% 'CanadaWest' ~ CanadaWest,
+    region %in% 'CanadaEast' ~ CanadaEast,
+    region %in% 'Arctic' ~ Arctic,
+    region %in% 'Mexico' ~ Mexico,
+    TRUE ~ Northwest+Southwest+NorthCentral+Southcentral+Northeast+Southeast+Alaska+Hawaii))
+   x <- x |> mutate(nativity = ifelse(is.na(nativity), ifelse(nativity0 > 0,'native','introduced'), nativity))
+   x <- x[,1:2]
+  #then try synonym join ----
+  x <- x |> left_join(syns[,c('acc','ac.binomial','syn')], by=c('taxa'='syn'), multiple = 'first') |> left_join(natdat, by = c('ac.binomial'='ac.binomial'), multiple = 'first')
+  x <- x |> mutate(nativity0 = case_when(
+    region %in% 'Northwest' ~ Northwest,
+    region %in% 'Southwest' ~ Southwest,
+    region %in% 'NorthCentral' ~ NorthCentral,
+    region %in% 'Southcentral' ~ Southcentral,
+    region %in% 'Northeast' ~ Northeast,
+    region %in% 'Southeast' ~ Southeast,
+    region %in% 'Alaska' ~ Alaska,
+    region %in% 'Hawaii' ~ Hawaii,
+    region %in% 'Caribbean' ~ Caribbean,
+    region %in% 'CanadaWest' ~ CanadaWest,
+    region %in% 'CanadaEast' ~ CanadaEast,
+    region %in% 'Arctic' ~ Arctic,
+    region %in% 'Mexico' ~ Mexico,
+    TRUE ~ Northwest+Southwest+NorthCentral+Southcentral+Northeast+Southeast+Alaska+Hawaii))
+  x <- x |> mutate(nativity = ifelse(is.na(nativity), ifelse(nativity0 > 0,'native','introduced'), nativity))
+  x <- x[,1:2]
+    return(x$nativity)}
+
+
+
+
+
+
+
+
+
+
 
 
   remotes::install_github("phytoclast/vegnasis", dependencies = FALSE)
@@ -527,8 +616,11 @@ x <- veg |> mutate(stratum = case_when(
 
   veg.raw <- soilDB::get_vegplot_species_from_NASIS_db()
   veg.ca<- veg.raw |> subset(grepl('CA', vegplotid))
-  veg <- clean.veg(veg.ca)
-  veg <- fill.hts.df(veg)
+  veg.raw <- vegnasis::nasis.veg
+  veg <- clean.veg(veg.raw)
+  veg$nativity <- NA
+  veg <- fill.nativity.df(veg, region='Caribbean')
+  veg$nativity2 <- fill.nativity(veg$taxon, 'Northwest')
   veg$type <- fill.type(veg$taxon, veg$type)
   saveRDS(veg.ca,'x.RDS')
   vegass <- get.assoc(veg)

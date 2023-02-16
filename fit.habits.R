@@ -55,48 +55,48 @@ hydric3 <-  hydric2 |> bind_rows(data.frame(Scientific.Name = unique(missing$bin
 
 write.csv(hydric3, 'data/plants/hydric.csv', row.names = F)
 #write hydric function ----
-data('nasis.veg')
-x <- nasis.veg |> clean.veg()
-x <- x |> mutate(type=fill.type(taxon, type)) |> fill.hts.df()
+# data('nasis.veg')
+# x <- nasis.veg |> clean.veg()
+# x <- x |> mutate(type=fill.type(taxon, type)) |> fill.hts.df()
 
-get.wetness <- function(x, region = 'NCNE'){
-  x <- x |> group_by(plot, taxon) |> summarise(cover=cover.agg(cover))
-
-  #Lookup default plant hydric indicator status ----
-  region = 'NCNE'
-  hydric <- hydric |> mutate(status = case_when(
-    region == 'AGCP' ~ AGCP,
-    region == 'AW' ~ AW,
-    region == 'CB' ~ CB,
-    region == 'EMP' ~ EMP,
-    region == 'HI' ~ HI,
-    region == 'MW' ~ MW,
-    region == 'NCNE' ~ NCNE,
-    region == 'WMVC' ~ WMVC,
-    region == 'AK' ~ AK,
-    TRUE ~ other))
-
-  hydric <- hydric |> mutate(
-    status = ifelse(is.na(status), rowMeans(select(hydric,
-                                                   c('AGCP','AW','CB','EMP','GP','HI','MW','NCNE','WMVC','AK','other')), na.rm = TRUE),status))
-
-
-  x$status0 = NA_real_
-  #first try straight join ----
-  x <- x |> left_join(hydric[,c('Scientific.Name','status')], by = c('taxon'='Scientific.Name'), multiple = 'first')
-  x <- x |> mutate(status0 = ifelse(is.na(status0)| status0 %in% NA_real_, status, status0))
-  x <- x[,1:4]
-  #then try synonym join ----
-  x <- x |> left_join(syns[,c('acc','syn')], by=c('taxon'='syn'), multiple = 'first') |> left_join(hydric[,c('Scientific.Name','status')], by = c('taxon'='Scientific.Name'), multiple = 'first')
-  x <- x |> mutate(status0 = ifelse(is.na(status0)| status0 %in% NA_real_, status, status0))
-  x <- x[,1:4]
-  #finally try genus only ----
-  #not implemented
-
-  x <- x|> subset(!is.na(status0) & !is.na(cover)) |> group_by(plot) |> summarise(wetness = sum(cover*status0+0.0005)/sum(cover+0.001))
-  return(x)
-}
-
+# get.wetness <- function(x, region = 'NCNE'){
+#   x <- x |> group_by(plot, taxon) |> summarise(cover=cover.agg(cover))
+#
+#   #Lookup default plant hydric indicator status ----
+#   region = 'NCNE'
+#   hydric <- hydric |> mutate(status = case_when(
+#     region == 'AGCP' ~ AGCP,
+#     region == 'AW' ~ AW,
+#     region == 'CB' ~ CB,
+#     region == 'EMP' ~ EMP,
+#     region == 'HI' ~ HI,
+#     region == 'MW' ~ MW,
+#     region == 'NCNE' ~ NCNE,
+#     region == 'WMVC' ~ WMVC,
+#     region == 'AK' ~ AK,
+#     TRUE ~ other))
+#
+#   hydric <- hydric |> mutate(
+#     status = ifelse(is.na(status), rowMeans(select(hydric,
+#                                                    c('AGCP','AW','CB','EMP','GP','HI','MW','NCNE','WMVC','AK','other')), na.rm = TRUE),status))
+#
+#
+#   x$status0 = NA_real_
+#   #first try straight join ----
+#   x <- x |> left_join(hydric[,c('Scientific.Name','status')], by = c('taxon'='Scientific.Name'), multiple = 'first')
+#   x <- x |> mutate(status0 = ifelse(is.na(status0)| status0 %in% NA_real_, status, status0))
+#   x <- x[,1:4]
+#   #then try synonym join ----
+#   x <- x |> left_join(syns[,c('acc','syn')], by=c('taxon'='syn'), multiple = 'first') |> left_join(hydric[,c('Scientific.Name','status')], by = c('taxon'='Scientific.Name'), multiple = 'first')
+#   x <- x |> mutate(status0 = ifelse(is.na(status0)| status0 %in% NA_real_, status, status0))
+#   x <- x[,1:4]
+#   #finally try genus only ----
+#   #not implemented
+#
+#   x <- x|> subset(!is.na(status0) & !is.na(cover)) |> group_by(plot) |> summarise(wetness = sum(cover*status0+0.0005)/sum(cover+0.001))
+#   return(x)
+# }
+#
 
 
 
@@ -180,7 +180,6 @@ f1.geo <- f1 %>% left_join(bm.geo.col, by=c('Binomial' = 'ac.binomial')) %>%
          FC.6 = ifelse(is.na(FC.6),0,FC.6),
          FC.7 = ifelse(is.na(FC.7),0,FC.7),
          FC.8 = ifelse(is.na(FC.8),0,FC.8))
-
 #exotic ranges ----
 
 FC <- cbind(FC= "FC.1", STATECODE = FC.1 ) %>%
@@ -474,3 +473,75 @@ get.habit <- function(code,type='name'){
 
 get.habit(type='stem', code=code)
 get.habit.code('Asimina triloba') |> get.habit('ESIS')
+
+
+#Get nativity ----
+#
+#
+
+Northwest <- c("US.WA","US.OR","US.ID","US.MT","US.WY")
+Southwest <- c("US.NV","US.UT","US.CO","US.CA","US.AZ","US.NM")
+NorthCentral <- c("US.IA","US.MO","US.MN","US.ND","US.NE","US.SD")
+Southcentral <- c("US.AR","US.LA","US.KS", "US.OK","US.TX")
+Northeast <- c("US.CT", "US.DE", "US.DC", "US.IL", "US.IN", "US.KY","US.MA", "US.MD", "US.ME", "US.MI","US.NH", "US.NJ","US.NY", "US.OH","US.PA", "US.RI",  "US.WI", "US.VT","US.VA", "US.WV")
+Southeast <- c("US.TN","US.NC","US.AL",  "US.FL", "US.GA",  "US.MS", "US.SC")
+Alaska <- c("US.AK")
+Hawaii <- c("US.HI")
+Caribbean <- c( "US.PR","US.UM","US.VI")
+CanadaWest <- c("CA.AB","CA.BC","CA.MB","CA.SK")
+CanadaEast <- c("CA.LB","CA.NB", "CA.NF", "CA.PE","CA.QU","CA.NS", "CA.ON","PM")
+Arctic <- c("CA.NT","CA.NU","CA.YT","GL")
+Mexico <- c("MX.CM", "MX.QR", "MX.TB", "MX.YU","MX.AG","MX.BN", "MX.BS", "MX.CA","MX.CH","MX.DF", "MX.DU", "MX.GJ","MX.NL","MX.SO", "MX.TL","MX.ZA","MX.CL", "MX.CP","MX.GR","MX.HI","MX.JA", "MX.MC","MX.MR","MX.MX", "MX.NA","MX.OA","MX.PU", "MX.QE", "MX.SI","MX.SL", "MX.TM", "MX.VE")
+FC <- cbind(FC= "Northwest", STATECODE = Northwest ) %>%
+  rbind(cbind(FC= "Southwest", Southwest ))%>%
+  rbind(cbind(FC= "NorthCentral", NorthCentral ))%>%
+  rbind(cbind(FC= "Southcentral", Southcentral ))%>%
+  rbind(cbind(FC= "Northeast", Northeast ))%>%
+  rbind(cbind(FC= "Southeast", Southeast ))%>%
+  rbind(cbind(FC= "Alaska", Alaska ))%>%
+  rbind(cbind(FC= "Hawaii", Hawaii ))%>%
+  rbind(cbind(FC= "Caribbean", Caribbean ))%>%
+  rbind(cbind(FC= "CanadaWest", CanadaWest ))%>%
+  rbind(cbind(FC= "CanadaEast", CanadaEast ))%>%
+  rbind(cbind(FC= "Arctic", Arctic ))%>%
+  rbind(cbind(FC= "Mexico", Mexico ))%>% as.data.frame()
+
+bm.geo.FC <- bm.geo %>% left_join(FC) %>% subset(Status %in% "N")
+bm.geo.sums <- bm.geo.FC %>% group_by(ac.binomial, FC) %>% summarise(ct = length(FC))
+bm.geo.max <- bm.geo.sums %>% group_by(ac.binomial) %>% summarise(ctsum = sum(ct))
+bm.geo.sums <- bm.geo.sums %>% left_join(bm.geo.max) %>% mutate(pct = ct/ctsum*100)
+
+bm.geo.col <-  as.data.frame(cbind(ac.binomial=unique(bm.geo.sums$ac.binomial))) %>%
+  left_join(subset(bm.geo.sums %>% mutate(Northwest=pct), FC %in% 'Northwest', select=c(ac.binomial, Northwest)))  %>%
+  left_join(subset(bm.geo.sums %>% mutate(Southwest=pct), FC %in% 'Southwest', select=c(ac.binomial, Southwest)))  %>%
+  left_join(subset(bm.geo.sums %>% mutate(NorthCentral=pct), FC %in% 'NorthCentral', select=c(ac.binomial, NorthCentral)))  %>%
+  left_join(subset(bm.geo.sums %>% mutate(Southcentral=pct), FC %in% 'Southcentral', select=c(ac.binomial, Southcentral)))  %>%
+  left_join(subset(bm.geo.sums %>% mutate(Northeast=pct), FC %in% 'Northeast', select=c(ac.binomial, Northeast)))  %>%
+  left_join(subset(bm.geo.sums %>% mutate(Southeast=pct), FC %in% 'Southeast', select=c(ac.binomial, Southeast)))  %>%
+  left_join(subset(bm.geo.sums %>% mutate(Alaska=pct), FC %in% 'Alaska', select=c(ac.binomial, Alaska)))  %>%
+  left_join(subset(bm.geo.sums %>% mutate(Hawaii=pct), FC %in% 'Hawaii', select=c(ac.binomial, Hawaii)))  %>%
+  left_join(subset(bm.geo.sums %>% mutate(Caribbean=pct), FC %in% 'Caribbean', select=c(ac.binomial, Caribbean)))  %>%
+  left_join(subset(bm.geo.sums %>% mutate(CanadaWest=pct), FC %in% 'CanadaWest', select=c(ac.binomial, CanadaWest)))  %>%
+  left_join(subset(bm.geo.sums %>% mutate(CanadaEast=pct), FC %in% 'CanadaEast', select=c(ac.binomial, CanadaEast)))  %>%
+  left_join(subset(bm.geo.sums %>% mutate(Arctic=pct), FC %in% 'Arctic', select=c(ac.binomial, Arctic)))  %>%
+  left_join(subset(bm.geo.sums %>% mutate(Mexico=pct), FC %in% 'Mexico', select=c(ac.binomial, Mexico)))
+
+nativity <- bm.geo.col %>%
+  mutate(Northwest = ifelse(is.na(Northwest),0,1),
+         Southwest = ifelse(is.na(Southwest),0,1),
+         NorthCentral = ifelse(is.na(NorthCentral),0,1),
+         Southcentral = ifelse(is.na(Southcentral),0,1),
+         Northeast = ifelse(is.na(Northeast),0,1),
+         Southeast = ifelse(is.na(Southeast),0,1),
+         Alaska = ifelse(is.na(Alaska),0,1),
+         Hawaii = ifelse(is.na(Hawaii),0,1),
+         Caribbean = ifelse(is.na(Caribbean),0,1),
+         CanadaWest = ifelse(is.na(CanadaWest),0,1),
+         CanadaEast = ifelse(is.na(CanadaEast),0,1),
+         Arctic = ifelse(is.na(Arctic),0,1),
+         Mexico = ifelse(is.na(Mexico),0,1))
+
+write.csv(nativity, 'data/plants/nativity.csv', row.names = F)
+
+
+
