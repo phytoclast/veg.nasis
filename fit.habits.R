@@ -525,6 +525,8 @@ bm.geo.col <-  as.data.frame(cbind(ac.binomial=unique(bm.geo.sums$ac.binomial)))
   left_join(subset(bm.geo.sums %>% mutate(CanadaEast=pct), FC %in% 'CanadaEast', select=c(ac.binomial, CanadaEast)))  %>%
   left_join(subset(bm.geo.sums %>% mutate(Arctic=pct), FC %in% 'Arctic', select=c(ac.binomial, Arctic)))  %>%
   left_join(subset(bm.geo.sums %>% mutate(Mexico=pct), FC %in% 'Mexico', select=c(ac.binomial, Mexico)))
+missing <- bm.geo |> subset(!ac.binomial %in% bm.geo.col$ac.binomial, select = ac.binomial) |> unique()
+bm.geo.col <- bm.geo.col |> bind_rows(missing)
 
 nativity <- bm.geo.col %>%
   mutate(Northwest = ifelse(is.na(Northwest),0,1),

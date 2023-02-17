@@ -619,7 +619,16 @@ x <- veg |> mutate(stratum = case_when(
   veg.raw <- vegnasis::nasis.veg
   veg <- clean.veg(veg.raw)
   veg$nativity <- NA
-  veg <- fill.nativity.df(veg, region='Caribbean')
+  veg <- fill.nativity.df(veg, region='Northwest')
+  veg$nativity <- NA
+  fill.nativity.df <- function(df, region=NA){
+    df$nativity <- fill.nativity(fill.nativity(veg$taxon, region=region, veg$nativity))
+    return(df)}
+
+
+
+  veg <- veg |> mutate(nativity = fill.nativity(taxa=taxon, region="Southeast", nativity = nativity))
+
   veg$nativity2 <- fill.nativity(veg$taxon, 'Northwest')
   veg$type <- fill.type(veg$taxon, veg$type)
   saveRDS(veg.ca,'x.RDS')
