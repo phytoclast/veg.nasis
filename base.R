@@ -614,7 +614,7 @@ x <- veg |> mutate(stratum = case_when(
   remotes::install_github("phytoclast/vegnasis", dependencies = FALSE)
   library(vegnasis)
 
-  veg.raw <- soilDB::get_vegplot_species_from_NASIS_db()
+  veg.raw <- soilDB::get_vegplot_species_from_NASIS_db(SS=F)
   veg.ca<- veg.raw |> subset(grepl('CA', vegplotid))
   veg.raw <- vegnasis::nasis.veg
   veg <- clean.veg(veg.raw)
@@ -637,3 +637,10 @@ x <- veg |> mutate(stratum = case_when(
   vegstruct.complex <- get.structure(veg, simple = FALSE)
 
   veg$hhh <- get.ht.max(veg$taxon)
+
+
+  obssites <- vegnasis::obs
+  obstaxa <- vegnasis::obsspp
+
+  veg <- clean.veg.log(obssites, obstaxa)
+  veg <- veg |> mutate(taxon=harmonize.taxa(veg$taxon, fix=T)) |> fill.type.df() |> fill.nativity.df() |> mutate(symbol = fill.usda.symbols(taxon))
