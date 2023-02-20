@@ -644,3 +644,4 @@ x <- veg |> mutate(stratum = case_when(
 
   veg <- clean.veg.log(obssites, obstaxa)
   veg <- veg |> mutate(taxon=harmonize.taxa(veg$taxon, fix=T)) |> fill.type.df() |> fill.nativity.df() |> mutate(symbol = fill.usda.symbols(taxon))
+exo = exo.flora(veg)
