@@ -12,7 +12,7 @@ breaks <- c(0.1, 0.5, 2, 5, 10, 20, 30)
 strat.summary <- vegnasis::summary.crown.thickness(veg, breaks)
 veg$new <- get.habit.code(veg$plantsciname)
 veg$new2 <- get.habit(veg$new)
-
+m <- make.plot.matrix(veg)
 # remotes::install_github("natearoe/ecositer", dependencies = FALSE)
 # library(ecositer)
 # test <- veg_summary(veg_df = ecositer::vegetation_dataframe)
