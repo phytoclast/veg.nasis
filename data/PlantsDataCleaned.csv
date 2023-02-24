@@ -1,0 +1,359 @@
+OBJECTID,PLANTS_CODE,COMMON_NAME,OVERSTORY,UNDERSTORY,GROUNDCOVER,RECORD_ID,vegplotid,DATABASE_L,DATABASE_1,PHOTO_ELTP,OBSERVER,LANDFORM,MICRORELIE,ASPECT,SLOPE,SLPPOS,GRNDFLORAG,BOREDEPTH,UOM_DP,PARENTMATE,ELTP,SOIL,MAPUNIT,ORIGIN
+1502,FAGR,"beech, American ",,C,C,72203,2022MI165006.PL,44.21649997,-85.658,240B,Richard Watson,moraine,undulating,45,0,Sh,PAUP,460,cm,outwash,43,Typic Haplorthods,243D,Plantation
+1505,PRSE2,"cherry, black ",,,R,72203,2022MI165006.PL,44.21649997,-85.658,240B,Richard Watson,moraine,undulating,45,0,Sh,PAUP,460,cm,outwash,43,Typic Haplorthods,243D,Plantation
+1497,ACRU,red maple,R,A,A,72203,2022MI165006.PL,44.21649997,-85.658,240B,Richard Watson,moraine,undulating,45,0,Sh,PAUP,460,cm,outwash,43,Typic Haplorthods,243D,Plantation
+1504,PIRE,red pine,A,,,72203,2022MI165006.PL,44.21649997,-85.658,240B,Richard Watson,moraine,undulating,45,0,Sh,PAUP,460,cm,outwash,43,Typic Haplorthods,243D,Plantation
+1499,AMELA,serviceberry,,,R,72203,2022MI165006.PL,44.21649997,-85.658,240B,Richard Watson,moraine,undulating,45,0,Sh,PAUP,460,cm,outwash,43,Typic Haplorthods,243D,Plantation
+1498,ACSA3,sugar maple,R,R,C,72203,2022MI165006.PL,44.21649997,-85.658,240B,Richard Watson,moraine,undulating,45,0,Sh,PAUP,460,cm,outwash,43,Typic Haplorthods,243D,Plantation
+1506,PTAQ,western brackenfern,,,C,72203,2022MI165006.PL,44.21649997,-85.658,240B,Richard Watson,moraine,undulating,45,0,Sh,PAUP,460,cm,outwash,43,Typic Haplorthods,243D,Plantation
+1503,FRAM2,white ash,,,R,72203,2022MI165006.PL,44.21649997,-85.658,240B,Richard Watson,moraine,undulating,45,0,Sh,PAUP,460,cm,outwash,43,Typic Haplorthods,243D,Plantation
+1500,ARNU2,wild sarsaparilla,,,R,72203,2022MI165006.PL,44.21649997,-85.658,240B,Richard Watson,moraine,undulating,45,0,Sh,PAUP,460,cm,outwash,43,Typic Haplorthods,243D,Plantation
+1501,DRSP4,wood fern,,,R,72203,2022MI165006.PL,44.21649997,-85.658,240B,Richard Watson,moraine,undulating,45,0,Sh,PAUP,460,cm,outwash,43,Typic Haplorthods,243D,Plantation
+1575,RUAL,Allegheny blackberry,,,C,72311,2022MI165004.PL,44.21649997,-85.59616666,241C,Richard Watson,outwash (old term),undulating,160,0,Su,PAUP,460,cm,outwash,31,Entic Haplorthods,231C,Clearcut second growth
+1571,FAGR,"beech, American ",,A,C,72311,2022MI165004.PL,44.21649997,-85.59616666,241C,Richard Watson,outwash (old term),undulating,160,0,Su,PAUP,460,cm,outwash,31,Entic Haplorthods,231C,Clearcut second growth
+1573,PRSE2,"cherry, black ",,C,C,72311,2022MI165004.PL,44.21649997,-85.59616666,241C,Richard Watson,outwash (old term),undulating,160,0,Su,PAUP,460,cm,outwash,31,Entic Haplorthods,231C,Clearcut second growth
+1572,OSVI,"hophornbeam, eastern ",,,C,72311,2022MI165004.PL,44.21649997,-85.59616666,241C,Richard Watson,outwash (old term),undulating,160,0,Su,PAUP,460,cm,outwash,31,Entic Haplorthods,231C,Clearcut second growth
+1568,ACRU,red maple,,,C,72311,2022MI165004.PL,44.21649997,-85.59616666,241C,Richard Watson,outwash (old term),undulating,160,0,Su,PAUP,460,cm,outwash,31,Entic Haplorthods,231C,Clearcut second growth
+1574,QURU,"red oak, northern ",A,C,A,72311,2022MI165004.PL,44.21649997,-85.59616666,241C,Richard Watson,outwash (old term),undulating,160,0,Su,PAUP,460,cm,outwash,31,Entic Haplorthods,231C,Clearcut second growth
+1569,ACSA3,sugar maple,,C,C,72311,2022MI165004.PL,44.21649997,-85.59616666,241C,Richard Watson,outwash (old term),undulating,160,0,Su,PAUP,460,cm,outwash,31,Entic Haplorthods,231C,Clearcut second growth
+1979,RUAL,Allegheny blackberry,,,A,80421,2022MI165002.PL,44.30466667,-85.5045,245B,Richard Watson,outwash (old term),hummocky,270,0,Su,MAIA,130,cm,outwash,65,Argic Endoaquods,265B,Clearcut second growth
+1975,MACA4,"beadruby, Canada ",,,C,80421,2022MI165002.PL,44.30466667,-85.5045,245B,Richard Watson,outwash (old term),hummocky,270,0,Su,MAIA,130,cm,outwash,65,Argic Endoaquods,265B,Clearcut second growth
+1972,FAGR,"beech, American ",R,C,,80421,2022MI165002.PL,44.30466667,-85.5045,245B,Richard Watson,outwash (old term),hummocky,270,0,Su,MAIA,130,cm,outwash,65,Argic Endoaquods,265B,Clearcut second growth
+1977,POGR4,bigtooth aspen,C,,,80421,2022MI165002.PL,44.30466667,-85.5045,245B,Richard Watson,outwash (old term),hummocky,270,0,Su,MAIA,130,cm,outwash,65,Argic Endoaquods,265B,Clearcut second growth
+1980,SOUL,bog goldenrod,,,R,80421,2022MI165002.PL,44.30466667,-85.5045,245B,Richard Watson,outwash (old term),hummocky,270,0,Su,MAIA,130,cm,outwash,65,Argic Endoaquods,265B,Clearcut second growth
+1978,PRSE2,"cherry, black ",R,C,,80421,2022MI165002.PL,44.30466667,-85.5045,245B,Richard Watson,outwash (old term),hummocky,270,0,Su,MAIA,130,cm,outwash,65,Argic Endoaquods,265B,Clearcut second growth
+1974,LYOB,rare clubmoss,,,R,80421,2022MI165002.PL,44.30466667,-85.5045,245B,Richard Watson,outwash (old term),hummocky,270,0,Su,MAIA,130,cm,outwash,65,Argic Endoaquods,265B,Clearcut second growth
+1969,ACRU,red maple,C,A,A,80421,2022MI165002.PL,44.30466667,-85.5045,245B,Richard Watson,outwash (old term),hummocky,270,0,Su,MAIA,130,cm,outwash,65,Argic Endoaquods,265B,Clearcut second growth
+1976,OSRE,royal fern,,,R,80421,2022MI165002.PL,44.30466667,-85.5045,245B,Richard Watson,outwash (old term),hummocky,270,0,Su,MAIA,130,cm,outwash,65,Argic Endoaquods,265B,Clearcut second growth
+1973,GRASS,unknown grasses,,,R,80421,2022MI165002.PL,44.30466667,-85.5045,245B,Richard Watson,outwash (old term),hummocky,270,0,Su,MAIA,130,cm,outwash,65,Argic Endoaquods,265B,Clearcut second growth
+1981,VIOLA,violet,,,R,80421,2022MI165002.PL,44.30466667,-85.5045,245B,Richard Watson,outwash (old term),hummocky,270,0,Su,MAIA,130,cm,outwash,65,Argic Endoaquods,265B,Clearcut second growth
+1970,ARNU2,wild sarsaparilla,,,R,80421,2022MI165002.PL,44.30466667,-85.5045,245B,Richard Watson,outwash (old term),hummocky,270,0,Su,MAIA,130,cm,outwash,65,Argic Endoaquods,265B,Clearcut second growth
+1989,ABBA,balsam fir,,R,,80423,2022MI165003.PL,44.302,-85.50716666,264B,Richard Watson,outwash (old term),undulating,120,0,Su,MAIA,130,cm,outwash,64,Typic Haplaquods,264B,Clearcut second growth
+1998,MACA4,"beadruby, Canada ",,,A,80423,2022MI165003.PL,44.302,-85.50716666,264B,Richard Watson,outwash (old term),undulating,120,0,Su,MAIA,130,cm,outwash,64,Typic Haplaquods,264B,Clearcut second growth
+1995,FAGR,"beech, American ",R,R,,80423,2022MI165003.PL,44.302,-85.50716666,264B,Richard Watson,outwash (old term),undulating,120,0,Su,MAIA,130,cm,outwash,64,Typic Haplaquods,264B,Clearcut second growth
+2000,POGR4,bigtooth aspen,C,,,80423,2022MI165003.PL,44.302,-85.50716666,264B,Richard Watson,outwash (old term),undulating,120,0,Su,MAIA,130,cm,outwash,64,Typic Haplaquods,264B,Clearcut second growth
+1993,CACA18,"hornbeam, American ",,,C,80423,2022MI165003.PL,44.302,-85.50716666,264B,Richard Watson,outwash (old term),undulating,120,0,Su,MAIA,130,cm,outwash,64,Typic Haplaquods,264B,Clearcut second growth
+2003,VAAN,lowbush blueberry,,,C,80423,2022MI165003.PL,44.302,-85.50716666,264B,Richard Watson,outwash (old term),undulating,120,0,Su,MAIA,130,cm,outwash,64,Typic Haplaquods,264B,Clearcut second growth
+1992,BEPA,paper birch,R,,,80423,2022MI165003.PL,44.302,-85.50716666,264B,Richard Watson,outwash (old term),undulating,120,0,Su,MAIA,130,cm,outwash,64,Typic Haplaquods,264B,Clearcut second growth
+1997,LYOB,rare clubmoss,,,C,80423,2022MI165003.PL,44.302,-85.50716666,264B,Richard Watson,outwash (old term),undulating,120,0,Su,MAIA,130,cm,outwash,64,Typic Haplaquods,264B,Clearcut second growth
+1990,ACRU,red maple,A,A,,80423,2022MI165003.PL,44.302,-85.50716666,264B,Richard Watson,outwash (old term),undulating,120,0,Su,MAIA,130,cm,outwash,64,Typic Haplaquods,264B,Clearcut second growth
+2002,TRBO2,"starflower, American ",,,R,80423,2022MI165003.PL,44.302,-85.50716666,264B,Richard Watson,outwash (old term),undulating,120,0,Su,MAIA,130,cm,outwash,64,Typic Haplaquods,264B,Clearcut second growth
+1994,COTR2,threeleaf goldthread,,,A,80423,2022MI165003.PL,44.302,-85.50716666,264B,Richard Watson,outwash (old term),undulating,120,0,Su,MAIA,130,cm,outwash,64,Typic Haplaquods,264B,Clearcut second growth
+2004,VIOLA,violet,,,C,80423,2022MI165003.PL,44.302,-85.50716666,264B,Richard Watson,outwash (old term),undulating,120,0,Su,MAIA,130,cm,outwash,64,Typic Haplaquods,264B,Clearcut second growth
+2001,PTAQ,western brackenfern,,,C,80423,2022MI165003.PL,44.302,-85.50716666,264B,Richard Watson,outwash (old term),undulating,120,0,Su,MAIA,130,cm,outwash,64,Typic Haplaquods,264B,Clearcut second growth
+1991,ARNU2,wild sarsaparilla,,,R,80423,2022MI165003.PL,44.302,-85.50716666,264B,Richard Watson,outwash (old term),undulating,120,0,Su,MAIA,130,cm,outwash,64,Typic Haplaquods,264B,Clearcut second growth
+1996,HAVI4,"witchhazel, American ",,C,,80423,2022MI165003.PL,44.302,-85.50716666,264B,Richard Watson,outwash (old term),undulating,120,0,Su,MAIA,130,cm,outwash,64,Typic Haplaquods,264B,Clearcut second growth
+3026,ULAM,"elm, American ",,R,,82806,2022MI165005.PL,44.2095,-85.59233333,274B,Richard Watson,moraine,undulating,0,0,Su,PAUP,80,cm,outwash,74,Typic Haplaquods,274,Clearcut second growth
+3022,FRPE,green ash,C,,C,82806,2022MI165005.PL,44.2095,-85.59233333,274B,Richard Watson,moraine,undulating,0,0,Su,PAUP,80,cm,outwash,74,Typic Haplaquods,274,Clearcut second growth
+3025,TSCA,"hemlock, eastern ",R,,R,82806,2022MI165005.PL,44.2095,-85.59233333,274B,Richard Watson,moraine,undulating,0,0,Su,PAUP,80,cm,outwash,74,Typic Haplaquods,274,Clearcut second growth
+3018,CACA18,"hornbeam, American ",,C,C,82806,2022MI165005.PL,44.2095,-85.59233333,274B,Richard Watson,moraine,undulating,0,0,Su,PAUP,80,cm,outwash,74,Typic Haplaquods,274,Clearcut second growth
+3024,ONSE,sensitive fern,,,C,82806,2022MI165005.PL,44.2095,-85.59233333,274B,Richard Watson,moraine,undulating,0,0,Su,PAUP,80,cm,outwash,74,Typic Haplaquods,274,Clearcut second growth
+3015,ACSA3,sugar maple,A,C,,82806,2022MI165005.PL,44.2095,-85.59233333,274B,Richard Watson,moraine,undulating,0,0,Su,PAUP,80,cm,outwash,74,Typic Haplaquods,274,Clearcut second growth
+3023,GRASS,unknown grasses,,,R,82806,2022MI165005.PL,44.2095,-85.59233333,274B,Richard Watson,moraine,undulating,0,0,Su,PAUP,80,cm,outwash,74,Typic Haplaquods,274,Clearcut second growth
+3027,VIOLA,violet,,,R,82806,2022MI165005.PL,44.2095,-85.59233333,274B,Richard Watson,moraine,undulating,0,0,Su,PAUP,80,cm,outwash,74,Typic Haplaquods,274,Clearcut second growth
+3016,ARNU2,wild sarsaparilla,,,C,82806,2022MI165005.PL,44.2095,-85.59233333,274B,Richard Watson,moraine,undulating,0,0,Su,PAUP,80,cm,outwash,74,Typic Haplaquods,274,Clearcut second growth
+3020,DRSP4,wood fern,,,A,82806,2022MI165005.PL,44.2095,-85.59233333,274B,Richard Watson,moraine,undulating,0,0,Su,PAUP,80,cm,outwash,74,Typic Haplaquods,274,Clearcut second growth
+3021,EQSY,woodland horsetail,,,R,82806,2022MI165005.PL,44.2095,-85.59233333,274B,Richard Watson,moraine,undulating,0,0,Su,PAUP,80,cm,outwash,74,Typic Haplaquods,274,Clearcut second growth
+3017,BEAL2,yellow birch,,R,,82806,2022MI165005.PL,44.2095,-85.59233333,274B,Richard Watson,moraine,undulating,0,0,Su,PAUP,80,cm,outwash,74,Typic Haplaquods,274,Clearcut second growth
+3452,MACA4,"beadruby, Canada ",,,A,91603,2022MI165030.PL,44.272,-85.5775,263B,Richard Watson,outwash (old term),smooth,90,0,Su,MAIA,140,cm,outwash,63,Typic Haplaquods,263B,Plantation
+3454,PRSE2,"cherry, black ",R,R,,91603,2022MI165030.PL,44.272,-85.5775,263B,Richard Watson,outwash (old term),smooth,90,0,Su,MAIA,140,cm,outwash,63,Typic Haplaquods,263B,Plantation
+3450,LYLU,"clubmoss, shinning",,,R,91603,2022MI165030.PL,44.272,-85.5775,263B,Richard Watson,outwash (old term),smooth,90,0,Su,MAIA,140,cm,outwash,63,Typic Haplaquods,263B,Plantation
+3456,RUFL,"dewberry, northern ",,,C,91603,2022MI165030.PL,44.272,-85.5775,263B,Richard Watson,outwash (old term),smooth,90,0,Su,MAIA,140,cm,outwash,63,Typic Haplaquods,263B,Plantation
+3458,VEOF2,gypsyweed,,,R,91603,2022MI165030.PL,44.272,-85.5775,263B,Richard Watson,outwash (old term),smooth,90,0,Su,MAIA,140,cm,outwash,63,Typic Haplaquods,263B,Plantation
+3453,PIBA2,jack pine,A,R,,91603,2022MI165030.PL,44.272,-85.5775,263B,Richard Watson,outwash (old term),smooth,90,0,Su,MAIA,140,cm,outwash,63,Typic Haplaquods,263B,Plantation
+3451,LYOB,rare clubmoss,,,R,91603,2022MI165030.PL,44.272,-85.5775,263B,Richard Watson,outwash (old term),smooth,90,0,Su,MAIA,140,cm,outwash,63,Typic Haplaquods,263B,Plantation
+3448,ACRU,red maple,R,R,C,91603,2022MI165030.PL,44.272,-85.5775,263B,Richard Watson,outwash (old term),smooth,90,0,Su,MAIA,140,cm,outwash,63,Typic Haplaquods,263B,Plantation
+3457,TRBO2,"starflower, American ",,,R,91603,2022MI165030.PL,44.272,-85.5775,263B,Richard Watson,outwash (old term),smooth,90,0,Su,MAIA,140,cm,outwash,63,Typic Haplaquods,263B,Plantation
+3459,VIOLA,violet,,,R,91603,2022MI165030.PL,44.272,-85.5775,263B,Richard Watson,outwash (old term),smooth,90,0,Su,MAIA,140,cm,outwash,63,Typic Haplaquods,263B,Plantation
+3455,PTAQ,western brackenfern,,,A,91603,2022MI165030.PL,44.272,-85.5775,263B,Richard Watson,outwash (old term),smooth,90,0,Su,MAIA,140,cm,outwash,63,Typic Haplaquods,263B,Plantation
+3938,RUAL,Allegheny blackberry,,,C,92702,2022MI165001.PL,44.27366667,-85.493,234B,Richard Watson,swamp,hummocky,140,0,Bs,VIBU,210,cm,outwash,34,Entic Haplorthods,234B,Clearcut second growth
+3929,FAGR,"beech, American ",,R,R,92702,2022MI165001.PL,44.27366667,-85.493,234B,Richard Watson,swamp,hummocky,140,0,Bs,VIBU,210,cm,outwash,34,Entic Haplorthods,234B,Clearcut second growth
+3934,POGR4,bigtooth aspen,A,,,92702,2022MI165001.PL,44.27366667,-85.493,234B,Richard Watson,swamp,hummocky,140,0,Bs,VIBU,210,cm,outwash,34,Entic Haplorthods,234B,Clearcut second growth
+3935,PRSE2,"cherry, black ",R,R,,92702,2022MI165001.PL,44.27366667,-85.493,234B,Richard Watson,swamp,hummocky,140,0,Bs,VIBU,210,cm,outwash,34,Entic Haplorthods,234B,Clearcut second growth
+3931,LYLU,"clubmoss, shinning",,,R,92702,2022MI165001.PL,44.27366667,-85.493,234B,Richard Watson,swamp,hummocky,140,0,Bs,VIBU,210,cm,outwash,34,Entic Haplorthods,234B,Clearcut second growth
+3940,TSCA,"hemlock, eastern ",R,,,92702,2022MI165001.PL,44.27366667,-85.493,234B,Richard Watson,swamp,hummocky,140,0,Bs,VIBU,210,cm,outwash,34,Entic Haplorthods,234B,Clearcut second growth
+3941,VAAN,lowbush blueberry,,,R,92702,2022MI165001.PL,44.27366667,-85.493,234B,Richard Watson,swamp,hummocky,140,0,Bs,VIBU,210,cm,outwash,34,Entic Haplorthods,234B,Clearcut second growth
+3927,BEPA,paper birch,R,,,92702,2022MI165001.PL,44.27366667,-85.493,234B,Richard Watson,swamp,hummocky,140,0,Bs,VIBU,210,cm,outwash,34,Entic Haplorthods,234B,Clearcut second growth
+3932,LYOB,rare clubmoss,,,R,92702,2022MI165001.PL,44.27366667,-85.493,234B,Richard Watson,swamp,hummocky,140,0,Bs,VIBU,210,cm,outwash,34,Entic Haplorthods,234B,Clearcut second growth
+3924,ACRU,red maple,C,C,,92702,2022MI165001.PL,44.27366667,-85.493,234B,Richard Watson,swamp,hummocky,140,0,Bs,VIBU,210,cm,outwash,34,Entic Haplorthods,234B,Clearcut second growth
+3937,QURU,"red oak, northern ",,R,,92702,2022MI165001.PL,44.27366667,-85.493,234B,Richard Watson,swamp,hummocky,140,0,Bs,VIBU,210,cm,outwash,34,Entic Haplorthods,234B,Clearcut second growth
+3926,AMELA,serviceberry,,,C,92702,2022MI165001.PL,44.27366667,-85.493,234B,Richard Watson,swamp,hummocky,140,0,Bs,VIBU,210,cm,outwash,34,Entic Haplorthods,234B,Clearcut second growth
+3939,TRBO2,"starflower, American ",,,R,92702,2022MI165001.PL,44.27366667,-85.493,234B,Richard Watson,swamp,hummocky,140,0,Bs,VIBU,210,cm,outwash,34,Entic Haplorthods,234B,Clearcut second growth
+3925,ACSA3,sugar maple,,R,,92702,2022MI165001.PL,44.27366667,-85.493,234B,Richard Watson,swamp,hummocky,140,0,Bs,VIBU,210,cm,outwash,34,Entic Haplorthods,234B,Clearcut second growth
+3930,GAPR2,"teaberry, eastern ",,,C,92702,2022MI165001.PL,44.27366667,-85.493,234B,Richard Watson,swamp,hummocky,140,0,Bs,VIBU,210,cm,outwash,34,Entic Haplorthods,234B,Clearcut second growth
+3936,PTAQ,western brackenfern,,,A,92702,2022MI165001.PL,44.27366667,-85.493,234B,Richard Watson,swamp,hummocky,140,0,Bs,VIBU,210,cm,outwash,34,Entic Haplorthods,234B,Clearcut second growth
+3933,PIST,"white pine, eastern ",R,,,92702,2022MI165001.PL,44.27366667,-85.493,234B,Richard Watson,swamp,hummocky,140,0,Bs,VIBU,210,cm,outwash,34,Entic Haplorthods,234B,Clearcut second growth
+4440,ABBA,balsam fir,A,A,,101103,2022MI165031.PL,44.274,-85.538,273,Richard Watson,outwash (old term),undulating,180,0,Su,VACC,70,cm,outwash,73,Aquic Endoaquods,273,Clearcut second growth
+4444,COCA13,bunchberry dogwood,,,C,101103,2022MI165031.PL,44.274,-85.538,273,Richard Watson,outwash (old term),undulating,180,0,Su,VACC,70,cm,outwash,73,Aquic Endoaquods,273,Clearcut second growth
+4449,PRSE2,"cherry, black ",,,C,101103,2022MI165031.PL,44.274,-85.538,273,Richard Watson,outwash (old term),undulating,180,0,Su,VACC,70,cm,outwash,73,Aquic Endoaquods,273,Clearcut second growth
+4451,RUFL,"dewberry, northern ",,,C,101103,2022MI165031.PL,44.274,-85.538,273,Richard Watson,outwash (old term),undulating,180,0,Su,VACC,70,cm,outwash,73,Aquic Endoaquods,273,Clearcut second growth
+4452,VAAN,lowbush blueberry,,,A,101103,2022MI165031.PL,44.274,-85.538,273,Richard Watson,outwash (old term),undulating,180,0,Su,VACC,70,cm,outwash,73,Aquic Endoaquods,273,Clearcut second growth
+4443,BEPA,paper birch,C,,,101103,2022MI165031.PL,44.274,-85.538,273,Richard Watson,outwash (old term),undulating,180,0,Su,VACC,70,cm,outwash,73,Aquic Endoaquods,273,Clearcut second growth
+4446,MIRE,partridgeberry,,,C,101103,2022MI165031.PL,44.274,-85.538,273,Richard Watson,outwash (old term),undulating,180,0,Su,VACC,70,cm,outwash,73,Aquic Endoaquods,273,Clearcut second growth
+4448,POTR5,quaking aspen,C,,,101103,2022MI165031.PL,44.274,-85.538,273,Richard Watson,outwash (old term),undulating,180,0,Su,VACC,70,cm,outwash,73,Aquic Endoaquods,273,Clearcut second growth
+4441,ACRU,red maple,A,C,A,101103,2022MI165031.PL,44.274,-85.538,273,Richard Watson,outwash (old term),undulating,180,0,Su,VACC,70,cm,outwash,73,Aquic Endoaquods,273,Clearcut second growth
+4442,AMELA,serviceberry,,,A,101103,2022MI165031.PL,44.274,-85.538,273,Richard Watson,outwash (old term),undulating,180,0,Su,VACC,70,cm,outwash,73,Aquic Endoaquods,273,Clearcut second growth
+4445,COTR2,threeleaf goldthread,,,C,101103,2022MI165031.PL,44.274,-85.538,273,Richard Watson,outwash (old term),undulating,180,0,Su,VACC,70,cm,outwash,73,Aquic Endoaquods,273,Clearcut second growth
+4450,PTAQ,western brackenfern,,,A,101103,2022MI165031.PL,44.274,-85.538,273,Richard Watson,outwash (old term),undulating,180,0,Su,VACC,70,cm,outwash,73,Aquic Endoaquods,273,Clearcut second growth
+4548,ABBA,balsam fir,C,C,A,101214,2022MI165032.PL,44.26983333,-85.53466667,262B,Richard Watson,swamp,hummocky,270,0,Bs,MAIA,80,cm,outwash,62,Typic Haplaquods,262B,Clearcut second growth
+4556,POGR4,bigtooth aspen,C,,,101214,2022MI165032.PL,44.26983333,-85.53466667,262B,Richard Watson,swamp,hummocky,270,0,Bs,MAIA,80,cm,outwash,62,Typic Haplaquods,262B,Clearcut second growth
+4557,PRSE2,"cherry, black ",,,C,101214,2022MI165032.PL,44.26983333,-85.53466667,262B,Richard Watson,swamp,hummocky,270,0,Bs,MAIA,80,cm,outwash,62,Typic Haplaquods,262B,Clearcut second growth
+4554,LYLU,"clubmoss, shinning",,,C,101214,2022MI165032.PL,44.26983333,-85.53466667,262B,Richard Watson,swamp,hummocky,270,0,Bs,MAIA,80,cm,outwash,62,Typic Haplaquods,262B,Clearcut second growth
+4559,TSCA,"hemlock, eastern ",C,,,101214,2022MI165032.PL,44.26983333,-85.53466667,262B,Richard Watson,swamp,hummocky,270,0,Bs,MAIA,80,cm,outwash,62,Typic Haplaquods,262B,Clearcut second growth
+4552,DIPO,moss,,,C,101214,2022MI165032.PL,44.26983333,-85.53466667,262B,Richard Watson,swamp,hummocky,270,0,Bs,MAIA,80,cm,outwash,62,Typic Haplaquods,262B,Clearcut second growth
+4555,LYOB,rare clubmoss,,,C,101214,2022MI165032.PL,44.26983333,-85.53466667,262B,Richard Watson,swamp,hummocky,270,0,Bs,MAIA,80,cm,outwash,62,Typic Haplaquods,262B,Clearcut second growth
+4549,ACRU,red maple,C,,C,101214,2022MI165032.PL,44.26983333,-85.53466667,262B,Richard Watson,swamp,hummocky,270,0,Bs,MAIA,80,cm,outwash,62,Typic Haplaquods,262B,Clearcut second growth
+4550,AMELA,serviceberry,,,C,101214,2022MI165032.PL,44.26983333,-85.53466667,262B,Richard Watson,swamp,hummocky,270,0,Bs,MAIA,80,cm,outwash,62,Typic Haplaquods,262B,Clearcut second growth
+4553,GAPR2,"teaberry, eastern ",,,C,101214,2022MI165032.PL,44.26983333,-85.53466667,262B,Richard Watson,swamp,hummocky,270,0,Bs,MAIA,80,cm,outwash,62,Typic Haplaquods,262B,Clearcut second growth
+4551,COTR2,threeleaf goldthread,,,A,101214,2022MI165032.PL,44.26983333,-85.53466667,262B,Richard Watson,swamp,hummocky,270,0,Bs,MAIA,80,cm,outwash,62,Typic Haplaquods,262B,Clearcut second growth
+4558,PTAQ,western brackenfern,,,C,101214,2022MI165032.PL,44.26983333,-85.53466667,262B,Richard Watson,swamp,hummocky,270,0,Bs,MAIA,80,cm,outwash,62,Typic Haplaquods,262B,Clearcut second growth
+10206,VAAN,lowbush blueberry,,,A,99051102,2022MI165017.PL,44.17388889,-85.80805556,211B,Richard Watson,Outwash plain,Smooth,50,4,SU,DESC,460,cm,Outwash,11,Typic Udipsamments,211B,Second growth
+10205,QUVE,"oak, black ",R,R,R,99051102,2022MI165017.PL,44.17388889,-85.80805556,211B,Richard Watson,Outwash plain,Smooth,50,4,SU,DESC,460,cm,Outwash,11,Typic Udipsamments,211B,Second growth
+10199,CAPE6,Pennsylvania sedge,,,C,99051102,2022MI165017.PL,44.17388889,-85.80805556,211B,Richard Watson,Outwash plain,Smooth,50,4,SU,DESC,460,cm,Outwash,11,Typic Udipsamments,211B,Second growth
+10201,PIRE,red pine,A,,,99051102,2022MI165017.PL,44.17388889,-85.80805556,211B,Richard Watson,Outwash plain,Smooth,50,4,SU,DESC,460,cm,Outwash,11,Typic Udipsamments,211B,Second growth
+10200,DEFL,wavy hairgrass,,,A,99051102,2022MI165017.PL,44.17388889,-85.80805556,211B,Richard Watson,Outwash plain,Smooth,50,4,SU,DESC,460,cm,Outwash,11,Typic Udipsamments,211B,Second growth
+10203,PTAQ,western brackenfern,,,A,99051102,2022MI165017.PL,44.17388889,-85.80805556,211B,Richard Watson,Outwash plain,Smooth,50,4,SU,DESC,460,cm,Outwash,11,Typic Udipsamments,211B,Second growth
+10204,QUAL,white oak,R,R,C,99051102,2022MI165017.PL,44.17388889,-85.80805556,211B,Richard Watson,Outwash plain,Smooth,50,4,SU,DESC,460,cm,Outwash,11,Typic Udipsamments,211B,Second growth
+10202,PIST,"white pine, eastern ",R,R,,99051102,2022MI165017.PL,44.17388889,-85.80805556,211B,Richard Watson,Outwash plain,Smooth,50,4,SU,DESC,460,cm,Outwash,11,Typic Udipsamments,211B,Second growth
+10211,PIBA2,jack pine,R,,,99051103,2022MI165011.PL,44.17722222,-85.81888889,211B,Richard Watson,Outwash plain,Smooth,45,3,SU,DESC,460,cm,Outwash,10,Typic Udipsamments,210B,Second growth
+10215,VAAN,lowbush blueberry,,,C,99051103,2022MI165011.PL,44.17722222,-85.81888889,211B,Richard Watson,Outwash plain,Smooth,45,3,SU,DESC,460,cm,Outwash,10,Typic Udipsamments,210B,Second growth
+10214,QUVE,"oak, black ",R,R,R,99051103,2022MI165011.PL,44.17722222,-85.81888889,211B,Richard Watson,Outwash plain,Smooth,45,3,SU,DESC,460,cm,Outwash,10,Typic Udipsamments,210B,Second growth
+10207,CAREX,sedge,,,C,99051103,2022MI165011.PL,44.17722222,-85.81888889,211B,Richard Watson,Outwash plain,Smooth,45,3,SU,DESC,460,cm,Outwash,10,Typic Udipsamments,210B,Second growth
+10208,DEFL,wavy hairgrass,,,R,99051103,2022MI165011.PL,44.17722222,-85.81888889,211B,Richard Watson,Outwash plain,Smooth,45,3,SU,DESC,460,cm,Outwash,10,Typic Udipsamments,210B,Second growth
+10213,QUAL,white oak,A,C,A,99051103,2022MI165011.PL,44.17722222,-85.81888889,211B,Richard Watson,Outwash plain,Smooth,45,3,SU,DESC,460,cm,Outwash,10,Typic Udipsamments,210B,Second growth
+10212,PIST,"white pine, eastern ",,R,R,99051103,2022MI165011.PL,44.17722222,-85.81888889,211B,Richard Watson,Outwash plain,Smooth,45,3,SU,DESC,460,cm,Outwash,10,Typic Udipsamments,210B,Second growth
+10210,HAVI4,"witchhazel, American ",,R,,99051103,2022MI165011.PL,44.17722222,-85.81888889,211B,Richard Watson,Outwash plain,Smooth,45,3,SU,DESC,460,cm,Outwash,10,Typic Udipsamments,210B,Second growth
+10262,PRSE2,"cherry, black ",,,C,99051309,2022MI165016.PL,44.18055556,-85.78361111,220B,Richard Watson,Outwash plain,Furrowed,25,2,SU,VACC,460,cm,Outwash,20,Typic Udipsamments,220B,Plantation
+10266,VAAN,lowbush blueberry,,,A,99051309,2022MI165016.PL,44.18055556,-85.78361111,220B,Richard Watson,Outwash plain,Furrowed,25,2,SU,VACC,460,cm,Outwash,20,Typic Udipsamments,220B,Plantation
+10265,QUVE,"oak, black ",R,,R,99051309,2022MI165016.PL,44.18055556,-85.78361111,220B,Richard Watson,Outwash plain,Furrowed,25,2,SU,VACC,460,cm,Outwash,20,Typic Udipsamments,220B,Plantation
+10259,ACRU,red maple,R,R,A,99051309,2022MI165016.PL,44.18055556,-85.78361111,220B,Richard Watson,Outwash plain,Furrowed,25,2,SU,VACC,460,cm,Outwash,20,Typic Udipsamments,220B,Plantation
+10261,PIRE,red pine,A,,,99051309,2022MI165016.PL,44.18055556,-85.78361111,220B,Richard Watson,Outwash plain,Furrowed,25,2,SU,VACC,460,cm,Outwash,20,Typic Udipsamments,220B,Plantation
+10260,CAREX,sedge,,,A,99051309,2022MI165016.PL,44.18055556,-85.78361111,220B,Richard Watson,Outwash plain,Furrowed,25,2,SU,VACC,460,cm,Outwash,20,Typic Udipsamments,220B,Plantation
+10263,PTAQ,western brackenfern,,,C,99051309,2022MI165016.PL,44.18055556,-85.78361111,220B,Richard Watson,Outwash plain,Furrowed,25,2,SU,VACC,460,cm,Outwash,20,Typic Udipsamments,220B,Plantation
+10264,QUAL,white oak,R,,R,99051309,2022MI165016.PL,44.18055556,-85.78361111,220B,Richard Watson,Outwash plain,Furrowed,25,2,SU,VACC,460,cm,Outwash,20,Typic Udipsamments,220B,Plantation
+10276,WAFR,barren strawberry,,,R,99051310,2022MI165010.PL,44.18111111,-85.79138889,215B,Richard Watson,outwash plain,smooth,0,3,SU,DESC,300,cm,outwash,15,Argic Udipsamments,215B,Plantation
+10272,PRSE2,"cherry, black ",,R,C,99051310,2022MI165010.PL,44.18111111,-85.79138889,215B,Richard Watson,outwash plain,smooth,0,3,SU,DESC,300,cm,outwash,15,Argic Udipsamments,215B,Plantation
+10268,CRATA,hawthorn,,,R,99051310,2022MI165010.PL,44.18111111,-85.79138889,215B,Richard Watson,outwash plain,smooth,0,3,SU,DESC,300,cm,outwash,15,Argic Udipsamments,215B,Plantation
+10275,VAAN,lowbush blueberry,,,C,99051310,2022MI165010.PL,44.18111111,-85.79138889,215B,Richard Watson,outwash plain,smooth,0,3,SU,DESC,300,cm,outwash,15,Argic Udipsamments,215B,Plantation
+10273,QUVE,"oak, black ",R,,R,99051310,2022MI165010.PL,44.18111111,-85.79138889,215B,Richard Watson,outwash plain,smooth,0,3,SU,DESC,300,cm,outwash,15,Argic Udipsamments,215B,Plantation
+10270,PIRE,red pine,A,,,99051310,2022MI165010.PL,44.18111111,-85.79138889,215B,Richard Watson,outwash plain,smooth,0,3,SU,DESC,300,cm,outwash,15,Argic Udipsamments,215B,Plantation
+10267,CAREX,sedge,,,A,99051310,2022MI165010.PL,44.18111111,-85.79138889,215B,Richard Watson,outwash plain,smooth,0,3,SU,DESC,300,cm,outwash,15,Argic Udipsamments,215B,Plantation
+10269,DEFL,wavy hairgrass,,,A,99051310,2022MI165010.PL,44.18111111,-85.79138889,215B,Richard Watson,outwash plain,smooth,0,3,SU,DESC,300,cm,outwash,15,Argic Udipsamments,215B,Plantation
+10271,PIST,"white pine, eastern ",R,,R,99051310,2022MI165010.PL,44.18111111,-85.79138889,215B,Richard Watson,outwash plain,smooth,0,3,SU,DESC,300,cm,outwash,15,Argic Udipsamments,215B,Plantation
+10329,POGR4,bigtooth aspen,R,,,99051416,2022MI165014.PL,44.17388889,-85.76861111,210B,Richard Watson,Outwash plain,Furrowed,0,2,SU,DESC,425,cm,Outwash,9,Typic Udipsamments,210B,Plantation
+10330,PRSE2,"cherry, black ",,,R,99051416,2022MI165014.PL,44.17388889,-85.76861111,210B,Richard Watson,Outwash plain,Furrowed,0,2,SU,DESC,425,cm,Outwash,9,Typic Udipsamments,210B,Plantation
+10333,VAAN,lowbush blueberry,,,C,99051416,2022MI165014.PL,44.17388889,-85.76861111,210B,Richard Watson,Outwash plain,Furrowed,0,2,SU,DESC,425,cm,Outwash,9,Typic Udipsamments,210B,Plantation
+10328,PIRE,red pine,A,,,99051416,2022MI165014.PL,44.17388889,-85.76861111,210B,Richard Watson,Outwash plain,Furrowed,0,2,SU,DESC,425,cm,Outwash,9,Typic Udipsamments,210B,Plantation
+10325,CAREX,sedge,,,A,99051416,2022MI165014.PL,44.17388889,-85.76861111,210B,Richard Watson,Outwash plain,Furrowed,0,2,SU,DESC,425,cm,Outwash,9,Typic Udipsamments,210B,Plantation
+10326,DEFL,wavy hairgrass,,,R,99051416,2022MI165014.PL,44.17388889,-85.76861111,210B,Richard Watson,Outwash plain,Furrowed,0,2,SU,DESC,425,cm,Outwash,9,Typic Udipsamments,210B,Plantation
+10331,PTAQ,western brackenfern,,,A,99051416,2022MI165014.PL,44.17388889,-85.76861111,210B,Richard Watson,Outwash plain,Furrowed,0,2,SU,DESC,425,cm,Outwash,9,Typic Udipsamments,210B,Plantation
+10332,QUAL,white oak,R,,R,99051416,2022MI165014.PL,44.17388889,-85.76861111,210B,Richard Watson,Outwash plain,Furrowed,0,2,SU,DESC,425,cm,Outwash,9,Typic Udipsamments,210B,Plantation
+10503,PRSE2,"cherry, black ",R,,R,99052032,2022MI165013.PL,44.21166667,-85.80666667,220B,Richard Watson,Outwash plain,Smooth,240,3,SU,DESC,460,cm,Outwash,10,Typic Udipsamments,210B,second growth
+10507,VAAN,lowbush blueberry,,,C,99052032,2022MI165013.PL,44.21166667,-85.80666667,220B,Richard Watson,Outwash plain,Smooth,240,3,SU,DESC,460,cm,Outwash,10,Typic Udipsamments,210B,second growth
+10506,QUVE,"oak, black ",R,R,R,99052032,2022MI165013.PL,44.21166667,-85.80666667,220B,Richard Watson,Outwash plain,Smooth,240,3,SU,DESC,460,cm,Outwash,10,Typic Udipsamments,210B,second growth
+10499,ACRU,red maple,R,R,R,99052032,2022MI165013.PL,44.21166667,-85.80666667,220B,Richard Watson,Outwash plain,Smooth,240,3,SU,DESC,460,cm,Outwash,10,Typic Udipsamments,210B,second growth
+10501,CAREX,sedge,,,A,99052032,2022MI165013.PL,44.21166667,-85.80666667,220B,Richard Watson,Outwash plain,Smooth,240,3,SU,DESC,460,cm,Outwash,10,Typic Udipsamments,210B,second growth
+10500,AMELA,serviceberry,,,R,99052032,2022MI165013.PL,44.21166667,-85.80666667,220B,Richard Watson,Outwash plain,Smooth,240,3,SU,DESC,460,cm,Outwash,10,Typic Udipsamments,210B,second growth
+10502,COPE80,sweet fern,,,R,99052032,2022MI165013.PL,44.21166667,-85.80666667,220B,Richard Watson,Outwash plain,Smooth,240,3,SU,DESC,460,cm,Outwash,10,Typic Udipsamments,210B,second growth
+10504,PTAQ,western brackenfern,,,A,99052032,2022MI165013.PL,44.21166667,-85.80666667,220B,Richard Watson,Outwash plain,Smooth,240,3,SU,DESC,460,cm,Outwash,10,Typic Udipsamments,210B,second growth
+10505,QUAL,white oak,C,C,C,99052032,2022MI165013.PL,44.21166667,-85.80666667,220B,Richard Watson,Outwash plain,Smooth,240,3,SU,DESC,460,cm,Outwash,10,Typic Udipsamments,210B,second growth
+10699,WAFR,barren strawberry,,,R,99052647,2022MI165025.PL,44.20444444,-85.81722222,223B,Richard Watson,outwash terrace,smooth,180,3,SU,VACC,135,cm,outwash,23,Argic Haplorthods,223B,second growth
+10694,PRSE2,"cherry, black ",C,C,A,99052647,2022MI165025.PL,44.20444444,-85.81722222,223B,Richard Watson,outwash terrace,smooth,180,3,SU,VACC,135,cm,outwash,23,Argic Haplorthods,223B,second growth
+10692,HICA3,"hawkweed, Canadian ",,,C,99052647,2022MI165025.PL,44.20444444,-85.81722222,223B,Richard Watson,outwash terrace,smooth,180,3,SU,VACC,135,cm,outwash,23,Argic Haplorthods,223B,second growth
+10698,VAAN,lowbush blueberry,,,R,99052647,2022MI165025.PL,44.20444444,-85.81722222,223B,Richard Watson,outwash terrace,smooth,180,3,SU,VACC,135,cm,outwash,23,Argic Haplorthods,223B,second growth
+10697,QUVE,"oak, black ",R,R,R,99052647,2022MI165025.PL,44.20444444,-85.81722222,223B,Richard Watson,outwash terrace,smooth,180,3,SU,VACC,135,cm,outwash,23,Argic Haplorthods,223B,second growth
+10696,QUEL,"pin oak, northern ",R,,,99052647,2022MI165025.PL,44.20444444,-85.81722222,223B,Richard Watson,outwash terrace,smooth,180,3,SU,VACC,135,cm,outwash,23,Argic Haplorthods,223B,second growth
+10688,ACRU,red maple,R,R,R,99052647,2022MI165025.PL,44.20444444,-85.81722222,223B,Richard Watson,outwash terrace,smooth,180,3,SU,VACC,135,cm,outwash,23,Argic Haplorthods,223B,second growth
+10690,CAREX,sedge,,,A,99052647,2022MI165025.PL,44.20444444,-85.81722222,223B,Richard Watson,outwash terrace,smooth,180,3,SU,VACC,135,cm,outwash,23,Argic Haplorthods,223B,second growth
+10691,COPE80,sweet fern,,,C,99052647,2022MI165025.PL,44.20444444,-85.81722222,223B,Richard Watson,outwash terrace,smooth,180,3,SU,VACC,135,cm,outwash,23,Argic Haplorthods,223B,second growth
+10695,QUAL,white oak,R,R,R,99052647,2022MI165025.PL,44.20444444,-85.81722222,223B,Richard Watson,outwash terrace,smooth,180,3,SU,VACC,135,cm,outwash,23,Argic Haplorthods,223B,second growth
+10693,PIST,"white pine, eastern ",C,R,R,99052647,2022MI165025.PL,44.20444444,-85.81722222,223B,Richard Watson,outwash terrace,smooth,180,3,SU,VACC,135,cm,outwash,23,Argic Haplorthods,223B,second growth
+10780,POBA2,balsam poplar,R,R,C,99052754,2022MI165015.PL,44.20222222,-85.81027778,251B,Richard Watson,Outwash terrace,Smooth,0,2,SU,PAUP,130,cm,Outwash,51,Oxyaquic Udipsamments,251B,second growth
+10782,WAFR,barren strawberry,,,R,99052754,2022MI165015.PL,44.20222222,-85.81027778,251B,Richard Watson,Outwash terrace,Smooth,0,2,SU,PAUP,130,cm,Outwash,51,Oxyaquic Udipsamments,251B,second growth
+10781,SOLID,goldenrod,,,R,99052754,2022MI165015.PL,44.20222222,-85.81027778,251B,Richard Watson,Outwash terrace,Smooth,0,2,SU,PAUP,130,cm,Outwash,51,Oxyaquic Udipsamments,251B,second growth
+10783,ZAAM,pricklyash,,,R,99052754,2022MI165015.PL,44.20222222,-85.81027778,251B,Richard Watson,Outwash terrace,Smooth,0,2,SU,PAUP,130,cm,Outwash,51,Oxyaquic Udipsamments,251B,second growth
+10778,PIRE,red pine,R,,,99052754,2022MI165015.PL,44.20222222,-85.81027778,251B,Richard Watson,Outwash terrace,Smooth,0,2,SU,PAUP,130,cm,Outwash,51,Oxyaquic Udipsamments,251B,second growth
+10777,CAREX,sedge,,,A,99052754,2022MI165015.PL,44.20222222,-85.81027778,251B,Richard Watson,Outwash terrace,Smooth,0,2,SU,PAUP,130,cm,Outwash,51,Oxyaquic Udipsamments,251B,second growth
+10779,PIST,"white pine, eastern ",C,R,R,99052754,2022MI165015.PL,44.20222222,-85.81027778,251B,Richard Watson,Outwash terrace,Smooth,0,2,SU,PAUP,130,cm,Outwash,51,Oxyaquic Udipsamments,251B,second growth
+10791,MACA4,"beadruby, Canada ",,,C,99052755,2022MI165019.PL,44.20277778,-85.80361111,233B,Richard Watson,Outwash terrace,Undulating,0,4,SU,TRIE,195,cm,Outwash,33,Argic Haporthods,233B,second growth
+10795,PRSE2,"cherry, black ",,R,C,99052755,2022MI165019.PL,44.20277778,-85.80361111,233B,Richard Watson,Outwash terrace,Undulating,0,4,SU,TRIE,195,cm,Outwash,33,Argic Haporthods,233B,second growth
+10789,LYLU,"clubmoss, shinning",,,R,99052755,2022MI165019.PL,44.20277778,-85.80361111,233B,Richard Watson,Outwash terrace,Undulating,0,4,SU,TRIE,195,cm,Outwash,33,Argic Haporthods,233B,second growth
+10799,TSCA,"hemlock, eastern ",C,,,99052755,2022MI165019.PL,44.20277778,-85.80361111,233B,Richard Watson,Outwash terrace,Undulating,0,4,SU,TRIE,195,cm,Outwash,33,Argic Haporthods,233B,second growth
+10788,LONIC,honeysuckle,,,R,99052755,2022MI165019.PL,44.20277778,-85.80361111,233B,Richard Watson,Outwash terrace,Undulating,0,4,SU,TRIE,195,cm,Outwash,33,Argic Haporthods,233B,second growth
+10800,VIAC,mapleleaf viburnum,,,R,99052755,2022MI165019.PL,44.20277778,-85.80361111,233B,Richard Watson,Outwash terrace,Undulating,0,4,SU,TRIE,195,cm,Outwash,33,Argic Haporthods,233B,second growth
+10792,MIRE,partridgeberry,,,R,99052755,2022MI165019.PL,44.20277778,-85.80361111,233B,Richard Watson,Outwash terrace,Undulating,0,4,SU,TRIE,195,cm,Outwash,33,Argic Haporthods,233B,second growth
+10790,LYOB,rare clubmoss,,,R,99052755,2022MI165019.PL,44.20277778,-85.80361111,233B,Richard Watson,Outwash terrace,Undulating,0,4,SU,TRIE,195,cm,Outwash,33,Argic Haporthods,233B,second growth
+10784,ACRU,red maple,A,A,A,99052755,2022MI165019.PL,44.20277778,-85.80361111,233B,Richard Watson,Outwash terrace,Undulating,0,4,SU,TRIE,195,cm,Outwash,33,Argic Haporthods,233B,second growth
+10797,QURU,"red oak, northern ",C,R,R,99052755,2022MI165019.PL,44.20277778,-85.80361111,233B,Richard Watson,Outwash terrace,Undulating,0,4,SU,TRIE,195,cm,Outwash,33,Argic Haporthods,233B,second growth
+10793,ORAS,roughleaf ricegrass,,,R,99052755,2022MI165019.PL,44.20277778,-85.80361111,233B,Richard Watson,Outwash terrace,Undulating,0,4,SU,TRIE,195,cm,Outwash,33,Argic Haporthods,233B,second growth
+10786,CAREX,sedge,,,R,99052755,2022MI165019.PL,44.20277778,-85.80361111,233B,Richard Watson,Outwash terrace,Undulating,0,4,SU,TRIE,195,cm,Outwash,33,Argic Haporthods,233B,second growth
+10798,TRBO2,"starflower, American ",,,C,99052755,2022MI165019.PL,44.20277778,-85.80361111,233B,Richard Watson,Outwash terrace,Undulating,0,4,SU,TRIE,195,cm,Outwash,33,Argic Haporthods,233B,second growth
+10796,PTAQ,western brackenfern,,,C,99052755,2022MI165019.PL,44.20277778,-85.80361111,233B,Richard Watson,Outwash terrace,Undulating,0,4,SU,TRIE,195,cm,Outwash,33,Argic Haporthods,233B,second growth
+10794,PIST,"white pine, eastern ",R,R,R,99052755,2022MI165019.PL,44.20277778,-85.80361111,233B,Richard Watson,Outwash terrace,Undulating,0,4,SU,TRIE,195,cm,Outwash,33,Argic Haporthods,233B,second growth
+10785,ARNU2,wild sarsaparilla,,,R,99052755,2022MI165019.PL,44.20277778,-85.80361111,233B,Richard Watson,Outwash terrace,Undulating,0,4,SU,TRIE,195,cm,Outwash,33,Argic Haporthods,233B,second growth
+10832,POGR4,bigtooth aspen,R,,,99052858,2022MI165018.PL,44.19638889,-85.79,225B,Richard Watson,Outwash terrace,Smooth,300,3,SU,TRIE,460,cm,Outwash,25,Entic Haplorthods,225B,second growth
+10834,PRSE2,"cherry, black ",,R,C,99052858,2022MI165018.PL,44.19638889,-85.79,225B,Richard Watson,Outwash terrace,Smooth,300,3,SU,TRIE,460,cm,Outwash,25,Entic Haplorthods,225B,second growth
+10829,CRATA,hawthorn,,,R,99052858,2022MI165018.PL,44.19638889,-85.79,225B,Richard Watson,Outwash terrace,Smooth,300,3,SU,TRIE,460,cm,Outwash,25,Entic Haplorthods,225B,second growth
+10833,POPR,Kentucky bluegrass,,,R,99052858,2022MI165018.PL,44.19638889,-85.79,225B,Richard Watson,Outwash terrace,Smooth,300,3,SU,TRIE,460,cm,Outwash,25,Entic Haplorthods,225B,second growth
+10838,VAAN,lowbush blueberry,,,C,99052858,2022MI165018.PL,44.19638889,-85.79,225B,Richard Watson,Outwash terrace,Smooth,300,3,SU,TRIE,460,cm,Outwash,25,Entic Haplorthods,225B,second growth
+10826,ACRU,red maple,C,C,A,99052858,2022MI165018.PL,44.19638889,-85.79,225B,Richard Watson,Outwash terrace,Smooth,300,3,SU,TRIE,460,cm,Outwash,25,Entic Haplorthods,225B,second growth
+10828,CAREX,sedge,,,A,99052858,2022MI165018.PL,44.19638889,-85.79,225B,Richard Watson,Outwash terrace,Smooth,300,3,SU,TRIE,460,cm,Outwash,25,Entic Haplorthods,225B,second growth
+10827,AMELA,serviceberry,,R,R,99052858,2022MI165018.PL,44.19638889,-85.79,225B,Richard Watson,Outwash terrace,Smooth,300,3,SU,TRIE,460,cm,Outwash,25,Entic Haplorthods,225B,second growth
+10837,TRBO2,"starflower, American ",,,R,99052858,2022MI165018.PL,44.19638889,-85.79,225B,Richard Watson,Outwash terrace,Smooth,300,3,SU,TRIE,460,cm,Outwash,25,Entic Haplorthods,225B,second growth
+10835,PTAQ,western brackenfern,,,A,99052858,2022MI165018.PL,44.19638889,-85.79,225B,Richard Watson,Outwash terrace,Smooth,300,3,SU,TRIE,460,cm,Outwash,25,Entic Haplorthods,225B,second growth
+10836,QUAL,white oak,A,C,A,99052858,2022MI165018.PL,44.19638889,-85.79,225B,Richard Watson,Outwash terrace,Smooth,300,3,SU,TRIE,460,cm,Outwash,25,Entic Haplorthods,225B,second growth
+10831,PIST,"white pine, eastern ",R,C,C,99052858,2022MI165018.PL,44.19638889,-85.79,225B,Richard Watson,Outwash terrace,Smooth,300,3,SU,TRIE,460,cm,Outwash,25,Entic Haplorthods,225B,second growth
+10830,HAVI4,"witchhazel, American ",,C,C,99052858,2022MI165018.PL,44.19638889,-85.79,225B,Richard Watson,Outwash terrace,Smooth,300,3,SU,TRIE,460,cm,Outwash,25,Entic Haplorthods,225B,second growth
+11326,MACA4,"beadruby, Canada ",,,R,99060902,2022MI165026.PL,44.24,-85.82194444,263B,Richard Watson,Outwash plain,Smooth,45,2,SU,VACC,350,cm,Outwash,22,Entic Haplorthods,222B,second growth
+11328,PRSE2,"cherry, black ",,R,R,99060902,2022MI165026.PL,44.24,-85.82194444,263B,Richard Watson,Outwash plain,Smooth,45,2,SU,VACC,350,cm,Outwash,22,Entic Haplorthods,222B,second growth
+11324,CRATA,hawthorn,,,R,99060902,2022MI165026.PL,44.24,-85.82194444,263B,Richard Watson,Outwash plain,Smooth,45,2,SU,VACC,350,cm,Outwash,22,Entic Haplorthods,222B,second growth
+11334,VAAN,lowbush blueberry,,,C,99060902,2022MI165026.PL,44.24,-85.82194444,263B,Richard Watson,Outwash plain,Smooth,45,2,SU,VACC,350,cm,Outwash,22,Entic Haplorthods,222B,second growth
+11332,QUVE,"oak, black ",R,R,R,99060902,2022MI165026.PL,44.24,-85.82194444,263B,Richard Watson,Outwash plain,Smooth,45,2,SU,VACC,350,cm,Outwash,22,Entic Haplorthods,222B,second growth
+11331,QURU,"red oak, northern ",R,R,R,99060902,2022MI165026.PL,44.24,-85.82194444,263B,Richard Watson,Outwash plain,Smooth,45,2,SU,VACC,350,cm,Outwash,22,Entic Haplorthods,222B,second growth
+11323,CAREX,sedge,,,A,99060902,2022MI165026.PL,44.24,-85.82194444,263B,Richard Watson,Outwash plain,Smooth,45,2,SU,VACC,350,cm,Outwash,22,Entic Haplorthods,222B,second growth
+11322,AMELA,serviceberry,,R,C,99060902,2022MI165026.PL,44.24,-85.82194444,263B,Richard Watson,Outwash plain,Smooth,45,2,SU,VACC,350,cm,Outwash,22,Entic Haplorthods,222B,second growth
+11333,TRBO2,"starflower, American ",,,R,99060902,2022MI165026.PL,44.24,-85.82194444,263B,Richard Watson,Outwash plain,Smooth,45,2,SU,VACC,350,cm,Outwash,22,Entic Haplorthods,222B,second growth
+11325,GAPR2,"teaberry, eastern ",,,A,99060902,2022MI165026.PL,44.24,-85.82194444,263B,Richard Watson,Outwash plain,Smooth,45,2,SU,VACC,350,cm,Outwash,22,Entic Haplorthods,222B,second growth
+11329,PTAQ,western brackenfern,,,A,99060902,2022MI165026.PL,44.24,-85.82194444,263B,Richard Watson,Outwash plain,Smooth,45,2,SU,VACC,350,cm,Outwash,22,Entic Haplorthods,222B,second growth
+11330,QUAL,white oak,C,R,C,99060902,2022MI165026.PL,44.24,-85.82194444,263B,Richard Watson,Outwash plain,Smooth,45,2,SU,VACC,350,cm,Outwash,22,Entic Haplorthods,222B,second growth
+11327,PIST,"white pine, eastern ",C,R,R,99060902,2022MI165026.PL,44.24,-85.82194444,263B,Richard Watson,Outwash plain,Smooth,45,2,SU,VACC,350,cm,Outwash,22,Entic Haplorthods,222B,second growth
+11644,MACA4,"beadruby, Canada ",,,R,99061731,2022MI165008.PL,44.24555556,-85.76555556,244B,Richard Watson,moraine,Undulating,200,5,SH,VIBU,230,cm,drift,44,Alfic Haplaquods,244B,second growth
+11640,FAGR,"beech, American ",R,C,C,99061731,2022MI165008.PL,44.24555556,-85.76555556,244B,Richard Watson,moraine,Undulating,200,5,SH,VIBU,230,cm,drift,44,Alfic Haplaquods,244B,second growth
+11647,POGR4,bigtooth aspen,C,,,99061731,2022MI165008.PL,44.24555556,-85.76555556,244B,Richard Watson,moraine,Undulating,200,5,SH,VIBU,230,cm,drift,44,Alfic Haplaquods,244B,second growth
+11648,PRSE2,"cherry, black ",R,C,R,99061731,2022MI165008.PL,44.24555556,-85.76555556,244B,Richard Watson,moraine,Undulating,200,5,SH,VIBU,230,cm,drift,44,Alfic Haplaquods,244B,second growth
+11642,LYLU,"clubmoss, shinning",,,A,99061731,2022MI165008.PL,44.24555556,-85.76555556,244B,Richard Watson,moraine,Undulating,200,5,SH,VIBU,230,cm,drift,44,Alfic Haplaquods,244B,second growth
+11643,LYOB,rare clubmoss,,,C,99061731,2022MI165008.PL,44.24555556,-85.76555556,244B,Richard Watson,moraine,Undulating,200,5,SH,VIBU,230,cm,drift,44,Alfic Haplaquods,244B,second growth
+11646,ORAS,roughleaf ricegrass,,,R,99061731,2022MI165008.PL,44.24555556,-85.76555556,244B,Richard Watson,moraine,Undulating,200,5,SH,VIBU,230,cm,drift,44,Alfic Haplaquods,244B,second growth
+11638,AMELA,serviceberry,,C,R,99061731,2022MI165008.PL,44.24555556,-85.76555556,244B,Richard Watson,moraine,Undulating,200,5,SH,VIBU,230,cm,drift,44,Alfic Haplaquods,244B,second growth
+11637,ACSA3,sugar maple,A,A,A,99061731,2022MI165008.PL,44.24555556,-85.76555556,244B,Richard Watson,moraine,Undulating,200,5,SH,VIBU,230,cm,drift,44,Alfic Haplaquods,244B,second growth
+11649,PTAQ,western brackenfern,,,R,99061731,2022MI165008.PL,44.24555556,-85.76555556,244B,Richard Watson,moraine,Undulating,200,5,SH,VIBU,230,cm,drift,44,Alfic Haplaquods,244B,second growth
+11639,ARNU2,wild sarsaparilla,,,C,99061731,2022MI165008.PL,44.24555556,-85.76555556,244B,Richard Watson,moraine,Undulating,200,5,SH,VIBU,230,cm,drift,44,Alfic Haplaquods,244B,second growth
+11796,RUFL,"dewberry, northern ",,,C,99061944,2022MI165033.PL,44.22833333,-85.77722222,272B,Richard Watson,swamp,hummocky,180,2,TS,SENS,80,cm,outwash,72,Histic Haplaquepts,272B,second growth
+11798,ULAM,"elm, American ",R,R,R,99061944,2022MI165033.PL,44.22833333,-85.77722222,272B,Richard Watson,swamp,hummocky,180,2,TS,SENS,80,cm,outwash,72,Histic Haplaquepts,272B,second growth
+11797,SOLID,goldenrod,,,A,99061944,2022MI165033.PL,44.22833333,-85.77722222,272B,Richard Watson,swamp,hummocky,180,2,TS,SENS,80,cm,outwash,72,Histic Haplaquepts,272B,second growth
+11790,FRPE,green ash,C,A,A,99061944,2022MI165033.PL,44.22833333,-85.77722222,272B,Richard Watson,swamp,hummocky,180,2,TS,SENS,80,cm,outwash,72,Histic Haplaquepts,272B,second growth
+11789,CACA18,"hornbeam, American ",,A,R,99061944,2022MI165033.PL,44.22833333,-85.77722222,272B,Richard Watson,swamp,hummocky,180,2,TS,SENS,80,cm,outwash,72,Histic Haplaquepts,272B,second growth
+11792,ONSE,sensitive fern,,,C,99061944,2022MI165033.PL,44.22833333,-85.77722222,272B,Richard Watson,swamp,hummocky,180,2,TS,SENS,80,cm,outwash,72,Histic Haplaquepts,272B,second growth
+11799,VIOLA,violet,,,C,99061944,2022MI165033.PL,44.22833333,-85.77722222,272B,Richard Watson,swamp,hummocky,180,2,TS,SENS,80,cm,outwash,72,Histic Haplaquepts,272B,second growth
+11795,PTAQ,western brackenfern,,,C,99061944,2022MI165033.PL,44.22833333,-85.77722222,272B,Richard Watson,swamp,hummocky,180,2,TS,SENS,80,cm,outwash,72,Histic Haplaquepts,272B,second growth
+11813,RUFL,"dewberry, northern ",,,C,99061945,2022MI165024.PL,44.22666667,-85.7675,275B,Richard Watson,swamp,hummocky,0,2,TS,SENS,120,cm,lacustrine,75,Histic Haplaquepts,275B,second growth
+11815,ULAM,"elm, American ",R,R,R,99061945,2022MI165024.PL,44.22666667,-85.7675,275B,Richard Watson,swamp,hummocky,0,2,TS,SENS,120,cm,lacustrine,75,Histic Haplaquepts,275B,second growth
+11814,SOLID,goldenrod,,,A,99061945,2022MI165024.PL,44.22666667,-85.7675,275B,Richard Watson,swamp,hummocky,0,2,TS,SENS,120,cm,lacustrine,75,Histic Haplaquepts,275B,second growth
+11804,FRPE,green ash,A,R,C,99061945,2022MI165024.PL,44.22666667,-85.7675,275B,Richard Watson,swamp,hummocky,0,2,TS,SENS,120,cm,lacustrine,75,Histic Haplaquepts,275B,second growth
+11806,HEAM8,"hepatica, round lobed",,,R,99061945,2022MI165024.PL,44.22666667,-85.7675,275B,Richard Watson,swamp,hummocky,0,2,TS,SENS,120,cm,lacustrine,75,Histic Haplaquepts,275B,second growth
+11807,LONIC,honeysuckle,,,R,99061945,2022MI165024.PL,44.22666667,-85.7675,275B,Richard Watson,swamp,hummocky,0,2,TS,SENS,120,cm,lacustrine,75,Histic Haplaquepts,275B,second growth
+11802,CACA18,"hornbeam, American ",,A,R,99061945,2022MI165024.PL,44.22666667,-85.7675,275B,Richard Watson,swamp,hummocky,0,2,TS,SENS,120,cm,lacustrine,75,Histic Haplaquepts,275B,second growth
+11801,ADPE,"maidenhair, northern ",,,R,99061945,2022MI165024.PL,44.22666667,-85.7675,275B,Richard Watson,swamp,hummocky,0,2,TS,SENS,120,cm,lacustrine,75,Histic Haplaquepts,275B,second growth
+11809,ORAS,roughleaf ricegrass,,,R,99061945,2022MI165024.PL,44.22666667,-85.7675,275B,Richard Watson,swamp,hummocky,0,2,TS,SENS,120,cm,lacustrine,75,Histic Haplaquepts,275B,second growth
+11808,ONSE,sensitive fern,,,R,99061945,2022MI165024.PL,44.22666667,-85.7675,275B,Richard Watson,swamp,hummocky,0,2,TS,SENS,120,cm,lacustrine,75,Histic Haplaquepts,275B,second growth
+11800,ACSA3,sugar maple,R,C,R,99061945,2022MI165024.PL,44.22666667,-85.7675,275B,Richard Watson,swamp,hummocky,0,2,TS,SENS,120,cm,lacustrine,75,Histic Haplaquepts,275B,second growth
+11816,VIOLA,violet,,,A,99061945,2022MI165024.PL,44.22666667,-85.7675,275B,Richard Watson,swamp,hummocky,0,2,TS,SENS,120,cm,lacustrine,75,Histic Haplaquepts,275B,second growth
+11812,PTAQ,western brackenfern,,,A,99061945,2022MI165024.PL,44.22666667,-85.7675,275B,Richard Watson,swamp,hummocky,0,2,TS,SENS,120,cm,lacustrine,75,Histic Haplaquepts,275B,second growth
+11803,DRSP4,wood fern,,,C,99061945,2022MI165024.PL,44.22666667,-85.7675,275B,Richard Watson,swamp,hummocky,0,2,TS,SENS,120,cm,lacustrine,75,Histic Haplaquepts,275B,second growth
+12242,FAGR,"beech, American ",R,R,R,99062988,2022MI165009.PL,44.27027778,-85.75777778,247C,Richard Watson,moraine,Undulating,90,13,SH,OSMO,150,cm,drift,47,Alfic Haplorthods,247C,second growth
+12246,PRSE2,"cherry, black ",R,R,R,99062988,2022MI165009.PL,44.27027778,-85.75777778,247C,Richard Watson,moraine,Undulating,90,13,SH,OSMO,150,cm,drift,47,Alfic Haplorthods,247C,second growth
+12245,OSCL,Clayton's sweetroot,,,A,99062988,2022MI165009.PL,44.27027778,-85.75777778,247C,Richard Watson,moraine,Undulating,90,13,SH,OSMO,150,cm,drift,47,Alfic Haplorthods,247C,second growth
+12238,ARTR,Jack in the pulpit,,,R,99062988,2022MI165009.PL,44.27027778,-85.75777778,247C,Richard Watson,moraine,Undulating,90,13,SH,OSMO,150,cm,drift,47,Alfic Haplorthods,247C,second growth
+12239,ATFI,ladyfern,,,R,99062988,2022MI165009.PL,44.27027778,-85.75777778,247C,Richard Watson,moraine,Undulating,90,13,SH,OSMO,150,cm,drift,47,Alfic Haplorthods,247C,second growth
+12240,CAPL4,plantainleaf sedge,,,R,99062988,2022MI165009.PL,44.27027778,-85.75777778,247C,Richard Watson,moraine,Undulating,90,13,SH,OSMO,150,cm,drift,47,Alfic Haplorthods,247C,second growth
+12241,CAREX,sedge,,,R,99062988,2022MI165009.PL,44.27027778,-85.75777778,247C,Richard Watson,moraine,Undulating,90,13,SH,OSMO,150,cm,drift,47,Alfic Haplorthods,247C,second growth
+12247,TRGR4,snow trillium,,,R,99062988,2022MI165009.PL,44.27027778,-85.75777778,247C,Richard Watson,moraine,Undulating,90,13,SH,OSMO,150,cm,drift,47,Alfic Haplorthods,247C,second growth
+12236,ACSA3,sugar maple,A,R,A,99062988,2022MI165009.PL,44.27027778,-85.75777778,247C,Richard Watson,moraine,Undulating,90,13,SH,OSMO,150,cm,drift,47,Alfic Haplorthods,247C,second growth
+12248,VIOLA,violet,,,C,99062988,2022MI165009.PL,44.27027778,-85.75777778,247C,Richard Watson,moraine,Undulating,90,13,SH,OSMO,150,cm,drift,47,Alfic Haplorthods,247C,second growth
+12237,ALTR3,wild leek,,,C,99062988,2022MI165009.PL,44.27027778,-85.75777778,247C,Richard Watson,moraine,Undulating,90,13,SH,OSMO,150,cm,drift,47,Alfic Haplorthods,247C,second growth
+12391,MACA4,"beadruby, Canada ",,,R,99070503,2022MI165022.PL,44.30138889,-85.81138889,232B,Richard Watson,Outwash plain,Furrowed,180,2,SU,TRIE,240,cm,Outwash,32,Entic Haplorthods,232B,Plantation
+12393,PRSE2,"cherry, black ",,R,R,99070503,2022MI165022.PL,44.30138889,-85.81138889,232B,Richard Watson,Outwash plain,Furrowed,180,2,SU,TRIE,240,cm,Outwash,32,Entic Haplorthods,232B,Plantation
+12396,VAAN,lowbush blueberry,,,R,99070503,2022MI165022.PL,44.30138889,-85.81138889,232B,Richard Watson,Outwash plain,Furrowed,180,2,SU,TRIE,240,cm,Outwash,32,Entic Haplorthods,232B,Plantation
+12388,CYAC3,pink lady's slipper,,,R,99070503,2022MI165022.PL,44.30138889,-85.81138889,232B,Richard Watson,Outwash plain,Furrowed,180,2,SU,TRIE,240,cm,Outwash,32,Entic Haplorthods,232B,Plantation
+12386,ACRU,red maple,R,C,C,99070503,2022MI165022.PL,44.30138889,-85.81138889,232B,Richard Watson,Outwash plain,Furrowed,180,2,SU,TRIE,240,cm,Outwash,32,Entic Haplorthods,232B,Plantation
+12392,PIRE,red pine,A,,,99070503,2022MI165022.PL,44.30138889,-85.81138889,232B,Richard Watson,Outwash plain,Furrowed,180,2,SU,TRIE,240,cm,Outwash,32,Entic Haplorthods,232B,Plantation
+12387,AMELA,serviceberry,,,R,99070503,2022MI165022.PL,44.30138889,-85.81138889,232B,Richard Watson,Outwash plain,Furrowed,180,2,SU,TRIE,240,cm,Outwash,32,Entic Haplorthods,232B,Plantation
+12395,TRBO2,"starflower, American ",,,C,99070503,2022MI165022.PL,44.30138889,-85.81138889,232B,Richard Watson,Outwash plain,Furrowed,180,2,SU,TRIE,240,cm,Outwash,32,Entic Haplorthods,232B,Plantation
+12394,PTAQ,western brackenfern,,,A,99070503,2022MI165022.PL,44.30138889,-85.81138889,232B,Richard Watson,Outwash plain,Furrowed,180,2,SU,TRIE,240,cm,Outwash,32,Entic Haplorthods,232B,Plantation
+12524,MACA4,"beadruby, Canada ",,,R,99070715,2022MI165023.PL,44.30305556,-85.80555556,282,Richard Watson,swamp,hummocky,270,2,SU,PAUP,70,cm,outwash,82,Histic Haplaquepts,282,second growth
+12521,FRPE,green ash,R,,R,99070715,2022MI165023.PL,44.30305556,-85.80555556,282,Richard Watson,swamp,hummocky,270,2,SU,PAUP,70,cm,outwash,82,Histic Haplaquepts,282,second growth
+12529,TSCA,"hemlock, eastern ",A,R,,99070715,2022MI165023.PL,44.30305556,-85.80555556,282,Richard Watson,swamp,hummocky,270,2,SU,PAUP,70,cm,outwash,82,Histic Haplaquepts,282,second growth
+12519,ATFI,ladyfern,,,R,99070715,2022MI165023.PL,44.30305556,-85.80555556,282,Richard Watson,swamp,hummocky,270,2,SU,PAUP,70,cm,outwash,82,Histic Haplaquepts,282,second growth
+12518,ACRU,red maple,R,R,R,99070715,2022MI165023.PL,44.30305556,-85.80555556,282,Richard Watson,swamp,hummocky,270,2,SU,PAUP,70,cm,outwash,82,Histic Haplaquepts,282,second growth
+12526,ONSE,sensitive fern,,,R,99070715,2022MI165023.PL,44.30305556,-85.80555556,282,Richard Watson,swamp,hummocky,270,2,SU,PAUP,70,cm,outwash,82,Histic Haplaquepts,282,second growth
+12528,TRBO2,"starflower, American ",,,R,99070715,2022MI165023.PL,44.30305556,-85.80555556,282,Richard Watson,swamp,hummocky,270,2,SU,PAUP,70,cm,outwash,82,Histic Haplaquepts,282,second growth
+12525,MIDI3,twoleaf miterwort,,,R,99070715,2022MI165023.PL,44.30305556,-85.80555556,282,Richard Watson,swamp,hummocky,270,2,SU,PAUP,70,cm,outwash,82,Histic Haplaquepts,282,second growth
+12523,GRASS,unknown grasses,,,R,99070715,2022MI165023.PL,44.30305556,-85.80555556,282,Richard Watson,swamp,hummocky,270,2,SU,PAUP,70,cm,outwash,82,Histic Haplaquepts,282,second growth
+12520,BEAL2,yellow birch,R,R,,99070715,2022MI165023.PL,44.30305556,-85.80555556,282,Richard Watson,swamp,hummocky,270,2,SU,PAUP,70,cm,outwash,82,Histic Haplaquepts,282,second growth
+12810,MACA4,"beadruby, Canada ",,,R,99071203,2022MI165021.PL,44.34805556,-85.79722222,221B,Richard Watson,Outwash plain,Furrowed,270,2,SU,MAIA,275,cm,Outwash,21,Entic Haplorthods,221B,Plantation
+12812,PRSE2,"cherry, black ",,R,C,99071203,2022MI165021.PL,44.34805556,-85.79722222,221B,Richard Watson,Outwash plain,Furrowed,270,2,SU,MAIA,275,cm,Outwash,21,Entic Haplorthods,221B,Plantation
+12806,ACRU,red maple,R,C,A,99071203,2022MI165021.PL,44.34805556,-85.79722222,221B,Richard Watson,Outwash plain,Furrowed,270,2,SU,MAIA,275,cm,Outwash,21,Entic Haplorthods,221B,Plantation
+12815,QURU,"red oak, northern ",,C,C,99071203,2022MI165021.PL,44.34805556,-85.79722222,221B,Richard Watson,Outwash plain,Furrowed,270,2,SU,MAIA,275,cm,Outwash,21,Entic Haplorthods,221B,Plantation
+12811,PIRE,red pine,A,,,99071203,2022MI165021.PL,44.34805556,-85.79722222,221B,Richard Watson,Outwash plain,Furrowed,270,2,SU,MAIA,275,cm,Outwash,21,Entic Haplorthods,221B,Plantation
+12808,CAREX,sedge,,,A,99071203,2022MI165021.PL,44.34805556,-85.79722222,221B,Richard Watson,Outwash plain,Furrowed,270,2,SU,MAIA,275,cm,Outwash,21,Entic Haplorthods,221B,Plantation
+12807,AMELA,serviceberry,,R,C,99071203,2022MI165021.PL,44.34805556,-85.79722222,221B,Richard Watson,Outwash plain,Furrowed,270,2,SU,MAIA,275,cm,Outwash,21,Entic Haplorthods,221B,Plantation
+12816,SMRA,"Solomon's seal, false",,,R,99071203,2022MI165021.PL,44.34805556,-85.79722222,221B,Richard Watson,Outwash plain,Furrowed,270,2,SU,MAIA,275,cm,Outwash,21,Entic Haplorthods,221B,Plantation
+12809,GRASS,unknown grasses,,,C,99071203,2022MI165021.PL,44.34805556,-85.79722222,221B,Richard Watson,Outwash plain,Furrowed,270,2,SU,MAIA,275,cm,Outwash,21,Entic Haplorthods,221B,Plantation
+12813,PTAQ,western brackenfern,,,A,99071203,2022MI165021.PL,44.34805556,-85.79722222,221B,Richard Watson,Outwash plain,Furrowed,270,2,SU,MAIA,275,cm,Outwash,21,Entic Haplorthods,221B,Plantation
+12814,QUAL,white oak,,C,C,99071203,2022MI165021.PL,44.34805556,-85.79722222,221B,Richard Watson,Outwash plain,Furrowed,270,2,SU,MAIA,275,cm,Outwash,21,Entic Haplorthods,221B,Plantation
+12984,PRSE2,"cherry, black ",,R,R,99071554,2022MI165020.PL,44.31194444,-85.78,230B,Richard Watson,Outwash plain,Undulating,270,2,SU,VACC,460,cm,Outwash,30,Entic Haplorthods,230B,Plantation
+12983,PIBA2,jack pine,A,,,99071554,2022MI165020.PL,44.31194444,-85.78,230B,Richard Watson,Outwash plain,Undulating,270,2,SU,VACC,460,cm,Outwash,30,Entic Haplorthods,230B,Plantation
+12988,VAAN,lowbush blueberry,,,R,99071554,2022MI165020.PL,44.31194444,-85.78,230B,Richard Watson,Outwash plain,Undulating,270,2,SU,VACC,460,cm,Outwash,30,Entic Haplorthods,230B,Plantation
+12978,ACRU,red maple,C,R,R,99071554,2022MI165020.PL,44.31194444,-85.78,230B,Richard Watson,Outwash plain,Undulating,270,2,SU,VACC,460,cm,Outwash,30,Entic Haplorthods,230B,Plantation
+12986,QURU,"red oak, northern ",,R,R,99071554,2022MI165020.PL,44.31194444,-85.78,230B,Richard Watson,Outwash plain,Undulating,270,2,SU,VACC,460,cm,Outwash,30,Entic Haplorthods,230B,Plantation
+12980,CAREX,sedge,,,A,99071554,2022MI165020.PL,44.31194444,-85.78,230B,Richard Watson,Outwash plain,Undulating,270,2,SU,VACC,460,cm,Outwash,30,Entic Haplorthods,230B,Plantation
+12979,AMELA,serviceberry,,R,R,99071554,2022MI165020.PL,44.31194444,-85.78,230B,Richard Watson,Outwash plain,Undulating,270,2,SU,VACC,460,cm,Outwash,30,Entic Haplorthods,230B,Plantation
+12987,SMRA,"Solomon's seal, false",,,R,99071554,2022MI165020.PL,44.31194444,-85.78,230B,Richard Watson,Outwash plain,Undulating,270,2,SU,VACC,460,cm,Outwash,30,Entic Haplorthods,230B,Plantation
+12981,GRASS,unknown grasses,,,A,99071554,2022MI165020.PL,44.31194444,-85.78,230B,Richard Watson,Outwash plain,Undulating,270,2,SU,VACC,460,cm,Outwash,30,Entic Haplorthods,230B,Plantation
+12985,PTAQ,western brackenfern,,,A,99071554,2022MI165020.PL,44.31194444,-85.78,230B,Richard Watson,Outwash plain,Undulating,270,2,SU,VACC,460,cm,Outwash,30,Entic Haplorthods,230B,Plantation
+12982,HAVI4,"witchhazel, American ",,R,R,99071554,2022MI165020.PL,44.31194444,-85.78,230B,Richard Watson,Outwash plain,Undulating,270,2,SU,VACC,460,cm,Outwash,30,Entic Haplorthods,230B,Plantation
+13638,TIAM,"basswood, American",R,,R,99080832,2022MI165034.PL,44.16472222,-85.7125,245C,Richard Watson,moraine,Undulating,180,6,SH,REGN,170,cm,drift,45,Alfic Haplorthods,245C,second growth
+13636,PRSE2,"cherry, black ",R,C,C,99080832,2022MI165034.PL,44.16472222,-85.7125,245C,Richard Watson,moraine,Undulating,180,6,SH,REGN,170,cm,drift,45,Alfic Haplorthods,245C,second growth
+13637,RIBES,currant,,,R,99080832,2022MI165034.PL,44.16472222,-85.7125,245C,Richard Watson,moraine,Undulating,180,6,SH,REGN,170,cm,drift,45,Alfic Haplorthods,245C,second growth
+13635,OSVI,"hophornbeam, eastern ",R,A,A,99080832,2022MI165034.PL,44.16472222,-85.7125,245C,Richard Watson,moraine,Undulating,180,6,SH,REGN,170,cm,drift,45,Alfic Haplorthods,245C,second growth
+13639,VIAC,mapleleaf viburnum,,,R,99080832,2022MI165034.PL,44.16472222,-85.7125,245C,Richard Watson,moraine,Undulating,180,6,SH,REGN,170,cm,drift,45,Alfic Haplorthods,245C,second growth
+13628,ACRU,red maple,R,R,R,99080832,2022MI165034.PL,44.16472222,-85.7125,245C,Richard Watson,moraine,Undulating,180,6,SH,REGN,170,cm,drift,45,Alfic Haplorthods,245C,second growth
+13630,CAREX,sedge,,,R,99080832,2022MI165034.PL,44.16472222,-85.7125,245C,Richard Watson,moraine,Undulating,180,6,SH,REGN,170,cm,drift,45,Alfic Haplorthods,245C,second growth
+13629,ACSA3,sugar maple,A,C,R,99080832,2022MI165034.PL,44.16472222,-85.7125,245C,Richard Watson,moraine,Undulating,180,6,SH,REGN,170,cm,drift,45,Alfic Haplorthods,245C,second growth
+13633,GRASS,unknown grasses,,,R,99080832,2022MI165034.PL,44.16472222,-85.7125,245C,Richard Watson,moraine,Undulating,180,6,SH,REGN,170,cm,drift,45,Alfic Haplorthods,245C,second growth
+13634,HAVI4,"witchhazel, American ",,R,R,99080832,2022MI165034.PL,44.16472222,-85.7125,245C,Richard Watson,moraine,Undulating,180,6,SH,REGN,170,cm,drift,45,Alfic Haplorthods,245C,second growth
+14624,MACA4,"beadruby, Canada ",,,R,99090738,2022MI165027.PL,44.32888889,-85.71972222,242C,Richard Watson,moraine,Undulating,210,6,SH,REGN,330,cm,drift,42,Typic Haplorthods,242C,second growth
+14621,FAGR,"beech, American ",R,R,R,99090738,2022MI165027.PL,44.32888889,-85.71972222,242C,Richard Watson,moraine,Undulating,210,6,SH,REGN,330,cm,drift,42,Typic Haplorthods,242C,second growth
+14625,PRSE2,"cherry, black ",C,R,R,99090738,2022MI165027.PL,44.32888889,-85.71972222,242C,Richard Watson,moraine,Undulating,210,6,SH,REGN,330,cm,drift,42,Typic Haplorthods,242C,second growth
+14623,LYOB,rare clubmoss,,,R,99090738,2022MI165027.PL,44.32888889,-85.71972222,242C,Richard Watson,moraine,Undulating,210,6,SH,REGN,330,cm,drift,42,Typic Haplorthods,242C,second growth
+14619,CAREX,sedge,,,R,99090738,2022MI165027.PL,44.32888889,-85.71972222,242C,Richard Watson,moraine,Undulating,210,6,SH,REGN,330,cm,drift,42,Typic Haplorthods,242C,second growth
+14618,AMELA,serviceberry,,,R,99090738,2022MI165027.PL,44.32888889,-85.71972222,242C,Richard Watson,moraine,Undulating,210,6,SH,REGN,330,cm,drift,42,Typic Haplorthods,242C,second growth
+14626,SMRA,"Solomon's seal, false",,,R,99090738,2022MI165027.PL,44.32888889,-85.71972222,242C,Richard Watson,moraine,Undulating,210,6,SH,REGN,330,cm,drift,42,Typic Haplorthods,242C,second growth
+14617,ACSA3,sugar maple,A,A,A,99090738,2022MI165027.PL,44.32888889,-85.71972222,242C,Richard Watson,moraine,Undulating,210,6,SH,REGN,330,cm,drift,42,Typic Haplorthods,242C,second growth
+14620,DRSP4,wood fern,,,R,99090738,2022MI165027.PL,44.32888889,-85.71972222,242C,Richard Watson,moraine,Undulating,210,6,SH,REGN,330,cm,drift,42,Typic Haplorthods,242C,second growth
+16587,FAGR,"beech, American ",R,C,C,990608101,2022MI165007.PL,44.21222222,-85.75166667,235B,Richard Watson,moraine,Undulating,180,3,SU,VIBU,460,cm,drift,35,Entic Haplorthods,235B,second growth
+16592,TSCA,"hemlock, eastern ",R,,,990608101,2022MI165007.PL,44.21222222,-85.75166667,235B,Richard Watson,moraine,Undulating,180,3,SU,VIBU,460,cm,drift,35,Entic Haplorthods,235B,second growth
+16590,OSVI,"hophornbeam, eastern ",,R,R,990608101,2022MI165007.PL,44.21222222,-85.75166667,235B,Richard Watson,moraine,Undulating,180,3,SU,VIBU,460,cm,drift,35,Entic Haplorthods,235B,second growth
+16593,VIAC,mapleleaf viburnum,,,C,990608101,2022MI165007.PL,44.21222222,-85.75166667,235B,Richard Watson,moraine,Undulating,180,3,SU,VIBU,460,cm,drift,35,Entic Haplorthods,235B,second growth
+16584,ACRU,red maple,R,R,R,990608101,2022MI165007.PL,44.21222222,-85.75166667,235B,Richard Watson,moraine,Undulating,180,3,SU,VIBU,460,cm,drift,35,Entic Haplorthods,235B,second growth
+16591,QURU,"red oak, northern ",A,C,C,990608101,2022MI165007.PL,44.21222222,-85.75166667,235B,Richard Watson,moraine,Undulating,180,3,SU,VIBU,460,cm,drift,35,Entic Haplorthods,235B,second growth
+16589,ORAS,roughleaf ricegrass,,,R,990608101,2022MI165007.PL,44.21222222,-85.75166667,235B,Richard Watson,moraine,Undulating,180,3,SU,VIBU,460,cm,drift,35,Entic Haplorthods,235B,second growth
+16586,CAREX,sedge,,,R,990608101,2022MI165007.PL,44.21222222,-85.75166667,235B,Richard Watson,moraine,Undulating,180,3,SU,VIBU,460,cm,drift,35,Entic Haplorthods,235B,second growth
+16585,ACSA3,sugar maple,R,R,R,990608101,2022MI165007.PL,44.21222222,-85.75166667,235B,Richard Watson,moraine,Undulating,180,3,SU,VIBU,460,cm,drift,35,Entic Haplorthods,235B,second growth
+19965,POGR4,bigtooth aspen,C,,,1996052603,2022MI165012.PL,44.2605,-85.8205, ,Richard Watson,outwash plain,undulating,270,4,UK,TRIE,200,cm,glaciofluvial deposit,24,Unknown,224B,Unknown
+19966,POPA5,gaywings,,,R,1996052603,2022MI165012.PL,44.2605,-85.8205, ,Richard Watson,outwash plain,undulating,270,4,UK,TRIE,200,cm,glaciofluvial deposit,24,Unknown,224B,Unknown
+19963,PIBA2,jack pine,C,,,1996052603,2022MI165012.PL,44.2605,-85.8205, ,Richard Watson,outwash plain,undulating,270,4,UK,TRIE,200,cm,glaciofluvial deposit,24,Unknown,224B,Unknown
+19972,VAAN,lowbush blueberry,,,R,1996052603,2022MI165012.PL,44.2605,-85.8205, ,Richard Watson,outwash plain,undulating,270,4,UK,TRIE,200,cm,glaciofluvial deposit,24,Unknown,224B,Unknown
+19960,CAPE6,Pennsylvania sedge,,,A,1996052603,2022MI165012.PL,44.2605,-85.8205, ,Richard Watson,outwash plain,undulating,270,4,UK,TRIE,200,cm,glaciofluvial deposit,24,Unknown,224B,Unknown
+19959,ACRU,red maple,C,R,C,1996052603,2022MI165012.PL,44.2605,-85.8205, ,Richard Watson,outwash plain,undulating,270,4,UK,TRIE,200,cm,glaciofluvial deposit,24,Unknown,224B,Unknown
+19970,QURU,"red oak, northern ",R,,C,1996052603,2022MI165012.PL,44.2605,-85.8205, ,Richard Watson,outwash plain,undulating,270,4,UK,TRIE,200,cm,glaciofluvial deposit,24,Unknown,224B,Unknown
+19971,TRBO2,"starflower, American ",,,C,1996052603,2022MI165012.PL,44.2605,-85.8205, ,Richard Watson,outwash plain,undulating,270,4,UK,TRIE,200,cm,glaciofluvial deposit,24,Unknown,224B,Unknown
+19961,GAPR2,"teaberry, eastern ",,,A,1996052603,2022MI165012.PL,44.2605,-85.8205, ,Richard Watson,outwash plain,undulating,270,4,UK,TRIE,200,cm,glaciofluvial deposit,24,Unknown,224B,Unknown
+19973,VIOLA,violet,,,R,1996052603,2022MI165012.PL,44.2605,-85.8205, ,Richard Watson,outwash plain,undulating,270,4,UK,TRIE,200,cm,glaciofluvial deposit,24,Unknown,224B,Unknown
+19968,PTAQ,western brackenfern,,,A,1996052603,2022MI165012.PL,44.2605,-85.8205, ,Richard Watson,outwash plain,undulating,270,4,UK,TRIE,200,cm,glaciofluvial deposit,24,Unknown,224B,Unknown
+19969,QUAL,white oak,R,,,1996052603,2022MI165012.PL,44.2605,-85.8205, ,Richard Watson,outwash plain,undulating,270,4,UK,TRIE,200,cm,glaciofluvial deposit,24,Unknown,224B,Unknown
+19964,PIST,"white pine, eastern ",,,C,1996052603,2022MI165012.PL,44.2605,-85.8205, ,Richard Watson,outwash plain,undulating,270,4,UK,TRIE,200,cm,glaciofluvial deposit,24,Unknown,224B,Unknown
+19962,HAVI4,"witchhazel, American ",,R,C,1996052603,2022MI165012.PL,44.2605,-85.8205, ,Richard Watson,outwash plain,undulating,270,4,UK,TRIE,200,cm,glaciofluvial deposit,24,Unknown,224B,Unknown
+27350,FAGR,"beech, American ",R,R,C,2000521048,2022MI165029.PL,44.36777778,-85.64305556,241D,Richard Watson,Moraine,Undulating,180,30,sh,REGN,490,CM,Till,41,Typic Haplorthods,241D,second growth
+27353,OSCL,Clayton's sweetroot,,,R,2000521048,2022MI165029.PL,44.36777778,-85.64305556,241D,Richard Watson,Moraine,Undulating,180,30,sh,REGN,490,CM,Till,41,Typic Haplorthods,241D,second growth
+27356,ULAM,"elm, American ",,,R,2000521048,2022MI165029.PL,44.36777778,-85.64305556,241D,Richard Watson,Moraine,Undulating,180,30,sh,REGN,490,CM,Till,41,Typic Haplorthods,241D,second growth
+27354,OSVI,"hophornbeam, eastern ",R,R,C,2000521048,2022MI165029.PL,44.36777778,-85.64305556,241D,Richard Watson,Moraine,Undulating,180,30,sh,REGN,490,CM,Till,41,Typic Haplorthods,241D,second growth
+27348,CAREX,sedge,,,R,2000521048,2022MI165029.PL,44.36777778,-85.64305556,241D,Richard Watson,Moraine,Undulating,180,30,sh,REGN,490,CM,Till,41,Typic Haplorthods,241D,second growth
+27355,TRGR4,snow trillium,,,R,2000521048,2022MI165029.PL,44.36777778,-85.64305556,241D,Richard Watson,Moraine,Undulating,180,30,sh,REGN,490,CM,Till,41,Typic Haplorthods,241D,second growth
+27346,ACSA3,sugar maple,A,A,A,2000521048,2022MI165029.PL,44.36777778,-85.64305556,241D,Richard Watson,Moraine,Undulating,180,30,sh,REGN,490,CM,Till,41,Typic Haplorthods,241D,second growth
+27349,ERAM5,"troutlily, American ",,,A,2000521048,2022MI165029.PL,44.36777778,-85.64305556,241D,Richard Watson,Moraine,Undulating,180,30,sh,REGN,490,CM,Till,41,Typic Haplorthods,241D,second growth
+27352,GRASS,unknown grasses,,,R,2000521048,2022MI165029.PL,44.36777778,-85.64305556,241D,Richard Watson,Moraine,Undulating,180,30,sh,REGN,490,CM,Till,41,Typic Haplorthods,241D,second growth
+27347,ALTR3,wild leek,,,C,2000521048,2022MI165029.PL,44.36777778,-85.64305556,241D,Richard Watson,Moraine,Undulating,180,30,sh,REGN,490,CM,Till,41,Typic Haplorthods,241D,second growth
+28027,FAGR,"beech, American ",C,A,A,2000701085,2022MI165028.PL,44.35916667,-85.68,240C,Richard Watson,Moraine,Undulating,185,17,sh,REGN,490,CM,Till,40,Typic Haplorthods,240C,second growth
+28025,CAREX,sedge,,,R,2000701085,2022MI165028.PL,44.35916667,-85.68,240C,Richard Watson,Moraine,Undulating,185,17,sh,REGN,490,CM,Till,40,Typic Haplorthods,240C,second growth
+28024,ACSA3,sugar maple,A,A,C,2000701085,2022MI165028.PL,44.35916667,-85.68,240C,Richard Watson,Moraine,Undulating,185,17,sh,REGN,490,CM,Till,40,Typic Haplorthods,240C,second growth
