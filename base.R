@@ -2,14 +2,38 @@ library(soilDB)
 library(stringr)
 library(dplyr)
 
-
+#install and load package
 remotes::install_github("phytoclast/vegnasis", dependencies = FALSE)
 library(vegnasis)
-veg.spp <- soilDB::get_vegplot_species_from_NASIS_db(SS = FALSE)
-veg <- clean.veg(veg.spp) |> fill.hts.df()
+#fresh NASIS data
+veg.raw <- soilDB::get_vegplot_species_from_NASIS_db(SS = FALSE)
+veg <- clean.veg(veg.raw) |> fill.hts.df()
+#sample data
+veg.raw <- vegnasis::nasis.veg
+veg <- clean.veg(veg.raw)
+#fill in missing data
+veg <- clean.veg(veg.raw) |> fill.type.df()  |> fill.hts.df() |> fill.nativity.df()
+#get wetland status
 hydric <- get.wetness(veg, region = 'NCNE')
-breaks <- c(0.1, 0.5, 2, 5, 10, 20, 30)
-strat.summary <- vegnasis::summary.crown.thickness(veg, breaks)
+#get structure and dominance association
+structure <- get.structure(veg)
+association <- get.assoc(veg)
+#quantified structural breakdown based on stratum identity and using USNVC defaults
+strat.summary <- vegnasis::summary.strata(veg)
+#quantified structural breakdown based on live crown and using EDIT's breaks
+breaks.ft <- c(0.5, 1, 2, 4.5, 13, 40, 80, 120)
+breaks <- vegnasis::ht.metric(breaks.ft)
+EDIT.strat.summary <- vegnasis::summary.crown.thickness(veg, breaks)
+
+#prepare for analysis
+m <- make.plot.matrix(veg, tr = 'log')
+d = vegan::vegdist(m, method='bray')
+t <- cluster::agnes(d, method = 'ward')|> as.hclust()
+ape::plot.phylo(ape::as.phylo(t))
+t <- optpart::flexbeta(d, beta = -0.2)|> as.hclust()
+ape::plot.phylo(ape::as.phylo(t))
+
+
 veg$new <- get.habit.code(veg$plantsciname)
 veg$new2 <- get.habit(veg$new)
 m <- make.plot.matrix(veg)
@@ -615,6 +639,7 @@ x <- veg |> mutate(stratum = case_when(
   library(vegnasis)
 
   veg.raw <- soilDB::get_vegplot_species_from_NASIS_db(SS=F)
+
   veg.ca<- veg.raw |> subset(grepl('CA', vegplotid))
   veg.raw <- vegnasis::nasis.veg
   veg <- clean.veg(veg.raw)
@@ -639,9 +664,83 @@ x <- veg |> mutate(stratum = case_when(
   veg$hhh <- get.ht.max(veg$taxon)
 
 
-  obssites <- vegnasis::obs
-  obstaxa <- vegnasis::obsspp
+  veg <- clean.veg.log(obs, obsspp)
 
-  veg <- clean.veg.log(obssites, obstaxa)
-  veg <- veg |> mutate(taxon=harmonize.taxa(veg$taxon, fix=T)) |> fill.type.df() |> fill.nativity.df() |> mutate(symbol = fill.usda.symbols(taxon))
-exo = exo.flora(veg)
+  veg <- veg |> mutate(taxon=harmonize.taxa(veg$taxon, fix=T)) |> fill.type.df() |> fill.nativity.df() |> mutate(symbol = fill.usda.symbols(taxon)) |> fill.hts.df()
+
+
+  forest <-  veg |> mutate(h = ifelse(diam > 0 & BA > 0, ht.max, NA),
+                           d = ifelse(diam > 0 & BA > 0, diam, NA),
+                           b = ifelse(diam > 0 & BA > 0, BA, NA)) |>
+    group_by(plot) |> filter(ht.max > 5) |>
+    summarise(cover = cover.agg(cover), BA = sum(BA, na.rm = T),
+              h=sum(h*b, na.rm = T), d=sum(d*b, na.rm = T), b=sum(b, na.rm = T)) |> mutate(BA = ifelse(BA > 0, BA, NA),
+                                                                                           ht = ifelse(b == 0, NA, h/b),
+                                                                                           diam = ifelse(b == 0, NA, d/b),
+                                                                                           h = NULL, d = NULL, b=NULL)
+  forest <- forest |> mutate(lcover = log(cover), lht=log(ht), ldiam=log(diam), lBA=log(BA), BA2=BA^2, BA.5=BA^.5,
+                             ht2 = ht^2, ht.5 = ht^0.5, diam.5 = diam^0.5, diam2 = diam^2, cover2=cover^2,cover.5=cover^.5)
+  library(ggplot2)
+  ggplot(forest, aes(x=BA, y=cover))+
+    geom_smooth()
+  ggplot(forest, aes(x=ldiam, y=lht))+
+    geom_smooth()
+
+  mod <- lm(BA ~ cover, forest)
+  summary(mod)
+
+  mod <- lm(diam ~ cover+ht+BA, forest)
+  step(mod)
+  mod <- lm(ldiam ~ lcover+lht+lBA, forest)
+  step(mod)
+
+   mod <- lm(diam ~ cover+ht, forest)
+   summary(mod)
+   mod <- lm(diam ~ ht+ht2+ht.5+lht, forest)
+   step(mod)
+   mod <- lm(diam ~ lht+ht+ht2, forest)
+   step(mod)
+
+   cor(forest[,c('diam','ldiam','diam.5','diam2','ht','lht','ht.5','ht2')], use = 'pairwise.complete.obs')
+
+   ggplot(forest, aes(x=ht.5, y=ldiam))+
+     geom_smooth()
+
+   mod <- lm(ldiam ~ ht.5, forest)
+   summary(mod)
+
+   h <- c(5, 10, 15, 20, 30, 40)
+
+   d <- exp(0.70799 + 0.61045*h^0.5)
+   round(d, 0)
+
+   cor(forest[,c('cover','lcover','cover.5','cover2','BA','lBA','BA.5','BA2')], use = 'pairwise.complete.obs')
+
+   ggplot(forest, aes(x=BA, y=cover))+
+     geom_smooth()
+
+   mod <- lm((diam) ~ ht.5, forest)
+   summary(mod)
+
+   library(minpack.lm)
+   library(growthmodels)
+   xy <- forest |> subset(!is.na(BA) & !is.na(cover))
+   x <- xy$BA
+   y <- xy$cover
+   mod1 <- nlsLM(y ~ growthmodels::gompertz(x, alpha, beta, k), start = list(alpha = 100, beta = 1, k = 1))#can swap out start values for fixed
+
+
+   mod1 <- minpack.lm::nlsLM(y ~ b1*(1-exp(b2*x))^(b3) , start = list(b1=100, b2=-1, b3=1))#can swap out start values for fixed model values
+   summary(mod1)
+
+   BA.to.cover <- function(x){
+     b1= 94.49218
+     b2= -0.08282
+     b3= 0.78939
+     y = b1*(1-exp(b2*x))^b3
+     return(round(y,1))}
+
+
+
+   BA=c(0,1,2,5,10,20,50)
+  BA.to.cover(BA)
