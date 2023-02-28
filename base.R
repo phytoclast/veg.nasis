@@ -7,7 +7,9 @@ remotes::install_github("phytoclast/vegnasis", dependencies = FALSE)
 library(vegnasis)
 #fresh NASIS data
 veg.raw <- soilDB::get_vegplot_species_from_NASIS_db(SS = FALSE)
-veg <- clean.veg(veg.raw) |> fill.hts.df()
+veg.raw2 <- soilDB::get_vegplot_transpecies_from_NASIS_db(SS = FALSE)
+veg.raw3 <- soilDB::get_vegplot_transect_from_NASIS_db (SS = FALSE)
+veg <- clean.veg.transect(veg.raw2) |> fill.hts.df()
 #sample data
 veg.raw <- vegnasis::nasis.veg
 veg <- clean.veg(veg.raw)
@@ -744,6 +746,22 @@ x <- veg |> mutate(stratum = case_when(
 
    BA=c(0,1,2,5,10,20,50)
   BA.to.cover(BA)
+
+  obssites = vegnasis::obs
+  obstaxa = vegnasis::obsspp
+  veg <- clean.veg.log(obssites, obstaxa)
+  veg <- clean.veg(nasis.veg)
+  veg <- veg |> fill.hts.df()
+
+  #Example data created to look as if imported from random csv file.
+  obsite <- c('plot1','plot1','plot1', 'plot2', 'plot2')
+  obsspp <- c('Acer rubrum','Pinus strobus','Pteridium aquilinum', 'Lindera benzoin', 'Trillium grandiflorum')
+  abund <- c(80,10,30,10,10)
+  mydata <- data.frame(obsite=obsite, obsspp=obsspp, abund=abund)
+
+  #Identify columns containing data cooresponding to standard column names.
+  mydata <- mydata |> mutate(taxon=obsspp, cover=abund, plot=obsite)
+  veg <- mydata |> pre.fill.veg()
 
 
 
