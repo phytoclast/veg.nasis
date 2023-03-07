@@ -65,5 +65,5 @@ y <- set.site(plot=y$site_id,
 
 x <- x |> subset(year == 2022 & month == 06 & day %in% c(22,23))
 
-clean.veg()
+
 z = match.sites(x=x,y=y, maxdist = 10000, maxdays = 200)
