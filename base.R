@@ -8,6 +8,12 @@ library(vegnasis)
 #fresh NASIS data
 veg.raw <- soilDB::get_vegplot_species_from_NASIS_db(SS = FALSE)
 veg.raw2 <- soilDB::get_vegplot_transpecies_from_NASIS_db(SS = FALSE)
+site.raw <- soilDB::get_site_data_from_NASIS_db(SS = FALSE)
+saveRDS(veg.raw, 'data/nasisvegraw2.RDS')
+saveRDS(veg.raw2, 'data/nasisvegtransraw2.RDS')
+saveRDS(site.raw, 'data/nasissiteraw2.RDS')
+
+
 veg.raw3 <- soilDB::get_vegplot_transect_from_NASIS_db (SS = FALSE)
 veg <- clean.veg.transect(veg.raw2) |> fill.hts.df()
 #sample data
@@ -764,4 +770,14 @@ x <- veg |> mutate(stratum = case_when(
   veg <- mydata |> pre.fill.veg()
 
 
+  veg.raw <- soilDB::get_vegplot_species_from_NASIS_db(SS = TRUE)
+ veg <- clean.veg(veg.raw)
+
+veg <- veg |> fill.nativity.df() |> fill.type.df() |> fill.hts.df()
+ass <- get.assoc(veg)
+structure <- veg |> get.structure()
+structure.alt <- veg |> get.structure.alt()
+structure2 <- veg |> get.structure(simple = FALSE)
+structure2.alt <- veg |> get.structure.alt(simple = FALSE)
+veg <- veg |> summary.strata()
 
