@@ -51,8 +51,6 @@ m <- make.plot.matrix(veg)
 #
 # test.R022AB006CA <- test$R022AB006CA$Raw_data
 
-veg.raw <- readRDS('data_raw/veg.raw.select.RDS')
-usethis::use_data(veg.raw, overwrite = T)
 # taxon.habits <- read.csv('data_raw/taxon.habits.csv')
 # usethis::use_data(taxon.habits, overwrite = T)
 # gho <- read.csv('data_raw/gho.csv')
@@ -78,6 +76,8 @@ usethis::use_data(veg.raw, overwrite = T)
 # usethis::use_data(usdaplants, overwrite = T)
 # natdat <- read.csv('data_raw/nativity.csv')
 # usethis::use_data(natdat, overwrite = T)
+# nasis.veg <- readRDS('data_raw/veg.raw.select.RDS')
+# usethis::use_data(nasis.veg, overwrite = T)
 
 
 
