@@ -114,13 +114,33 @@ strat.summary <- vegnasis::summary.crown.thickness(veg, breaks)
 veg.raw <-  vegnasis::nasis.veg
 veg <- clean.veg(veg.raw)
 
-vegs <- veg |> subset(plot %in% '2022MI165023.P') |> fill.hts.df()
+vegs <- veg  |> fill.hts.df()|> subset(grepl('2022MI16',plot))
 
 vegs <- vegs |> mutate(diam =  fill.diameters(ht.max,diam))
-vegs <- vegs |> mutate(stems = trees_per_ha(BA, diam))
 
-totalBA <- sum(vegs$BA, na.rm = T)
-vegs.sum <- vegs |> mutate(cancov = ifelse(ht.max > 5, cover, NA)) |> group_by(plot) |> mutate(cancov.sum = sum(cancov, na.rm = T),
-                                                                                               BA.sum=sum(BA, na.rm = T),
-                                                                                               BA2 = BA.sum*cancov/cancov.sum)
 
+vegs <- vegs |> mutate(cover.over = ifelse(ht.max > 5, cover, NA)) |> group_by(plot) |> mutate(overstory = sum(cover.over, na.rm = T),
+                                                                                               BA.stand=sum(BA, na.rm = T),
+                                                                                               BA.dstr = BA.stand*cover.over/overstory)
+vegs <- vegs |> mutate(density = trees_per_ha(BA2, diam))
+vegs <- vegs |> mutate(cw = est_crown_width(density,cover,diam))
+
+BA <- c(0:600)/5
+cc <- BA.to.cover(BA)
+
+plot(BA~cc)
+mod1 <- minpack.lm::nlsLM(BA ~ b1*(1-exp(b2*cc))^(b3) , start = list(b1=100, b2=-1, b3=1))#can swap out start values for fixed model values
+summary(mod1)
+summary(mod1)
+
+
+vegs <- vegs |> mutate(stratum = case_when(ht.max > 45 ~ 'T3',
+                                           ht.max > 15 ~ 'T2',
+                                           ht.max > 5 & type %in% c('tree', 'shrub/vine') ~ 'T1',
+                                           ht.max > 0.5 & type %in% c('tree', 'shrub/vine') ~ 'S',
+                                           ht.max >= 0 & !type %in% c('moss', 'lichen') ~ 'H',
+                                           type %in% c('moss', 'lichen') ~ 'M',
+                                           ht.max < 0 ~ 'A',
+                                           ))
+
+vegs <- vegs |> group_by(plot, stratum) |> mutate(stratum.cover = cover.agg(cover))
