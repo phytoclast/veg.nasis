@@ -122,7 +122,7 @@ vegs <- vegs |> mutate(diam =  fill.diameters(ht.max,diam))
 vegs <- vegs |> mutate(cover.over = ifelse(ht.max > 5, cover, NA)) |> group_by(plot) |> mutate(overstory = sum(cover.over, na.rm = T),
                                                                                                BA.stand=sum(BA, na.rm = T),
                                                                                                BA.dstr = BA.stand*cover.over/overstory)
-vegs <- vegs |> mutate(density = trees_per_ha(BA2, diam))
+vegs <- vegs |> mutate(density = trees_per_ha(BA.dstr, diam))
 vegs <- vegs |> mutate(cw = est_crown_width(density,cover,diam))
 
 BA <- c(0:600)/5
@@ -144,3 +144,43 @@ vegs <- vegs |> mutate(stratum = case_when(ht.max > 45 ~ 'T3',
                                            ))
 
 vegs <- vegs |> group_by(plot, stratum) |> mutate(stratum.cover = cover.agg(cover))
+
+
+veg <- clean.veg.log(obs, obsspp)
+
+veg <- veg |> mutate(taxon=harmonize.taxa(veg$taxon, fix=T)) |> fill.type.df() |> fill.nativity.df() |> mutate(symbol = fill.usda.symbols(taxon)) |> fill.hts.df()
+forest <-  veg |> mutate(h = ifelse(diam > 0 & BA > 0, ht.max, NA),
+                         d = ifelse(diam > 0 & BA > 0, diam, NA),
+                         b = ifelse(diam > 0 & BA > 0, BA, NA)) |>
+  group_by(plot) |> filter(ht.max > 5) |>
+  summarise(cover = cover.agg(cover), BA = sum(BA, na.rm = T),
+            h=sum(h*b, na.rm = T), d=sum(d*b, na.rm = T), b=sum(b, na.rm = T)) |> mutate(BA = ifelse(BA > 0, BA, NA),
+                                                                                         ht = ifelse(b == 0, NA, h/b),
+                                                                                         diam = ifelse(b == 0, NA, d/b),
+                                                                                         h = NULL, d = NULL, b=NULL)
+
+BA = forest$BA
+cc = forest$cover
+mod1 <- minpack.lm::nlsLM(BA ~ b1 * exp(b2*cc)^(b3) , start = list(b1=1,b2=0.001, b3=0.1))#can swap out start values for fixed model
+
+mod <- lm(BA ~ poly(cover,2), data=forest)
+
+b1= 8.478e-20
+
+b3= 1.000e+00
+forest$BA2 = 533.717*forest$cover + 9.401*forest$cover^2
+
+
+df = data.frame(BA <- c(0:600)/5,
+                cc <- BA.to.cover(BA))
+library(ggplot2)
+ggplot(forest, aes(BA, cover))+
+  geom_point()+
+  geom_smooth()+
+  geom_line(data=df, aes(x=BA, y=cc), color='red')
+
+ggplot(data=forest, aes(x=cover, y=BA))+
+  geom_point()+
+  geom_smooth()+
+  geom_line(data=df, aes(x=cc, y=BA), color='red')+
+  geom_smooth(data=forest, aes(x=cover, y=BA2), color='green')
