@@ -114,24 +114,72 @@ strat.summary <- vegnasis::summary.crown.thickness(veg, breaks)
 veg.raw <-  vegnasis::nasis.veg
 veg <- clean.veg(veg.raw)
 
-vegs <- veg  |> fill.hts.df()|> subset(grepl('2022MI16',plot))
+veg <- veg  |> fill.hts.df()|> subset(grepl('2022MI16',plot))
 
-vegs <- vegs |> mutate(diam =  fill.diameters(ht.max,diam))
+veg <- veg |> mutate(dbh.r =  fill.diameters(ht.max,dbh.max,dbh.min))
+veg <- veg |> mutate(cw =  case_when(type %in% 'tree' | ht.max > 5 ~ pmax(est_crown_width(dbh.r),1),
+                                     type %in% 'shrub/vine' ~ pmax(pmin(3,ht.max),1),
+                                     TRUE ~ 1))
+veg <- veg |> mutate(density =  density_from_cw(cover, cw))
+veg <- veg |> mutate(BA.r =  BA_per_ha(density, dbh.r))
+
+veg <- veg |> group_by(plot) |> mutate(BA.sum = sum(BA, na.rm = T), BA.rsum = sum(BA.r, na.rm = T), BA.sum = ifelse(is.na(BA.sum), BA.rsum,BA.sum), BA.ratio = BA.sum/BA.rsum,  BA.rsum = NULL)#
+
+veg <- veg |> mutate(BA.r = ifelse(is.na(BA.sum) | ht.max <= 5, BA.r, round(BA.r*BA.sum/BA.rsum,1)),
+                     density = ifelse(is.na(BA.sum) | ht.max <= 5, density, round(density*BA.sum/BA.rsum,0)),
+                     cw = ifelse(is.na(BA.sum) | ht.max <= 5, cw, round(cw*(BA.sum/BA.rsum)^-0.5,1)))
+
+veg <- veg |> mutate(habit= get.habit.code(taxon),
+                     crshape = case_when(grepl('^T', habit) & grepl('N', habit) ~ 'conifer1',
+                                         grepl('^T', habit)  ~ 'blob',
+                                         type %in% 'shrub/vine' ~ 'cloud1',
+                                         grepl('FE', habit) ~ 'ferny',
+                                         grepl('F', habit) ~ 'forby',
+                                         type %in% 'grass/grasslike' ~ 'grassy'),
+                     stshape = case_when(grepl('^T', habit) & grepl('N', habit) ~ 'trunk',
+                                         grepl('^T', habit)  ~ 'trunk',
+                                         type %in% 'shrub/vine' ~ 'sticks',
+                                         grepl('FE', habit) ~ NA,
+                                         grepl('F', habit) ~ NA,
+                                         type %in% 'grass/grasslike' ~ NA))
+veg <- veg |> arrange(plot,-ht.max, -cover)
+#number strats...
 
 
-vegs <- vegs |> mutate(cover.over = ifelse(ht.max > 5, cover, NA)) |> group_by(plot) |> mutate(overstory = sum(cover.over, na.rm = T),
-                                                                                               BA.stand=sum(BA, na.rm = T),
-                                                                                               BA.dstr = BA.stand*cover.over/overstory)
-vegs <- vegs |> mutate(density = trees_per_ha(BA.dstr, diam))
-vegs <- vegs |> mutate(cw = est_crown_width(density,cover,diam))
 
-BA <- c(0:600)/5
-cc <- BA.to.cover(BA)
+attach(mtcars)
 
-plot(BA~cc)
-mod1 <- minpack.lm::nlsLM(BA ~ b1*(1-exp(b2*cc))^(b3) , start = list(b1=100, b2=-1, b3=1))#can swap out start values for fixed model values
-summary(mod1)
-summary(mod1)
+# sort by mpg
+newdata <- mtcars[order(mpg),]
+
+# sort by mpg and cyl
+newdata <- mtcars[order(mpg, cyl),]
+
+#sort by mpg (ascending) and cyl (descending)
+newdata <- mtcars[order(mpg, -cyl),]
+
+detach(mtcars)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 vegs <- vegs |> mutate(stratum = case_when(ht.max > 45 ~ 'T3',
@@ -149,7 +197,8 @@ vegs <- vegs |> group_by(plot, stratum) |> mutate(stratum.cover = cover.agg(cove
 veg <- clean.veg.log(obs, obsspp)
 
 veg <- veg |> mutate(taxon=harmonize.taxa(veg$taxon, fix=T)) |> fill.type.df() |> fill.nativity.df() |> mutate(symbol = fill.usda.symbols(taxon)) |> fill.hts.df()
-forest <-  veg |> mutate(h = ifelse(diam > 0 & BA > 0, ht.max, NA),
+forest <-  veg |> mutate(diam = ifelse(is.na(dbh.min),dbh.max,(dbh.max+dbh.min)/2),
+                         h = ifelse(diam > 0 & BA > 0, ht.max, NA),
                          d = ifelse(diam > 0 & BA > 0, diam, NA),
                          b = ifelse(diam > 0 & BA > 0, BA, NA)) |>
   group_by(plot) |> filter(ht.max > 5) |>
@@ -158,29 +207,125 @@ forest <-  veg |> mutate(h = ifelse(diam > 0 & BA > 0, ht.max, NA),
                                                                                          ht = ifelse(b == 0, NA, h/b),
                                                                                          diam = ifelse(b == 0, NA, d/b),
                                                                                          h = NULL, d = NULL, b=NULL)
+n <- c(0:100)*400
+(1/10000)*10000*100
+c0 <- (1/10000)*n*100
+c1 <- pmin((1/10000)*n*100, 100)
+c2 <- (1-(1-1/10000)^n)*100
+cf = ((100-c2)/1+0)/100+0.2
+c3 <- c1*2/3+c2*1/3
+
+w = 10
+c = 90
+cf=0.8
+n1 <- log(1-c/100)/log(1-w/10000)
+n2 <- c/(100*(w/10000))
+n3 <- n1*(1-cf)+n2*cf
+c1 <- pmin((w/10000)*n3*100, 100)
+c2 <- (1-(1-w/10000)^n3)*100
+c1*2/3+c2*1/3
+
+ht <- c(0.5,2,5,10,20,30,45,80)
+dbh <- fill.diameters(ht)
+dbh
+dbh <-exp(1.248705*log(ht)) |> round(1)
+dbh
+cover <- c(10)
+BA = cover/100*30
+density = trees_per_ha(BA, dbh)
+cw = est_crown_width(density, cover, dbh)
+cw
+#45.2 m tall, 134.7 cm
+
+
+# treedb <- read.csv('C:/workspace2/vegrob/All Trees (m).csv')
+#
+# treedb <- treedb |> mutate(ht.max =  readr::parse_number(Height..m.),
+#                            dbh =  readr::parse_number(Girth..cm.)/3.141592,
+#                            cw = readr::parse_number(Crown.spread..m.)) |> subset(select = c(Botanical.Name, ht.max,dbh,cw))
+# write.csv(treedb, 'data/treedb.csv', row.names = F)
+treedb <- read.csv('data/treedb.csv') |> subset(dbh < 900 & ht.max > 5 & dbh > 10)
+
+forest <- treedb |> mutate(ht=ht.max, lht=log(ht), ldiam=log(dbh),
+                           ht2 = ht^2, ht.5 = ht^0.5, diam.5 = dbh^0.5, diam2 = dbh^2, lcw = log(cw)) |> subset(!is.na(ht) & !is.na(dbh))
+#To test bends in the curve, several transformations to see which fit was best.
+cor(forest[,c('dbh','ldiam','diam.5','diam2','ht','lht','ht.5','ht2','cw','lcw')], use = 'pairwise.complete.obs')
+
+mod <- lm(log(dbh)~log(ht.max)+0, data=forest)
+summary(mod)
+library(ggplot2)
+forest <- forest |> mutate(dbhmod = exp(1.248705*log(ht.max)), dbhold = fill.diameters(ht.max))
+ggplot(data=forest)+
+  geom_point(aes(x=ht.max, y=dbh), color='black', size= 0.1, alpha=0.1)+
+  geom_smooth(aes(x=ht.max, y=dbh), color='red')+
+  geom_smooth(aes(x=ht.max, y=dbhold), color='blue')+
+  geom_smooth(aes(x=ht.max, y=dbhmod), color='green')+
+  scale_x_continuous(breaks = c(0:20)*20)+#, limits = c(0,200))+
+  scale_y_continuous(breaks = c(0:40)*50)#, limits = c(0,100))
+
+mod <- lm(cw~dbh+I(dbh^2), data=forest)
+summary(mod)
+
+mod1 <- minpack.lm::nlsLM(cw ~ b1*(1-exp(b2*dbh))^(b3), data=forest , start = list(b1=100, b2=-1, b3=1))
+summary(mod1)
+b1= 69.690000
+b2= -0.002392
+b3=  0.857591
+forest <- forest |> mutate(cwmod = b1*(1-exp(b2*dbh))^(b3), ratio=cw/dbh, mratio=cwmod/dbh)
+ggplot(data=forest)+
+  geom_point(aes(x=dbh, y=cw), color='black', size= 0.1, alpha=0.5)+
+  geom_smooth(aes(x=dbh, y=cw), color='red')+
+  geom_smooth(aes(x=dbh, y=cwmod), color='blue')+
+
+  scale_x_continuous(breaks = c(0:20)*50)+#, limits = c(0,200))+
+  scale_y_continuous(breaks = c(0:40)*20)#, limits = c(0,100))
+ggplot(data=forest)+
+  geom_point(aes(x=dbh, y=ratio), color='black', size= 0.1, alpha=0.5)+
+  geom_smooth(aes(x=dbh, y=ratio), color='red')+
+  geom_smooth(aes(x=dbh, y=mratio), color='blue')+
+
+  scale_x_continuous(breaks = c(0:20)*50)+#, limits = c(0,200))+
+  scale_y_continuous(breaks = c(0:40)*.20)#, limits = c(0,100))
+
+
+
+cover = 90
+cw = 1
+density_from_cw(cover, cw)
+
+
+c1 <- pmin((w/10000)*n2*100, 100)
+c2 <- (1-(1-w/10000)^n2)*100
+c1*2/3+c2*1/3
+
+df <-  data.frame(n=n,c0=c0,c1=c1,c2=c2,c3=c3)
+
+library(ggplot2)
+
+ggplot(data=df)+
+  geom_line(aes(x=c0, y=c1), color='red')+
+  geom_line(aes(x=c0, y=c2), color='blue')+
+  geom_line(aes(x=c0, y=c3), color='green')+
+  scale_x_continuous(breaks = c(0:20)*20, limits = c(0,200))+
+  scale_y_continuous(breaks = c(0:40)*20, limits = c(0,100))
+
+
 
 BA = forest$BA
 cc = forest$cover
-mod1 <- minpack.lm::nlsLM(BA ~ b1 * exp(b2*cc)^(b3) , start = list(b1=1,b2=0.001, b3=0.1))#can swap out start values for fixed model
 
-mod <- lm(BA ~ poly(cover,2), data=forest)
-
-b1= 8.478e-20
-
-b3= 1.000e+00
-forest$BA2 = 533.717*forest$cover + 9.401*forest$cover^2
-
-
-df = data.frame(BA <- c(0:600)/5,
-                cc <- BA.to.cover(BA))
+BA=c(0:600)/5
+cc=BA.to.cover(BA)
+BA2=30*cc/100
+df = data.frame(BA=BA,
+                cc=cc,
+                BA2=BA2)
 library(ggplot2)
-ggplot(forest, aes(BA, cover))+
-  geom_point()+
-  geom_smooth()+
-  geom_line(data=df, aes(x=BA, y=cc), color='red')
 
 ggplot(data=forest, aes(x=cover, y=BA))+
   geom_point()+
   geom_smooth()+
   geom_line(data=df, aes(x=cc, y=BA), color='red')+
-  geom_smooth(data=forest, aes(x=cover, y=BA2), color='green')
+  geom_smooth(data=df, aes(x=cc, y=BA2), color='green')+
+  scale_x_continuous(breaks = c(0:20)*20)+
+  scale_y_continuous(breaks = c(0:40)*20)
