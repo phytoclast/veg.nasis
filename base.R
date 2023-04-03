@@ -6,7 +6,7 @@ library(dplyr)
 remotes::install_github("phytoclast/vegnasis", dependencies = FALSE)
 library(vegnasis)
 #fresh NASIS data
-veg.raw <- soilDB::get_vegplot_species_from_NASIS_db(SS = FALSE)
+veg.raw <- soilDB::get_vegplot_species_from_NASIS_db(SS = F)
 veg.raw2 <- soilDB::get_vegplot_transpecies_from_NASIS_db(SS = FALSE)
 site.raw <- soilDB::get_site_data_from_NASIS_db(SS = FALSE)
 saveRDS(veg.raw, 'data/nasisvegraw2.RDS')
@@ -78,8 +78,11 @@ m <- make.plot.matrix(veg)
 # usethis::use_data(natdat, overwrite = T)
 # nasis.veg <- readRDS('data_raw/veg.raw.select.RDS')
 # usethis::use_data(nasis.veg, overwrite = T)
-
-
+# veg.raw <- soilDB::get_vegplot_species_from_NASIS_db(SS = F)
+# select1 <- subset(nasis.veg, !grepl('2022MI', vegplotid))
+# select2 <- subset(veg.raw, grepl('2022MI', vegplotid))
+# select3 <- rbind(select2,select1)
+# saveRDS(select3,'data_raw/veg.raw.select.RDS')
 
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
@@ -110,11 +113,38 @@ strat.summary <- vegnasis::summary.crown.thickness(veg, breaks)
 # saveRDS(veg.spp, 'data/veg.spp.RDS')
 # saveRDS(veg.data.veg, 'data/veg.data.veg.RDS')
 # saveRDS(veg.data.trans, 'data/veg.data.trans.RDS')
-
+library(vegnasis)
 veg.raw <-  vegnasis::nasis.veg
 veg <- clean.veg(veg.raw)
 
-veg <- veg  |> fill.hts.df()|> subset(grepl('2022MI16',plot))
+veg <- subset(veg,  grepl('2022MI165023.P',plot))
+plants <- prepare_strata(veg)
+
+veg_profile_plot(plants)
+'2022MI165021.P'
+'2021WA031024'
+plants <- veg.select |> prepare_strata()
+veg_profile_plot(plants)
+veg_profile_plot(plants, 'sqrt', 10)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+veg <- veg  |> fill.hts.df()|> subset(grepl('WA',plot))
 
 veg <- veg |> mutate(dbh.r =  fill.diameters(ht.max,dbh.max,dbh.min))
 veg <- veg |> mutate(cw =  case_when(type %in% 'tree' | ht.max > 5 ~ pmax(est_crown_width(dbh.r),1),
@@ -125,9 +155,9 @@ veg <- veg |> mutate(BA.r =  BA_per_ha(density, dbh.r))
 
 veg <- veg |> group_by(plot) |> mutate(BA.sum = sum(BA, na.rm = T), BA.rsum = sum(BA.r, na.rm = T), BA.sum = ifelse(is.na(BA.sum), BA.rsum,BA.sum), BA.ratio = BA.sum/BA.rsum,  BA.rsum = NULL)#
 
-veg <- veg |> mutate(BA.r = ifelse(is.na(BA.sum) | ht.max <= 5, BA.r, round(BA.r*BA.sum/BA.rsum,1)),
-                     density = ifelse(is.na(BA.sum) | ht.max <= 5, density, round(density*BA.sum/BA.rsum,0)),
-                     cw = ifelse(is.na(BA.sum) | ht.max <= 5, cw, round(cw*(BA.sum/BA.rsum)^-0.5,1)))
+veg <- veg |> mutate(BA.r = ifelse(ht.max <= 5, BA.r, round(BA.r*BA.ratio,1)),
+                     density = ifelse(ht.max <= 5, density, round(density*BA.ratio,0)),
+                     cw = ifelse(ht.max <= 5, cw, round(cw*BA.ratio^-0.5,1)))
 
 veg <- veg |> mutate(habit= get.habit.code(taxon),
                      crshape = case_when(grepl('^T', habit) & grepl('N', habit) ~ 'conifer1',
@@ -141,24 +171,130 @@ veg <- veg |> mutate(habit= get.habit.code(taxon),
                                          type %in% 'shrub/vine' ~ 'sticks',
                                          grepl('FE', habit) ~ NA,
                                          grepl('F', habit) ~ NA,
-                                         type %in% 'grass/grasslike' ~ NA))
-veg <- veg |> arrange(plot,-ht.max, -cover)
-#number strats...
+                                         type %in% 'grass/grasslike' ~ NA),
+                     fun=case_when(grepl('^T', habit)  ~ 'T',
+                                   grepl('^S', habit)  ~ 'S',
+                                   grepl('^H', habit)  ~ 'H'),
+                     stems = round(0.1*density,0) #count number of stem objects required for tenth hectare plot
+                     )
+strats <- veg |> subset(fun %in% c('T','S','H') & stems > 0) |> arrange(plot,-ht.max, -cover)
+strats$seq <- c(1:nrow(strats))
+strats <- strats |> group_by(plot) |> mutate(seqmin = min(seq), seq = seq-seqmin+1, seqmin = NULL)
+
+
+strats <- subset(strats,  grepl('2021WA031024',plot))
+#make stand
+stand <- make_hex_stand(0.5,1) |> subset(yp >= 15 & yp < 35) |> mutate(wtn = wt, stratid = NA)
+#define counts per stratum
 
 
 
-attach(mtcars)
 
-# sort by mpg
-newdata <- mtcars[order(mpg),]
 
-# sort by mpg and cyl
-newdata <- mtcars[order(mpg, cyl),]
+for (i in 1:nrow(strats)){#i=1
+  thistrat = strats$seq[i]
+  nstems = strats$stems[i]
+  newstumps <- sample(stand$stumpid, size = nstems, prob = stand$wtn, replace = T)
+  stand <- stand |> mutate(wtn = ifelse(stand$stumpid %in% newstumps, 0, wtn),
+                           stratid = ifelse(stand$stumpid %in% newstumps, thistrat,stratid))
+}
 
-#sort by mpg (ascending) and cyl (descending)
-newdata <- mtcars[order(mpg, -cyl),]
+#Create shapes of the right size, then distribute into the stump positions.
+for (i in 1:nrow(strats)){#i=1
+  thistrat <- strats[i,]
+  plant0 <- make_plant(thistrat$fun, thistrat$ht.max, thistrat$ht.min,thistrat$cw,thistrat$dbh.r, thistrat$crshape, thistrat$stshape)
+  stumps0 <- stand |> subset(stratid %in% i)
+  plant0 <- merge(stumps0, plant0) |> mutate(objid = paste0(stratid,obj,stumpid))
+  if(i==1){plants <- plant0}else{plants <- rbind(plants,plant0)}
+}
 
-detach(mtcars)
+#randomize sizes and positions
+plants <- plants |> group_by(stumpid) |>
+  mutate(ht.max = max(z), crwd = max(x)-min(x),
+         xpp = xp + runif(1, min = -0.8, max = 0.8),#shift position on grid
+         zr = rnorm(1,ht.max, ht.max/10)/ht.max,#deviation in height
+         xr = (rnorm(1,ht.max, ht.max/10)/ht.max+rnorm(1,crwd, crwd/10)/crwd)/2,#deviation in width partially related to height
+         xn = x*xr+xpp,#resized width and put on new position
+         zn = z*zr*(1-1/15))#resized height adjusted downward show that variation is less than max height in the field
+
+#rearrange stems depth drawing order
+plants <- plants |> arrange(yp,stumpid, objid, ptord)
+ypmax <- max(plants$yp)
+ypmin <- min(plants$yp)
+ypwid <- ypmax-ypmin
+plants <- plants |> mutate(depth = case_when(yp < ypmin+ypwid*(1/5) ~ 'E',
+                                             yp < ypmin+ypwid*(2/5) ~ 'D',
+                                             yp < ypmin+ypwid*(3/5) ~ 'C',
+                                             yp < ypmin+ypwid*(4/5) ~ 'B',
+                                             TRUE ~ 'A'))
+
+crowns1 <- plants |> subset(depth %in% 'E' & obj %in% c('crown','herb')) |>
+  mutate(fill=colormixer(fill, "#D9F2FF", 0.8), color=colormixer(color, "#D9F2FF", 0.8))
+crowns2 <- plants |> subset(depth %in% 'D' & obj %in% c('crown','herb')) |>
+  mutate(fill=colormixer(fill, "#D9F2FF", 0.6), color=colormixer(color, "#D9F2FF", 0.6))
+crowns3 <- plants |> subset(depth %in% 'C' & obj %in% c('crown','herb')) |>
+  mutate(fill=colormixer(fill, "#D9F2FF", 0.4), color=colormixer(color, "#D9F2FF", 0.4))
+crowns4 <- plants |> subset(depth %in% 'B' & obj %in% c('crown','herb'))|>
+  mutate(fill=colormixer(fill, "#D9F2FF", 0.2), color=colormixer(color, "#D9F2FF", 0.2))
+crowns5 <- plants |> subset(depth %in% 'A' & obj %in% c('crown','herb'))
+
+stems1 <- plants |> subset(depth %in% 'E' & obj %in% 'stem')|>
+  mutate(fill=colormixer(fill, "#D9F2FF", 0.8), color=colormixer(color, "#D9F2FF", 0.8))
+stems2 <- plants |> subset(depth %in% 'D' & obj %in% 'stem')|>
+  mutate(fill=colormixer(fill, "#D9F2FF", 0.6), color=colormixer(color, "#D9F2FF", 0.6))
+stems3 <- plants |> subset(depth %in% 'C' & obj %in% 'stem')|>
+  mutate(fill=colormixer(fill, "#D9F2FF", 0.4), color=colormixer(color, "#D9F2FF", 0.4))
+stems4 <- plants |> subset(depth %in% 'B' & obj %in% 'stem')|>
+  mutate(fill=colormixer(fill, "#D9F2FF", 0.2), color=colormixer(color, "#D9F2FF", 0.2))
+stems5 <- plants |> subset(depth %in% 'A' & obj %in% 'stem')
+
+plants2 <- rbind(crowns1,crowns2,crowns3,crowns4,crowns5,stems1,stems2,stems3,stems4,stems5)
+
+# ggplot()+
+#   geom_point(aes(x=1,y=1))+
+#   theme(panel.background = element_rect(fill = rgb(0.4,0.6,0.5)))
+
+pcolor <- plants2$color |> unique() |> sort()
+pfill <- plants2$fill |> unique()|> sort()
+
+
+
+ggplot() +
+  geom_polygon(data=stems1, aes(x=xn,y=zn,group=objid, fill=fill, color=color), alpha=1, linewidth=0.01)+
+  geom_polygon(data=crowns1, aes(x=xn,y=zn,group=objid, fill=fill, color=color), alpha=1, linewidth=0.01)+
+  geom_polygon(data=stems2, aes(x=xn,y=zn,group=objid, fill=fill, color=color), alpha=1, linewidth=0.01)+
+  geom_polygon(data=crowns2, aes(x=xn,y=zn,group=objid, fill=fill, color=color), alpha=1, linewidth=0.01)+
+  geom_polygon(data=stems3, aes(x=xn,y=zn,group=objid, fill=fill, color=color), alpha=1, linewidth=0.01)+
+  geom_polygon(data=crowns3, aes(x=xn,y=zn,group=objid, fill=fill, color=color), alpha=1, linewidth=0.01)+
+  geom_polygon(data=stems4, aes(x=xn,y=zn,group=objid, fill=fill, color=color), alpha=1, linewidth=0.01)+
+  geom_polygon(data=crowns4, aes(x=xn,y=zn,group=objid, fill=fill, color=color), alpha=1, linewidth=0.01)+
+  geom_polygon(data=stems5, aes(x=xn,y=zn,group=objid, fill=fill, color=color), alpha=1, linewidth=0.01)+
+  geom_polygon(data=crowns5, aes(x=xn,y=zn,group=objid, fill=fill, color=color), alpha=1, linewidth=0.01)+
+  scale_fill_manual(values=pfill)+
+  scale_color_manual(values=pcolor)+
+  theme(legend.position = "none",
+        panel.background = element_rect(fill = rgb(0.85,0.95,1,0.5),
+                                        colour = "black",
+                                        linewidth = 0.5, linetype = "solid"),
+        panel.grid.major = element_line(linewidth = 0.5, linetype = 'solid',
+                                        colour = rgb(0.1, 0.1, 0.1, 0.3)),
+        panel.grid.minor = element_line(linewidth = 0.1, linetype = 'solid',
+                                        colour = rgb(0.1, 0.1, 0.1, 0.1))
+  )+
+  coord_fixed(ratio = 1)+
+  scale_y_continuous(trans='identity', breaks = c(-10:(120/5))*5,minor_breaks = c(-10:(120)), limits = c(0,100))+
+  scale_x_continuous(breaks = c(-10:(120/5))*5, minor_breaks = c(-10:(120)), limits = c(-10,60))
+
+
+
+
+
+
+
+
+
+
+
 
 
 
