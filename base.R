@@ -115,21 +115,29 @@ strat.summary <- vegnasis::summary.crown.thickness(veg, breaks)
 # saveRDS(veg.data.trans, 'data/veg.data.trans.RDS')
 library(vegnasis)
 veg.raw <-  vegnasis::nasis.veg
-veg <- clean.veg(veg.raw)
-
-veg <- subset(veg,  grepl('2022MI165023.P',plot))
-plants <- prepare_strata(veg)
+veg <- clean.veg(veg.raw) |> fill.type.df() |> fill.hts.df()
+veg$habit <- get.habit.code(veg$taxon)
+veg.s <- subset(veg,  grepl('2022AK261038',plot))
+plants <- prepare_strata(veg.s)
 
 veg_profile_plot(plants)
 '2022MI165021.P'
 '2021WA031024'
-plants <- veg.select |> prepare_strata()
-veg_profile_plot(plants)
-veg_profile_plot(plants, 'sqrt', 10)
 
 
+obsite <- c('plot1','plot1','plot1', 'plot1', 'plot1', 'plot1')
+obsspp <- c('Acer rubrum','Sabal palmetto','Pinus elliotii','Pteridium aquilinum', 'Aristida', 'Andropogon')
+abund <- c(5,10,10,10,30, 10)
+hts <- c(10,10,20,4,.2,3)
+mydata <- data.frame(obsite=obsite, obsspp=obsspp, abund=abund, hts=hts)
 
-
+#Identify columns containing data cooresponding to standard column names.
+mydata <- mydata |> mutate(taxon=obsspp, cover=abund, plot=obsite, crown.max = hts)
+veg <- mydata |> pre.fill.veg()|> fill.type.df() |> fill.hts.df()
+plants <- prepare_strata(veg)
+veg_profile_plot(plants,'sqrt',5)
+hb <- vegnasis::taxon.habits
+s <- vegnasis::shapes
 
 
 
