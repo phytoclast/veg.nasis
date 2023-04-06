@@ -117,27 +117,41 @@ library(vegnasis)
 veg.raw <-  vegnasis::nasis.veg
 veg <- clean.veg(veg.raw) |> fill.type.df() |> fill.hts.df()
 veg$habit <- get.habit.code(veg$taxon)
-veg.s <- subset(veg,  grepl('2021WA031024',plot))
-plants <- prepare_strata(veg.s)
+veg.s <- subset(veg,  grepl('2022MI165021.P',plot))
+taxon <- c('Acer rubrum', 'Pinus resinosa')
+crfill <- c(NA,"#80991A")
+stfill <- c('gray',"#B36666")
+crshape <- c(NA,'conifer2')
+override <- data.frame(taxon=taxon,stfill=stfill,crfill=crfill,crshape=crshape)
+veg.s <- veg.s |> left_join(override)
+
+plants <- grow_plants(veg.s)
 
 veg_profile_plot(plants)
 '2022MI165021.P'
 '2021WA031024'
-
-#Create savanna data
-obsite <- c('plot1')
-obsspp <- c('Quercus macrocarpa','Pteridium', 'Festuca', 'Andropogon', 'Liatris')
-abund <- c(20,10,60,10,5)
-hts <- c(15,1,0.6,2,0.4)
+rgb(0.7,0.4,0.4)
+#Create fake data
+plot <- c('plot1')
+taxon <- c('Quercus macrocarpa','UNK', 'Festuca', 'Andropogon', 'Liatris')
+cover <- c(20,20,60,10,5)
+crown.max <- c(15, 30, 0.6, 2, 10)
 dbh <- c(60,NA,NA,NA,NA)
-mydata <- data.frame(obsite=obsite, obsspp=obsspp, abund=abund, hts=hts, dbh=dbh)
+habit <- c(NA,'T.NE',NA, NA,'S.BD')
+crfill <- c('yellow',NA,'red',NA,NA)
+crcolor <- c('green','purple','red',NA,NA)
+stfill <- c('white',NA,'white',NA,NA)
+stcolor <- c('gray','blue','red',NA,NA)
 
-#Identify columns containing data corresponding to standard column names.
-mydata <- mydata |> mutate(taxon=obsspp, cover=abund, plot=obsite, crown.max = hts, dbh.max = dbh)
+mydata <- data.frame(taxon=taxon, cover=cover, plot=plot, crown.max = crown.max, dbh.max = dbh,
+                     habit=habit, crfill=crfill, crcolor=crcolor, stfill=stfill, stcolor=stcolor)
+
 veg <- mydata |> pre.fill.veg()
-plants <- prepare_strata(veg)
-veg_profile_plot(plants, unit='m',  skycolor = rgb(0.8,0.98,1), fadecolor = 'lightgray', gridalpha = 0.1, groundcolor = rgb(0.55,0.45,0.2))
-rgb(0.8,0.95,1)
+plants <- grow_plants(veg)
+veg_profile_plot(plants, unit='m',  skycolor = rgb(0.8,0.98,1), fadecolor = 'lightgray', gridalpha = 0.1, groundcolor = rgb(0.55,0.45,0.2), ylim = c(0,20))
+
+
+
 
 
 hb <- vegnasis::taxon.habits
@@ -146,10 +160,21 @@ s <- vegnasis::shapes
 
 
 
+plot <- c('plot1')
+taxon <- c('Quercus macrocarpa','UNK','Pteridium', 'Festuca', 'Andropogon', 'Liatris')
+cover <- c(20,5,10,60,10,5)
+crown.max <- c(15,4,1,0.6,2,0.4)
+crfill <- c(NA,"#99E6B3",NA,NA,NA,NA)
+dbh <- c(60,NA,NA,NA,NA,NA)
+habit <- c(NA,'S.BD',NA,NA,NA,NA)
+mydata <- data.frame(plot=plot,taxon=taxon, cover=cover, habit=habit, crown.max = crown.max, dbh.max = dbh,crfill=crfill)
 
 
+veg <- mydata |> pre.fill.veg()
+plants <- grow_plants(veg, plength=100) #Grow more plants on a longer 100 m plot (default was 50 m).
+veg_profile_plot(plants, unit='m',  skycolor = rgb(0.8,0.98,1), fadecolor = 'lightgray', gridalpha = 0.1, groundcolor = rgb(0.55,0.45,0.2), xlim=c(0,100))
 
-
+rgb(0.6,0.9,0.7)
 
 
 
