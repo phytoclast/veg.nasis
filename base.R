@@ -125,9 +125,9 @@ crshape <- c(NA,'conifer2')
 override <- data.frame(taxon=taxon,stfill=stfill,crfill=crfill,crshape=crshape)
 veg.s <- veg.s |> left_join(override)
 
-plants <- grow_plants(veg.s)
+plants <- grow_plants(veg.s, pwidth=50)
 
-veg_profile_plot(plants)
+veg_profile_plot0(plants, xslope=50, yslope=25)
 '2022MI165021.P'
 '2021WA031024'
 rgb(0.7,0.4,0.4)
@@ -502,3 +502,175 @@ ggplot(data=forest, aes(x=cover, y=BA))+
   geom_smooth(data=df, aes(x=cc, y=BA2), color='green')+
   scale_x_continuous(breaks = c(0:20)*20)+
   scale_y_continuous(breaks = c(0:40)*20)
+
+
+
+
+
+
+
+
+
+
+
+
+
+shape = branch
+bnarrow <- function(shape){
+  df=NULL
+  for(i in 1:50){#i=10
+    
+    yu = (i+3)/50
+    yl = (i-3)/50
+    ys <- subset(shape, y>= yl & y<= yu)
+    if(nrow(ys)>0){
+      w <- max(ys$x)-min(ys$x)
+      y <- (yu+yl)/2
+      
+      df0 <- data.frame(w=w,y=y)
+      if(is.null(df)){df = df0}else{df=rbind(df,df0)}
+    }}
+  
+  wmax <- max(df$w)
+  ywidest <- mean(subset(df, w %in% wmax)$y)
+  wmin <- min(subset(df, y < ywidest)$w)
+  ynarrowest <-  mean(subset(df, w %in% wmin)$y)
+  
+}
+
+
+
+library(terra)
+library(sf)
+maple <- rast('C:/workspace2/vegrob/maple.png')
+maple <- ifel(maple > 0, NA,1)
+maple1 <- as.polygons(maple) |> geom() |> as.data.frame()
+ggplot(maple1, aes(x,y,group=paste(part,hole), fill=hole))+
+  geom_polygon()
+maple1 <- subset(maple1, hole <=0)
+maple1 <- maple1 |> group_by(part) |> mutate(size = length(part)) 
+maxpart <- max(maple1$size)
+maple1 <- subset(maple1, size %in% maxpart)
+ggplot(maple1, aes(x,y,group=paste(part,hole), fill=paste(part,hole)))+
+  geom_polygon()
+
+ggplot(shape, aes(x,y,group=paste(part,hole), fill=paste(part,hole)))+
+  geom_polygon()
+
+shape = maple1
+shape$x <- (shape$x - (max(shape$x) + min(shape$x))/2) / (max(shape$x) - min(shape$x))
+shape$y <- 1-1*(shape$y - min(shape$y)) / (max(shape$y) - min(shape$y))
+shape$y <- shape$y*-1+1
+df=NULL
+for(i in 1:25){#i=10
+  
+  yu = (i+3)/25
+  yl = (i-3)/25
+  ys <- subset(shape, y>= yl & y<= yu)
+  if(nrow(ys)>0){
+    w <- max(ys$x)-min(ys$x)
+    y <- (yu+yl)/2
+    
+    df0 <- data.frame(w=w,y=y)
+    if(is.null(df)){df = df0}else{df=rbind(df,df0)}
+  }}
+
+wmax <- max(df$w)
+ywidest <- mean(subset(df, w %in% wmax)$y)
+wmin <- min(subset(df, y < ywidest)$w)
+ynarrowest <-  mean(subset(df, w %in% wmin)$y)
+ggplot()+
+  geom_polygon(data= shape, aes(y=x+0.5,x=y,group=paste(part,hole), fill=paste(part,hole)))+
+  geom_line(data= df, aes(x=y,y=w))+
+  scale_x_continuous(breaks = c(0:5)/5)+
+  scale_y_continuous(breaks = c(0:5)/5)+
+  coord_flip(xlim=c(0,1),ylim=c(0,1))
+
+
+
+
+shape <- as.polygons(maple) 
+coorwidth <- shape |> geom() |> as.data.frame()
+coorwidth <- max((max(coorwidth$x) - min(coorwidth$x)),(max(coorwidth$x) - min(coorwidth$x)))
+shape <- simplifyGeom(shape, coorwidth/200) |> geom() |> as.data.frame()
+# shape <- shape |> geom() |> as.data.frame()
+shape <- shape |> group_by(part) |> mutate(size = length(part)) 
+maxpart <- max(shape$size)
+shape <- subset(shape, hole <=0)
+shape <- subset(shape, size %in% maxpart)
+shape$x <- (shape$x - (max(shape$x) + min(shape$x))/2) / (max(shape$x) - min(shape$x))
+shape$y <- 1-1*(shape$y - min(shape$y)) / (max(shape$y) - min(shape$y))
+shape$y <- shape$y*-1+1
+df=NULL
+for(i in 1:25){#i=10
+  yu = (i+3)/25
+  yl = (i-3)/25
+  ys <- subset(shape, y>= yl & y<= yu)
+  if(nrow(ys)>0){
+    w <- max(ys$x)-min(ys$x)
+    y <- (yu+yl)/2
+    
+    df0 <- data.frame(w=w,y=y )
+    if(is.null(df)){df = df0}else{df=rbind(df,df0)}
+  }}
+
+wmax <- max(df$w)
+ywidest <- mean(subset(df, w %in% wmax)$y)
+wmin <- min(subset(df, y < ywidest)$w)
+ynarrowest <-  mean(subset(df, w %in% wmin)$y)
+
+ggplot()+
+  geom_polygon(data= shape, aes(y=x+0.5,x=y,group=paste(part), fill=paste(part)))+
+  # geom_point(data= shape, aes(y=x+0.5,x=y))+
+  geom_line(data= df, aes(x=y,y=w))+
+  scale_x_continuous(breaks = c(0:5)/5)+
+  scale_y_continuous(breaks = c(0:5)/5)+
+  coord_flip(xlim=c(0,1),ylim=c(0,1))
+
+
+ht.max = 25
+ht.min = 12
+dbh = 30
+cw = 8
+
+cht <- ((ywidest-ynarrowest)*0.5+ynarrowest)
+bh <- cht*1.4/ht.min
+df=NULL
+for(i in 1:25){#i=10
+  
+  yu = (i+3)/25
+  yl = (i)/25
+  ys <- subset(shape, y>= yl & y<= yu)
+  if(nrow(ys)>0){
+    w <- max(ys$x)-min(ys$x)
+    y <- yl
+    
+    df0 <- data.frame(w=w,y=y)
+    if(is.null(df)){df = df0}else{df=rbind(df,df0)}
+  }}
+
+bhw <- min(subset(df, y <= bh, select=w))
+
+dbhincrease <- (dbh/100)/bhw
+
+crownincrease <- cw/1
+
+bottomincrease <- ht.min/cht
+
+topincrease <- (ht.max-ht.min)/(1-cht)
+
+shapenew <- shape |> mutate(transition = (y-ynarrowest+0.0000001)/(ywidest-ynarrowest+0.0000001),
+                         x = case_when(y < ynarrowest ~ x*dbhincrease,
+                                       y >  ywidest ~ x*crownincrease,
+                                       TRUE ~ x*(transition*dbhincrease + (1-transition)*crownincrease)),
+                         y = case_when(y <= cht ~ y*bottomincrease,
+                                       y > cht ~ cht*bottomincrease+(y-cht)*topincrease)
+                                       )
+
+ggplot()+
+  geom_polygon(data= shapenew, aes(y=y,x=x))
+# +
+#   scale_x_continuous(breaks = c(-5:5)*10)+
+#   scale_y_continuous(breaks = c(-5:5)*10)+
+#   coord_cartesian(xlim=c(-20,20),ylim=c(0,30))
+
