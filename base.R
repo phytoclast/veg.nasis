@@ -539,7 +539,7 @@ bnarrow <- function(shape){
 }
 
 
-
+#convert raster image to vector
 library(terra)
 library(sf)
 maple <- rast('C:/workspace2/vegrob/maple.png')
@@ -554,9 +554,10 @@ maple1 <- subset(maple1, size %in% maxpart)
 ggplot(maple1, aes(x,y,group=paste(part,hole), fill=paste(part,hole)))+
   geom_polygon()
 
-ggplot(shape, aes(x,y,group=paste(part,hole), fill=paste(part,hole)))+
-  geom_polygon()
 
+
+
+#morph shape top and bottom
 shape = maple1
 shape$x <- (shape$x - (max(shape$x) + min(shape$x))/2) / (max(shape$x) - min(shape$x))
 shape$y <- 1-1*(shape$y - min(shape$y)) / (max(shape$y) - min(shape$y))
@@ -592,35 +593,23 @@ ggplot()+
 shape <- as.polygons(maple) 
 coorwidth <- shape |> geom() |> as.data.frame()
 coorwidth <- max((max(coorwidth$x) - min(coorwidth$x)),(max(coorwidth$x) - min(coorwidth$x)))
-shape <- simplifyGeom(shape, coorwidth/200) |> geom() |> as.data.frame()
-# shape <- shape |> geom() |> as.data.frame()
+shape <- simplifyGeom(shape, coorwidth/1000) |> geom() |> as.data.frame()
 shape <- shape |> group_by(part) |> mutate(size = length(part)) 
 maxpart <- max(shape$size)
 shape <- subset(shape, hole <=0)
 shape <- subset(shape, size %in% maxpart)
-shape$x <- (shape$x - (max(shape$x) + min(shape$x))/2) / (max(shape$x) - min(shape$x))
-shape$y <- 1-1*(shape$y - min(shape$y)) / (max(shape$y) - min(shape$y))
-shape$y <- shape$y*-1+1
-df=NULL
-for(i in 1:25){#i=10
-  yu = (i+3)/25
-  yl = (i-3)/25
-  ys <- subset(shape, y>= yl & y<= yu)
-  if(nrow(ys)>0){
-    w <- max(ys$x)-min(ys$x)
-    y <- (yu+yl)/2
-    
-    df0 <- data.frame(w=w,y=y )
-    if(is.null(df)){df = df0}else{df=rbind(df,df0)}
-  }}
+# shape <- shape |> geom() |> as.data.frame()
 
-wmax <- max(df$w)
-ywidest <- mean(subset(df, w %in% wmax)$y)
-wmin <- min(subset(df, y < ywidest)$w)
-ynarrowest <-  mean(subset(df, w %in% wmin)$y)
+make_tree <- function(ht.max, ht.min, crwd, dbh, crshape, stshape){
+  crown <- subset(shapes, shape %in% crshape) |> mutate(x=x*crwd, z=z*(ht.max-ht.min)+ht.min, obj='crown')
+  base <- subset(shapes, shape %in% stshape) |> mutate(x=x*dbh/100*1.1, z=z*(ht.min), obj='stem')
+  tree = rbind(crown, base)
+  tree$ptord <- rownames(tree) |> as.numeric()
+  return(tree)}
+
 
 ggplot()+
-  geom_polygon(data= shape, aes(y=x+0.5,x=y,group=paste(part), fill=paste(part)))+
+  geom_polygon(data= shape, aes(y=x+0.5,x=y), fill='red')+
   # geom_point(data= shape, aes(y=x+0.5,x=y))+
   geom_line(data= df, aes(x=y,y=w))+
   scale_x_continuous(breaks = c(0:5)/5)+
@@ -628,49 +617,85 @@ ggplot()+
   coord_flip(xlim=c(0,1),ylim=c(0,1))
 
 
-ht.max = 25
+ht.max = 30
 ht.min = 12
-dbh = 30
-cw = 8
+dbh = 15
+crwd = 8
+crshape = shape
 
-cht <- ((ywidest-ynarrowest)*0.5+ynarrowest)
-bh <- cht*1.4/ht.min
-df=NULL
-for(i in 1:25){#i=10
+morph_tree <- function(ht.max, ht.min, crwd, dbh, crshape, stshape) {
+  shape <- crshape 
+  shape$x <- (shape$x - (max(shape$x) + min(shape$x))/2) / (max(shape$x) - min(shape$x))
+  shape$y <- 1-1*(shape$y - min(shape$y)) / (max(shape$y) - min(shape$y))
+  shape$y <- shape$y*-1+1
+  #first pass to get wide and narrow
+  df=NULL
+  for(i in 1:25){#i=10
+    yu = (i+3)/25
+    yl = (i-3)/25
+    ys <- subset(shape, y>= yl & y<= yu)
+    if(nrow(ys)>0){
+      w <- max(ys$x)-min(ys$x)
+      y <- (yu+yl)/2
+      
+      df0 <- data.frame(w=w,y=y )
+      if(is.null(df)){df = df0}else{df=rbind(df,df0)}
+    }}
   
-  yu = (i+3)/25
-  yl = (i)/25
-  ys <- subset(shape, y>= yl & y<= yu)
-  if(nrow(ys)>0){
-    w <- max(ys$x)-min(ys$x)
-    y <- yl
+  wmax <- max(df$w)
+  ywidest <- mean(subset(df, w %in% wmax)$y)
+  wmin <- min(subset(df, y < ywidest)$w)
+  ynarrowest <-  mean(subset(df, w %in% wmin)$y)
+  
+ #second pass for breast height
+  df=NULL
+  for(i in 1:50){#i=10
     
-    df0 <- data.frame(w=w,y=y)
-    if(is.null(df)){df = df0}else{df=rbind(df,df0)}
-  }}
+    yu = (i+3)/50
+    yl = (i)/50
+    ys <- subset(shape, y>= yl & y<= yu)
+    if(nrow(ys)>0){
+      w <- max(ys$x)-min(ys$x)
+      y <- yl
+      
+      df0 <- data.frame(w=w,y=y)
+      if(is.null(df)){df = df0}else{df=rbind(df,df0)}
+    }}
+  
+  cht <- ((ywidest-ynarrowest)*0.5+ynarrowest)
+  bh <- cht*1.4/ht.min
 
-bhw <- min(subset(df, y <= bh, select=w))
+  bhw <- min(subset(df, y <= bh, select=w))
+  
+  dbhincrease <- (dbh/100)/bhw
+  
+  crownincrease <- crwd/1
+  
+  bottomincrease <- ht.min/cht
+  
+  topincrease <- (ht.max-ht.min)/(1-cht)
+  
+  shapenew <- shape |> mutate(transition = (y-ynarrowest+0.0000001)/(cht-ynarrowest+0.0000001),
+                              x = case_when(y < ynarrowest ~ x*dbhincrease,
+                                            y >  cht ~ x*crownincrease,
+                                            TRUE ~ x*(transition*dbhincrease + (1-transition)*crownincrease)),
+                              y = case_when(y <= cht ~ y*bottomincrease,
+                                            y > cht ~ cht*bottomincrease+(y-cht)*topincrease)
+  )
+  return(shapenew)}
 
-dbhincrease <- (dbh/100)/bhw
+ht.max = 30
+ht.min = 12
+dbh = 15
+crwd = 8
+crshape = branch1
+newtree <- morph_tree(ht.max=ht.max, ht.min=10, crwd=25, dbh=100, crshape=branch1)
 
-crownincrease <- cw/1
-
-bottomincrease <- ht.min/cht
-
-topincrease <- (ht.max-ht.min)/(1-cht)
-
-shapenew <- shape |> mutate(transition = (y-ynarrowest+0.0000001)/(ywidest-ynarrowest+0.0000001),
-                         x = case_when(y < ynarrowest ~ x*dbhincrease,
-                                       y >  ywidest ~ x*crownincrease,
-                                       TRUE ~ x*(transition*dbhincrease + (1-transition)*crownincrease)),
-                         y = case_when(y <= cht ~ y*bottomincrease,
-                                       y > cht ~ cht*bottomincrease+(y-cht)*topincrease)
-                                       )
 
 ggplot()+
-  geom_polygon(data= shapenew, aes(y=y,x=x))
-# +
-#   scale_x_continuous(breaks = c(-5:5)*10)+
-#   scale_y_continuous(breaks = c(-5:5)*10)+
-#   coord_cartesian(xlim=c(-20,20),ylim=c(0,30))
+  geom_polygon(data= newtree, aes(y=y,x=x))+
+  
+  scale_x_continuous(breaks = c(-5:5)*10)+
+  scale_y_continuous(breaks = c(-5:5)*10)+
+  coord_fixed(xlim=c(-20,20),ylim=c(0,ht.max+5))
 
