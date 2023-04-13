@@ -148,7 +148,7 @@ mydata <- data.frame(taxon=taxon, cover=cover, plot=plot, crown.max = crown.max,
 
 veg <- mydata |> pre.fill.veg()
 plants <- grow_plants(veg)
-veg_profile_plot(plants, unit='m',  skycolor = rgb(0.8,0.98,1), fadecolor = 'lightgray', gridalpha = 0.1, groundcolor = rgb(0.55,0.45,0.2), ylim = c(0,20))
+veg_profile_plot(plants, unit='m',  skycolor = rgb(0.8,0.98,1), fadecolor = 'lightgray', gridalpha = 0.0, groundcolor = rgb(0.55,0.45,0.2), ylim = c(0,20))
 
 
 
@@ -621,7 +621,7 @@ ht.max = 30
 ht.min = 12
 dbh = 15
 crwd = 8
-crshape = shape
+crshape = branch1
 
 morph_tree <- function(ht.max, ht.min, crwd, dbh, crshape, stshape) {
   shape <- crshape 
@@ -676,26 +676,34 @@ morph_tree <- function(ht.max, ht.min, crwd, dbh, crshape, stshape) {
   topincrease <- (ht.max-ht.min)/(1-cht)
   
   shapenew <- shape |> mutate(transition = (y-ynarrowest+0.0000001)/(cht-ynarrowest+0.0000001),
-                              x = case_when(y < ynarrowest ~ x*dbhincrease,
+                              xn = case_when(y < ynarrowest ~ x*dbhincrease,
                                             y >  cht ~ x*crownincrease,
-                                            TRUE ~ x*(transition*dbhincrease + (1-transition)*crownincrease)),
-                              y = case_when(y <= cht ~ y*bottomincrease,
-                                            y > cht ~ cht*bottomincrease+(y-cht)*topincrease)
-  )
+                                            TRUE ~ x*((1-transition)*dbhincrease + (transition)*crownincrease)),
+                              yn = case_when(y <= cht ~ y*bottomincrease,
+                                            y > cht ~ cht*bottomincrease+(y-cht)*topincrease) )
+ 
   return(shapenew)}
 
 ht.max = 30
-ht.min = 12
-dbh = 15
-crwd = 8
+ht.min = 10
+dbh = 100
+crwd = 20
 crshape = branch1
-newtree <- morph_tree(ht.max=ht.max, ht.min=10, crwd=25, dbh=100, crshape=branch1)
-
+newtree <- morph_tree(ht.max=ht.max, ht.min=ht.min, crwd=crwd, dbh=dbh, crshape=crshape)
+branch1 <- branch1 |> mutate(id=as.numeric(rownames(branch1)))
 
 ggplot()+
-  geom_polygon(data= newtree, aes(y=y,x=x))+
-  
-  scale_x_continuous(breaks = c(-5:5)*10)+
-  scale_y_continuous(breaks = c(-5:5)*10)+
-  coord_fixed(xlim=c(-20,20),ylim=c(0,ht.max+5))
+  geom_polygon(data= newtree, aes(y=yn,x=xn), fill='red')+
+  geom_point(data= newtree, aes(y=yn,x=xn))+
+  geom_text(data= newtree, aes(y=yn,x=xn, label=id))+
+  scale_x_continuous(breaks = c(-5:5)*5)+
+  scale_y_continuous(breaks = c(-5:5)*5)+
+  coord_fixed(xlim=c(-20,20),ylim=c(0,ht.max+0))
+ggplot()+
+  geom_polygon(data= branch1, aes(y=y,x=x), fill='red')+
+  geom_point(data= branch1, aes(y=y,x=x))+
+  geom_text(data= branch1, aes(y=y,x=x, label=id))+
+  scale_x_continuous(breaks = c(-5:5)/10)+
+  scale_y_continuous(breaks = c(-5:5)/10)+
+  coord_fixed(xlim=c(-0.5,0.5),ylim=c(0,1))
 
