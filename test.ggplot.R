@@ -33,14 +33,18 @@ plants <- plants |> arrange(yp,stumpid, objid, ptord) |> mutate(zn = zn+(xp*xslo
                                                                   xamplitude+xamplitude*sin(xp/xperiod*3.141592*2)) #implement slope
 zmax <- max(plants$zn, na.rm =TRUE)
 
+# colormixer('magenta', fadecolor, round(1-1/(1+((18.19-ypmin)/20)),2))
 
 iters = 20
 ypmin <- min(plants$yp)-0.01
 ypmax <- max(plants$yp)+0.01
 ypinc <- (ypmax - ypmin)/iters
-# yp=ypmax - c(1:50)*ypinc/10
+
+# 1-(floor(((ypmax - yp)/(ypmax - ypmin))*iters+0.99)/iters))
+# yp=ypmax - c(1:20)*ypinc
 # 1-(floor(((ypmax - yp)/(ypmax - ypmin))*5+0.99)/5)
-plants <- plants |> mutate(fill=colormixer(fill, fadecolor, 1-(floor(((ypmax - yp)/(ypmax - ypmin))*iters+0.99)/iters)), color=colormixer(color, fadecolor, 1-(floor(((ypmax - yp)/(ypmax - ypmin))*5+0.99)/5)))
+plants <- plants |> mutate(fill=colormixer(fill, fadecolor, round(1-1/(1+((yp-ypmin)/20)),2)), 
+                           color=colormixer(color, fadecolor, round(1-1/(1+((yp-ypmin)/20)),2)))
 pcolor <- c(plants$color) |> unique() |> sort()
 pfill <- c(plants$fill) |> unique()|> sort()
 ucf = case_when(units %in% c('feet', 'ft') ~ 0.3048,
@@ -94,5 +98,26 @@ gp <- gp+
   scale_x_continuous(name = xunits ,breaks = xbreaks, labels = xlabels, minor_breaks = xminor, limits = c(xnmin-5,xnmax+5))#
 
 gp
-gp2 <- veg_profile_plot0(plants)
-gp2 
+
+
+
+
+
+
+p=0.46
+
+colormixer <- function(colorname, mixcolor, p){
+  ccc <- col2rgb(colorname)
+  ccc <- data.frame(r = ccc[1,],   g = ccc[2,],   b = ccc[3,])
+  mmm <- col2rgb(mixcolor)
+  new <- ccc |> mutate(r = r*(1-p)+mmm[1,1]*p,
+                       g = g*(1-p)+mmm[2,1]*p,
+                       b = b*(1-p)+mmm[3,1]*p)
+  new <- rgb(new$r,new$g,new$b, maxColorValue = 255)
+  return(new)
+}
+
+
+
+
+
