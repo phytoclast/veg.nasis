@@ -151,6 +151,23 @@ plants <- grow_plants(veg)
 veg_profile_plot(plants, unit='m',  skycolor = rgb(0.8,0.98,1), fadecolor = 'lightgray', gridalpha = 0.0, groundcolor = rgb(0.55,0.45,0.2), ylim = c(0,20))
 
 
+veg.raw <- readRDS('data/nasisvegraw3.RDS')
+veg <- clean.veg(veg.raw) |> fill.hts.df()
+ass <- veg |> get.assoc()
+veg <- veg |> left_join(ass)
+
+m <- veg |> make.plot.matrix(tr = 'log', rc = T, nr=T, label='association')
+#distance matrix based on Bray-Curtis simularity.
+d = vegan::vegdist(m, method='bray')
+#Cluster analysis using Ward's method using distance matrix.
+t <- cluster::agnes(d, method = 'ward')|> as.hclust()
+#Define number of groups to color the dendrogram by.
+k = 4
+groups <- cutree(t, k = k)
+#This function rearranges the branchs and groups so that the tree is always oriented with most nested branches to the bottom of the plot (when tree oriented vertically with branches to the right).
+groups <- dendrogrouporder(t, groups)
+a = 'Vegetation of Michigan'
+plot.dendro(a,d,t,groups)
 
 
 
@@ -519,23 +536,23 @@ shape = branch
 bnarrow <- function(shape){
   df=NULL
   for(i in 1:50){#i=10
-    
+
     yu = (i+3)/50
     yl = (i-3)/50
     ys <- subset(shape, y>= yl & y<= yu)
     if(nrow(ys)>0){
       w <- max(ys$x)-min(ys$x)
       y <- (yu+yl)/2
-      
+
       df0 <- data.frame(w=w,y=y)
       if(is.null(df)){df = df0}else{df=rbind(df,df0)}
     }}
-  
+
   wmax <- max(df$w)
   ywidest <- mean(subset(df, w %in% wmax)$y)
   wmin <- min(subset(df, y < ywidest)$w)
   ynarrowest <-  mean(subset(df, w %in% wmin)$y)
-  
+
 }
 
 
@@ -548,7 +565,7 @@ maple1 <- as.polygons(maple) |> geom() |> as.data.frame()
 ggplot(maple1, aes(x,y,group=paste(part,hole), fill=hole))+
   geom_polygon()
 maple1 <- subset(maple1, hole <=0)
-maple1 <- maple1 |> group_by(part) |> mutate(size = length(part)) 
+maple1 <- maple1 |> group_by(part) |> mutate(size = length(part))
 maxpart <- max(maple1$size)
 maple1 <- subset(maple1, size %in% maxpart)
 ggplot(maple1, aes(x,y,group=paste(part,hole), fill=paste(part,hole)))+
@@ -564,14 +581,14 @@ shape$y <- 1-1*(shape$y - min(shape$y)) / (max(shape$y) - min(shape$y))
 shape$y <- shape$y*-1+1
 df=NULL
 for(i in 1:25){#i=10
-  
+
   yu = (i+3)/25
   yl = (i-3)/25
   ys <- subset(shape, y>= yl & y<= yu)
   if(nrow(ys)>0){
     w <- max(ys$x)-min(ys$x)
     y <- (yu+yl)/2
-    
+
     df0 <- data.frame(w=w,y=y)
     if(is.null(df)){df = df0}else{df=rbind(df,df0)}
   }}
@@ -590,11 +607,11 @@ ggplot()+
 
 
 
-shape <- as.polygons(maple) 
+shape <- as.polygons(maple)
 coorwidth <- shape |> geom() |> as.data.frame()
 coorwidth <- max((max(coorwidth$x) - min(coorwidth$x)),(max(coorwidth$x) - min(coorwidth$x)))
 shape <- simplifyGeom(shape, coorwidth/1000) |> geom() |> as.data.frame()
-shape <- shape |> group_by(part) |> mutate(size = length(part)) 
+shape <- shape |> group_by(part) |> mutate(size = length(part))
 maxpart <- max(shape$size)
 shape <- subset(shape, hole <=0)
 shape <- subset(shape, size %in% maxpart)
@@ -624,7 +641,7 @@ crwd = 8
 crshape = branch1
 
 morph_tree <- function(ht.max, ht.min, crwd, dbh, crshape, stshape) {
-  shape <- crshape 
+  shape <- crshape
   shape$x <- (shape$x - (max(shape$x) + min(shape$x))/2) / (max(shape$x) - min(shape$x))
   shape$y <- 1-1*(shape$y - min(shape$y)) / (max(shape$y) - min(shape$y))
   shape$y <- shape$y*-1+1
@@ -637,51 +654,51 @@ morph_tree <- function(ht.max, ht.min, crwd, dbh, crshape, stshape) {
     if(nrow(ys)>0){
       w <- max(ys$x)-min(ys$x)
       y <- (yu+yl)/2
-      
+
       df0 <- data.frame(w=w,y=y )
       if(is.null(df)){df = df0}else{df=rbind(df,df0)}
     }}
-  
+
   wmax <- max(df$w)
   ywidest <- mean(subset(df, w %in% wmax)$y)
   wmin <- min(subset(df, y < ywidest)$w)
   ynarrowest <-  mean(subset(df, w %in% wmin)$y)
-  
+
  #second pass for breast height
   df=NULL
   for(i in 1:50){#i=10
-    
+
     yu = (i+3)/50
     yl = (i)/50
     ys <- subset(shape, y>= yl & y<= yu)
     if(nrow(ys)>0){
       w <- max(ys$x)-min(ys$x)
       y <- yl
-      
+
       df0 <- data.frame(w=w,y=y)
       if(is.null(df)){df = df0}else{df=rbind(df,df0)}
     }}
-  
+
   cht <- ((ywidest-ynarrowest)*0.5+ynarrowest)
   bh <- cht*1.4/ht.min
 
   bhw <- min(subset(df, y <= bh, select=w))
-  
+
   dbhincrease <- (dbh/100)/bhw
-  
+
   crownincrease <- crwd/1
-  
+
   bottomincrease <- ht.min/cht
-  
+
   topincrease <- (ht.max-ht.min)/(1-cht)
-  
+
   shapenew <- shape |> mutate(transition = (y-ynarrowest+0.0000001)/(cht-ynarrowest+0.0000001),
                               xn = case_when(y < ynarrowest ~ x*dbhincrease,
                                             y >  cht ~ x*crownincrease,
                                             TRUE ~ x*((1-transition)*dbhincrease + (transition)*crownincrease)),
                               yn = case_when(y <= cht ~ y*bottomincrease,
                                             y > cht ~ cht*bottomincrease+(y-cht)*topincrease) )
- 
+
   return(shapenew)}
 
 ht.max = 30
