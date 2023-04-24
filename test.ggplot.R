@@ -1,27 +1,35 @@
 
 
-ytrans = 'identity'; yratio=1; units = 'm'; skycolor = "#D9F2FF80"; fadecolor = "#D9F2FF"; gridalpha=0.3; groundcolor="#808066"; xlim=c(0,50); ylim=c(-1, 30+5); xticks=5; yticks=5; xslope=15; yslope=25; xperiod=10; xamplitude=0
+plength = 50; pwidth=20; ytrans = 'identity'; yratio=1; units = 'm'; skycolor = "#D9F2FF80"; fadecolor = "#D9F2FF"; gridalpha=0.3; groundcolor="#808066"; xlim=c(0,50); ylim=c(-1, 30+5); xticks=5; yticks=5; xslope=15; yslope=25; xperiod=10; xamplitude=0
 
 
 library(vegnasis)
 veg.raw <- vegnasis::nasis.veg
 veg <- clean.veg(veg.raw) |> fill.type.df() |> fill.hts.df()
 veg$habit <- get.habit.code(veg$taxon)
-veg.s <- subset(veg,  grepl('2022MI165021.P',plot))
+veg <- subset(veg,  grepl('2022MI165021.P',plot))
 taxon <- c('Acer rubrum', 'Pinus resinosa')
 crfill <- c(NA,"#80991A")
 stfill <- c('gray',"#B36666")
 crshape <- c(NA,'conifer2')
 override <- data.frame(taxon=taxon,stfill=stfill,crfill=crfill,crshape=crshape)
-veg.s <- veg.s |> left_join(override)
+veg <- veg |> left_join(override)
+plants <- grow_plants(veg, pwidth=100)
 
 timeA=Sys.time()
-veg_profile_plot0(plants, xslope=50, yslope=25)
+gp1 = veg_profile_plot0(plants, xslope=50, yslope=25)
 Sys.time()-timeA
 timeA=Sys.time()
-veg_profile_plot(plants)
+gp2 = veg_profile_plot1(plants, xslope=50, yslope=25)
 Sys.time()-timeA
-plants <- grow_plants(veg.s, pwidth=50)
+
+timeA=Sys.time()
+gp1
+Sys.time()-timeA
+timeA=Sys.time()
+gp2
+Sys.time()-timeA
+
 
 #test looping ggplot, test color layering; test any other way to group ggplot by yp
 xnmax <- max(plants$xn, na.rm =TRUE)
@@ -41,9 +49,9 @@ ypmax <- max(plants$yp)+0.01
 ypinc <- (ypmax - ypmin)/iters
 
 # 1-(floor(((ypmax - yp)/(ypmax - ypmin))*iters+0.99)/iters))
-# yp=ypmax - c(1:20)*ypinc
+# yp=c(ypmax - c(1:20)*ypinc,100,200)
 # 1-(floor(((ypmax - yp)/(ypmax - ypmin))*5+0.99)/5)
-plants <- plants |> mutate(fill=colormixer(fill, fadecolor, round(1-1/(1+((yp-ypmin)/20)),2)), 
+plants <- plants |> mutate(fill=colormixer(fill, fadecolor, round(1-1/(1+((yp-ypmin)/20)),2)),
                            color=colormixer(color, fadecolor, round(1-1/(1+((yp-ypmin)/20)),2)))
 pcolor <- c(plants$color) |> unique() |> sort()
 pfill <- c(plants$fill) |> unique()|> sort()
@@ -84,7 +92,7 @@ gp <- gp+
   scale_fill_manual(values=pfill)+
   scale_color_manual(values=pcolor)+
   theme(legend.position = "none",
-        
+
         panel.background = element_rect(fill = skycolor,
                                         colour = "black",
                                         linewidth = 0.5, linetype = "solid"),
