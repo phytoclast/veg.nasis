@@ -16,7 +16,10 @@ library(dplyr)
 apg <- read.csv('data/plants/apg.csv')
 apgselect <- subset(apg, superclass %in% c("Acrogymnosperms"))
 taxa.select <- subset(taxa.TPL, family %in% apgselect$family)
-taxa.select <- taxa.select |> slice_sample(n=3, by=family, replace = TRUE) |> unique()
+#taxa.select <- taxa.select |> group_by(family) |> mutate(ct = floor(length(family)^0.5))
+taxa.select1 <- taxa.select |> slice_sample(n=1, by=family)
+taxa.select2 <- taxa.select |> slice_sample(n=floor(length(taxa.select$species)^0.5))
+taxa.select <- rbind(taxa.select1, taxa.select2)
 example <- unique(data.frame(species = taxa.select$species, genus = taxa.select$genus, family = taxa.select$family))
 
 ### run the function
