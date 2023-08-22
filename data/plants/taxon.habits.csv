@@ -19699,7 +19699,6 @@
 "Rubus andrewsianus","S1BD","S","1","BD","S1BD","Rubus",0.3
 "Rubus apogaeus","S1BD","S","1","BD","S1BD","Rubus",0.3
 "Rubus aptatus","S1BD","S","1","BD","S1BD","Rubus",0.3
-"Rubus arcticus","S1BD","S","1","BD","S1BD","Rubus",0.3
 "Rubus arcuans","S1BD","S","1","BD","S1BD","Rubus",0.3
 "Rubus arenicola","S1BD","S","1","BD","S1BD","Rubus",0.3
 "Rubus argutus","S1BD","S","1","BD","S1BD","Rubus",0.5
@@ -19720,7 +19719,6 @@
 "Rubus caesius","S1BD","S","1","BD","S1BD","Rubus",0.3
 "Rubus canadensis","S1BD","S","1","BD","S1BD","Rubus",0.3
 "Rubus centralis","S1BD","S","1","BD","S1BD","Rubus",0.3
-"Rubus chamaemorus","S1BD","S","1","BD","S1BD","Rubus",0.3
 "Rubus clarus","S1BD","S","1","BD","S1BD","Rubus",0.3
 "Rubus conanicutensis","S1BD","S","1","BD","S1BD","Rubus",0.3
 "Rubus concameratus","S1BD","S","1","BD","S1BD","Rubus",0.3
@@ -19728,7 +19726,6 @@
 "Rubus cubitans","S1BD","S","1","BD","S1BD","Rubus",0.3
 "Rubus cuneifolius","S1BD","S","1","BD","S1BD","Rubus",0.5
 "Rubus curtipes","S1BD","S","1","BD","S1BD","Rubus",0.3
-"Rubus repens","H2F","H","2","F","H2F","Rubus",0.5
 "Rubus deamii","S1BD","S","1","BD","S1BD","Rubus",0.3
 "Rubus defectionis","S1BD","S","1","BD","S1BD","Rubus",0.3
 "Rubus deliciosus","S1BD","S","1","BD","S1BD","Rubus",0.3
@@ -19765,7 +19762,6 @@
 "Rubus hawaiensis","S1BD","S","1","BD","S1BD","Rubus",0.3
 "Rubus heterophyllus","S1BD","S","1","BD","S1BD","Rubus",0.3
 "Rubus hispidoides","S1BD","S","1","BD","S1BD","Rubus",0.3
-"Rubus hispidus","S1BD","S","1","BD","S1BD","Rubus",0.5
 "Rubus huttonii","S1BD","S","1","BD","S1BD","Rubus",0.3
 "Rubus hypolasius","S1BD","S","1","BD","S1BD","Rubus",0.3
 "Rubus ictus","S1BD","S","1","BD","S1BD","Rubus",0.3
@@ -19785,7 +19781,6 @@
 "Rubus kennedyanus","S1BD","S","1","BD","S1BD","Rubus",0.3
 "Rubus laciniatus","S1BD","S","1","BD","S1BD","Rubus",0.5
 "Rubus largus","S1BD","S","1","BD","S1BD","Rubus",0.3
-"Rubus lasiococcus","S1BD","S","1","BD","S1BD","Rubus",0.3
 "Rubus latens","S1BD","S","1","BD","S1BD","Rubus",0.3
 "Rubus lawrencei","S1BD","S","1","BD","S1BD","Rubus",0.3
 "Rubus leucodermis","S1BD","S","1","BD","S1BD","Rubus",0.3
@@ -19818,7 +19813,6 @@
 "Rubus obsessus","S1BD","S","1","BD","S1BD","Rubus",0.3
 "Rubus obvius","S1BD","S","1","BD","S1BD","Rubus",0.3
 "Rubus occidentalis","S1BD","S","1","BD","S1BD","Rubus",0.5
-"Rubus odoratus","S1BD","S","1","BD","S1BD","Rubus",0.5
 "Rubus oklahomus","S1BD","S","1","BD","S1BD","Rubus",0.3
 "Rubus originalis","S1BD","S","1","BD","S1BD","Rubus",0.3
 "Rubus ortivus","S1BD","S","1","BD","S1BD","Rubus",0.3
@@ -19829,8 +19823,6 @@
 "Rubus parlinii","S1BD","S","1","BD","S1BD","Rubus",0.3
 "Rubus particeps","S1BD","S","1","BD","S1BD","Rubus",0.3
 "Rubus particularis","S1BD","S","1","BD","S1BD","Rubus",0.3
-"Rubus nutkanus","S1BD","S","1","BD","S1BD","Rubus",0.3
-"Rubus parvifolius","S2BD","S","1","BD","S1BD","Rubus",0.3
 "Rubus pedatus","S1BD","S","1","BD","S1BD","Rubus",0.3
 "Rubus pergratus","S1BD","S","1","BD","S1BD","Rubus",0.3
 "Rubus pernagaeus","S1BD","S","1","BD","S1BD","Rubus",0.3
@@ -19850,7 +19842,6 @@
 "Rubus probus","S1BD","S","1","BD","S1BD","Rubus",0.3
 "Rubus prosper","S1BD","S","1","BD","S1BD","Rubus",0.3
 "Rubus provincialis","S1BD","S","1","BD","S1BD","Rubus",0.3
-"Rubus pubescens","S1BD","S","1","BD","S1BD","Rubus",0.3
 "Rubus pugnax","S1BD","S","1","BD","S1BD","Rubus",0.3
 "Rubus quaesitus","S1BD","S","1","BD","S1BD","Rubus",0.3
 "Rubus racemiger","S1BD","S","1","BD","S1BD","Rubus",0.3
@@ -58551,3 +58542,12 @@
 "Zygophlebia mathewsii","E.F","E",".","F","E.F","Zygophlebia",12
 "Zyzyura mayana","","H","2","F","H2F","Zyzyura",0.6
 "Zyzyxia lundellii","","H","2","F","H2F","Zyzyxia",0.6
+"Rubus arcticus","S1BD","H","2","F","H2F","Rubus",0.1
+"Rubus chamaemorus","S1BD","H","2","F","H2F","Rubus",0.1
+"Rubus lasiococcus","S1BD","H","2","F","H2F","Rubus",0.1
+"Rubus pubescens","S1BD","H","2","F","H2F","Rubus",0.1
+"Rubus repens","H2F","H","2","F","H2F","Rubus",0.1
+"Rubus parvifolius","S2BD","S","1","BD","S1BD","Rubus",0.3
+"Rubus hispidus","S1BD","S","1","BE","S1BE","Rubus",0.3
+"Rubus nutkanus","S1BD","S","2","BD","S2BD","Rubus",1
+"Rubus odoratus","S1BD","S","2","BD","S2BD","Rubus",1

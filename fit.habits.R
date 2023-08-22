@@ -389,8 +389,6 @@ write.csv(gho, 'data/plants/gho.csv', row.names = F)
 #append habits ----
 taxon.habits <-  read.csv('data/plants/taxon.habits.csv')
 
-
-
 bm.geo.FC <- bm.geo %>% left_join(FC) |> subset(!ac.binomial %in% "" & !is.na(ac.binomial))
 bm.geo.sums <- bm.geo.FC %>% group_by(ac.binomial, FC) %>% summarise(ct = length(FC))
 bm.geo.max <- bm.geo.sums %>% group_by(FC) %>% summarise(fcsum = max(ct))
@@ -545,5 +543,21 @@ nativity <- bm.geo.col %>%
 
 write.csv(nativity, 'data/plants/nativity.csv', row.names = F)
 
+#Fix Rubus----
+taxon.habits <-  read.csv('data/plants/taxon.habits.csv')
+fixrubus <-  read.csv('data/plants/fixrubus.csv')
+fixrubus <-  fixrubus |> inner_join(taxon.habits, by=c('taxon'='Scientific.Name'))
+fixrubus <-  fixrubus |> mutate(Stem = substr(correctedform, 1,1),
+                                Size = substr(correctedform, 2,2),
+                                Leaf = substr(correctedform, 3,5),
+                                GH = correctedform,
+                                correctedform=NULL)
+fixrubus <- fixrubus |> mutate(ht.max = case_when(Stem %in% 'H' ~ 0.1,
+                                                  Size %in% 1 ~ 0.3,
+                                                  Size %in% 2 ~ 1))
+taxon.habits1 <- taxon.habits |> subset(!Scientific.Name %in% fixrubus$taxon )
+colnames(fixrubus)[colnames(fixrubus) %in% "taxon"] <- 'Scientific.Name'
+taxon.habits1 <- rbind(taxon.habits1, fixrubus)
+write.csv(taxon.habits1, 'data/plants/taxon.habits.csv', row.names = F)
 
 
