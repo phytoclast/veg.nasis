@@ -1,4 +1,5 @@
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+library(vegnasis)
 veg.spp <- read.delim('data/Observed_Species.txt')
 veg.site <- read.delim('data/Sites.txt')
 veg <- clean.veg.log(veg.site,veg.spp)
@@ -51,4 +52,22 @@ multi.releve.summary <-  function(x, breaks=c(0.5,5,15), woodytypes = c('tree','
 
 
 veg.summ <- multi.releve.summary(veg1, c(0.5,5,12))
+colnames(veg.summ)
+veg.con <- veg.summ |> group_by(habitsort, overstory, covertotal, taxon, type, freq) |> summarise(c1 = sum(ifelse(stratum %in% 1, cover.r,0)),
+                                                               c2 = sum(ifelse(stratum %in% 2, cover.r,0)),
+                                                               c3 = sum(ifelse(stratum %in% 3, cover.r,0)),
+                                                               c4 = sum(ifelse(stratum %in% 4, cover.r,0)),
+                                                               ht1 = sum(ifelse(stratum %in% 1, cover.r,0)),
+                                                               ht2 = sum(ifelse(stratum %in% 2, cover.r,0)),
+                                                               ht3 = sum(ifelse(stratum %in% 3, cover.r,0)),
+                                                               ht4 = sum(ifelse(stratum %in% 4, cover.r,0))) |>
+  arrange(habitsort, -overstory, -covertotal, taxon) |> mutate(#habitsort=NULL, overstory=NULL, covertotal=NULL,
+                                                               c1=ifelse(c1<=0,NA,c1),
+                                                               c2=ifelse(c2<=0,NA,c2),
+                                                               c3=ifelse(c3<=0,NA,c3),
+                                                               c4=ifelse(c4<=0,NA,c4),
+                                                               ht1=ifelse(ht1<=0,NA,ht1),
+                                                               ht2=ifelse(ht2<=0,NA,ht2),
+                                                               ht3=ifelse(ht3<=0,NA,ht3),
+                                                               ht4=ifelse(ht4<=0,NA,ht4))
 
