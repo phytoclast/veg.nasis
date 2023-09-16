@@ -1,0 +1,100 @@
+"taxon","type","frq","0-0.5 m","0.5-2 m","2-5 m","5-12 m","12-24 m","24+ m","ht.max","over.cover","taxon.cover"
+"Acer saccharinum","tree",0.8,0.2,,,,19,51.6,31.7,60.8,60.9
+"Fagus grandifolia","tree",0.8,0.4,,0.9,17,0.8,5,29,21.8,22.8
+"Ulmus americana","tree",1,0.1,,,16,,,9.7,16,16.1
+"Carya ovata","tree",1,0.2,,,2.8,,5.4,26.3,8,8.2
+"Tilia americana","tree",0.8,,,,0.8,2.8,4.2,26,7.6,7.6
+"Acer saccharum","tree",0.6,,,,3.6,1.8,,14.3,5.3,5.3
+"Quercus alba","tree",0.2,0.4,,,,,3,28,3,3.4
+"Acer rubrum","tree",0.2,,,,1.6,1,,16,2.6,2.6
+"Carya laciniosa","tree",0.4,,,0.8,2.4,,,12,2.4,3.2
+"Quercus macrocarpa","tree",0.4,,,,,,2.4,33.7,2.4,2.4
+"Ostrya virginiana","tree",0.6,0.1,,,2.1,,,10.6,2.1,2.2
+"Carpinus caroliniana","tree",0.4,,,0.4,1.4,,,7,1.4,1.8
+"Quercus rubra","tree",0.4,0.4,,,,,1,26,1,1.4
+"Quercus muehlenbergii","tree",0.2,,,,,,1,29,1,1
+"Fraxinus pennsylvanica","tree",1,1.8,0.2,1.4,0.4,,,12,0.4,3.8
+"Prunus serotina","tree",0.4,,,,0.1,,,6,0.1,0.2
+"Fraxinus nigra","tree",0.4,,,1,,,,4,0,1
+"Asimina triloba","tree",0.4,0.1,,,,,,0.4,0,0.1
+"Celtis occidentalis","tree",0.2,0.1,,,,,,0.3,0,0.1
+"Cornus alternifolia","tree",0.2,,,,,,,0.1,0,0
+"Parthenocissus quinquefolia","shrub/vine",1,5.9,0.1,,,0.1,,15.3,0.1,6
+"Toxicodendron radicans","shrub/vine",1,5.4,,,,0.1,,15,0.1,5.6
+"Lindera benzoin","shrub/vine",1,3.2,3.5,6.8,,,,2.8,0,12.9
+"Rosa multiflora","shrub/vine",0.2,0.4,,,,,,0.4,0,0.4
+"Ribes","shrub/vine",0.2,0.2,,,,,,0.4,0,0.2
+"Ribes cynosbati","shrub/vine",0.4,0.2,,,,,,0.3,0,0.2
+"Sambucus nigra","shrub/vine",0.2,0.1,,,,,,0.5,0,0.1
+"Vitis riparia","shrub/vine",0.2,0.1,,,,,,0.4,0,0.1
+"Carex bromoides","grass/grasslike",0.4,1.3,,,,,,0.5,0,1.3
+"Glyceria striata","grass/grasslike",0.6,0.5,,,,,,0.5,0,0.5
+"Carex blanda","grass/grasslike",0.4,0.3,,,,,,0.2,0,0.3
+"Carex grayi","grass/grasslike",0.6,0.2,,,,,,0.5,0,0.2
+"Carex gracilescens","grass/grasslike",0.2,0.2,,,,,,0.3,0,0.2
+"Elymus hystrix","grass/grasslike",0.2,0.1,,,,,,0.9,0,0.1
+"Festuca subverticillata","grass/grasslike",0.2,0.1,,,,,,0.6,0,0.1
+"Poa alsodes","grass/grasslike",0.4,0.1,,,,,,0.5,0,0.1
+"Poa","grass/grasslike",0.2,0.1,,,,,,0.3,0,0.1
+"Carex radiata","grass/grasslike",0.2,0.1,,,,,,0.2,0,0.1
+"Poa trivialis","grass/grasslike",0.2,,,,,,,0.3,0,0
+"Carex intumescens","grass/grasslike",0.2,,,,,,,0.2,0,0
+"Carex plantaginea","grass/grasslike",0.2,,,,,,,0.1,0,0
+"Geranium maculatum","forb",0.4,6.8,,,,,,0.1,0,6.8
+"Boehmeria cylindrica","forb",0.6,2.4,,,,,,0.3,0,2.4
+"Allium tricoccum","forb",0.2,2.4,,,,,,0.1,0,2.4
+"Viola pubescens","forb",0.2,1.6,,,,,,0.2,0,1.6
+"Laportea canadensis","forb",0.6,1.2,,,,,,0.4,0,1.2
+"Floerkea proserpinacoides","forb",0.2,1.2,,,,,,0.1,0,1.2
+"Ranunculus hispidus","forb",0.8,0.9,,,,,,0.2,0,0.9
+"Persicaria virginiana","forb",0.8,0.9,,,,,,0.1,0,0.9
+"Cryptotaenia canadensis","forb",0.6,0.7,,,,,,0.3,0,0.7
+"Impatiens capensis","forb",0.8,0.7,,,,,,0.2,0,0.7
+"Arisaema triphyllum","forb",1,0.5,,,,,,0.3,0,0.5
+"Dryopteris intermedia","forb",0.4,0.4,,,,,,0.3,0,0.4
+"Sanicula trifoliata","forb",0.2,0.4,,,,,,0.3,0,0.4
+"Circaea canadensis","forb",0.2,0.4,,,,,,0.2,0,0.4
+"Asarum canadense","forb",0.2,0.4,,,,,,0.1,0,0.4
+"Sanicula odorata","forb",0.4,0.3,,,,,,0.3,0,0.3
+"Nabalus","forb",0.4,0.3,,,,,,0.2,0,0.3
+"Onoclea sensibilis","forb",0.2,0.2,,,,,,0.2,0,0.2
+"Anemone quinquefolia","forb",0.2,0.2,,,,,,0.1,0,0.2
+"Alliaria petiolata","forb",0.2,0.1,,,,,,0.3,0,0.1
+"Packera glabella","forb",0.2,0.1,,,,,,0.3,0,0.1
+"Dryopteris carthusiana","forb",0.6,0.1,,,,,,0.2,0,0.1
+"Galium aparine","forb",0.2,0.1,,,,,,0.2,0,0.1
+"Hydrophyllum virginianum","forb",0.2,0.1,,,,,,0.2,0,0.1
+"Maianthemum racemosum","forb",0.4,0.1,,,,,,0.2,0,0.1
+"Mitella diphylla","forb",0.2,0.1,,,,,,0.2,0,0.1
+"Phlox","forb",0.2,0.1,,,,,,0.2,0,0.1
+"Polygonatum pubescens","forb",0.2,0.1,,,,,,0.2,0,0.1
+"Polystichum acrostichoides","forb",0.4,0.1,,,,,,0.2,0,0.1
+"Solidago caesia","forb",0.2,0.1,,,,,,0.2,0,0.1
+"Trillium flexipes","forb",0.2,0.1,,,,,,0.2,0,0.1
+"Caltha palustris","forb",0.4,0.1,,,,,,0.1,0,0.1
+"Claytonia virginica","forb",0.4,0.1,,,,,,0.1,0,0.1
+"Galium circaezans","forb",0.2,0.1,,,,,,0.1,0,0.1
+"Osmorhiza claytonii","forb",0.2,0.1,,,,,,0.1,0,0.1
+"Ranunculus abortivus","forb",0.4,0.1,,,,,,0.1,0,0.1
+"Rubus pubescens","forb",0.4,0.1,,,,,,0.1,0,0.1
+"Sceptridium dissectum","forb",0.2,0.1,,,,,,0.1,0,0.1
+"Trillium sessile","forb",0.2,0.1,,,,,,0.1,0,0.1
+"Viola","forb",0.4,0.1,,,,,,0.1,0,0.1
+"Viola sororia","forb",0.4,0.1,,,,,,0.1,0,0.1
+"Athyrium angustum","forb",0.2,,,,,,,0.3,0,0
+"Iris virginica","forb",0.2,,,,,,,0.3,0,0
+"Cardamine bulbosa","forb",0.2,,,,,,,0.2,0,0
+"Cardamine pensylvanica","forb",0.2,,,,,,,0.2,0,0
+"Caulophyllum thalictroides","forb",0.2,,,,,,,0.2,0,0
+"Geum canadense","forb",0.2,,,,,,,0.2,0,0
+"Solidago flexicaulis","forb",0.2,,,,,,,0.2,0,0
+"Solidago gigantea","forb",0.2,,,,,,,0.2,0,0
+"Symplocarpus foetidus","forb",0.2,,,,,,,0.2,0,0
+"Uvularia grandiflora","forb",0.2,,,,,,,0.2,0,0
+"Amphicarpaea bracteata","forb",0.2,,,,,,,0.1,0,0
+"Lilium michiganense","forb",0.2,,,,,,,0.1,0,0
+"Scutellaria lateriflora","forb",0.2,,,,,,,0.1,0,0
+"Trillium","forb",0.2,,,,,,,0.1,0,0
+"Mosses",,0.6,1.4,,,,,,0,0,1.4
+"Poaceae",,0.6,1.3,,,,,,0.3,0,1.3
+"Algae",,0.2,,,,,,,0,0,0
