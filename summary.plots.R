@@ -58,6 +58,9 @@ breaks = c(0.5,2,5,12,24)
 woodytypes = c('tree','shrub/vine', 'epiphyte')
 lowerQ=0.25; upperQ=0.75
 
+
+
+
 summary.ESIS0 <-  function(x, breaks=c(0.5,5,15), lowerQ=0.25, upperQ=0.75,woodytypes = c('tree','shrub/vine', 'epiphyte')){
   x=x |> mutate(dbh.min= ifelse(is.na(dbh.min), dbh.max,dbh.min))
   #frequency of whole plot
@@ -68,12 +71,13 @@ summary.ESIS0 <-  function(x, breaks=c(0.5,5,15), lowerQ=0.25, upperQ=0.75,woody
   y <- NULL
   nbks <- length(breaks)+1
   brks <- c(0,breaks,1000)
+  
   #extract means by stratum and plot
   for(i in 1:(nbks)){#i = 1
     y0 <- x |> subset((ht.max <= brks[i+1] & ht.max > brks[i] & type %in% woodytypes)|(i==1 & !type %in% woodytypes))
     
     if(nrow(y0)>0){
-      y0 <- y0 %>% mutate(stratum=i, stratum.label = paste0(brks[i], ifelse(i==nbks, "+",paste0("-", brks[i+1]))), ht.min= ht.min, ht.max = ht.max)
+      y0 <- y0 %>% mutate(stratum=i, stratum.label = paste0(brks[i], ifelse(i==nbks, "+",paste0("-", brks[i+1]))), ht.min= ht.min, ht.max = ht.max, stratum.min = brks[i], stratum.max = brks[i+1])
       y1 <- y0 %>% group_by(plot, symbol, taxon, type, stratum, stratum.label, stratum.min, stratum.max) %>%
         summarise(Cover = cover.agg(cover),
                   ht.min=weighted.mean(ht.min, cover+0.001, na.rm=TRUE),
@@ -120,7 +124,8 @@ summary.ESIS0 <-  function(x, breaks=c(0.5,5,15), lowerQ=0.25, upperQ=0.75,woody
                                            cover.pp = round(cover.mean/frq.plot,1),
                                            BA.mean = round(BA.mean,1),
                                            cover.mean = round(cover.mean,1),
-                                           frq.plot = round(frq.plot,3))
+                                           frq.plot = round(frq.plot,3),
+                                           stratum.max = ifelse(stratum.max > (floor((max(Top)+5)/5)*5),(floor((max(Top)+5)/5)*5),stratum.max))
   
   y.fill <- subset(y.fill, select=c(taxon, symbol, type, stratum, stratum.label, stratum.min, stratum.max, cover.Low, cover.High, Bottom,Top, dbh.Low, dbh.High, BA.Low, BA.High, cover.mean, cover.pp, cover.ps, BA.mean, BA.pp, frq.plot, frq.strat, taxon.cover,over.cover, type.top)) |> arrange(-type.top, type, -over.cover, -taxon.cover, -Top)
   
@@ -134,8 +139,6 @@ summary.ESIS0 <-  function(x, breaks=c(0.5,5,15), lowerQ=0.25, upperQ=0.75,woody
 breaks = c(0.5,2,5,12,24)
 veg.summ <- multi.releve.summary(veg1, breaks)
 veg.summ0 <- summary.ESIS0(veg1, breaks)
-veg.con <- consolidated.summary(veg.summ, breaks)
-write.csv(veg.con, 'veg.con.csv', row.names = FALSE, na = "")
 
 
 
@@ -204,14 +207,13 @@ flat.summary <- function(veg.summ){
     cname <- paste0('c',i)
     if(i==1){cnames=cname}else{cnames=c(cnames,cname)}
     
-    altname <- case_when(i == 1  ~ paste0('0-',brks[i],' m'),
-                       i < nbks ~ paste0(brks[i],'-',brks[i+1],' m'),
-                       TRUE ~ paste0(brks[i],'+ m'))
+    altname <- case_when(i < nbks ~ paste0(brks[i],'-',brks[i+1],' m'),
+                         TRUE ~ paste0(brks[i],'+ m'))
     if(i==1){altnames=altname}else{altnames=c(altnames,altname)}
   }
   veg.con <- veg.con |> 
-      arrange(-type.top, type, -over.cover, -taxon.cover, -ht.max, taxon) |> subset(select = c('taxon','type','frq.plot',cnames,'ht.max','over.cover','taxon.cover'))
-    colnames(veg.con)[colnames(veg.con) %in% c(cnames,'frq.plot')] <- c('frq',altnames)
+    arrange(-type.top, type, -over.cover, -taxon.cover, -ht.max, taxon) |> subset(select = c('taxon','type','frq.plot',cnames,'ht.max','over.cover','taxon.cover'))
+  colnames(veg.con)[colnames(veg.con) %in% c(cnames,'frq.plot')] <- c('frq',altnames)
   return(veg.con)}
 
 
@@ -221,6 +223,7 @@ breaks = c(0.5,2,5,12,24)
 veg.summ <- summary.ESIS0(veg1, breaks)
 veg.con <- flat.summary(veg.summ)
 
+write.csv(veg.con, 'veg.con.csv', row.names = FALSE, na = "")
 
 
 
