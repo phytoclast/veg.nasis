@@ -4,12 +4,26 @@ veg.spp <- read.delim('data/Observed_Species.txt')
 veg.site <- read.delim('data/Sites.txt')
 veg <- clean.veg.log(veg.site,veg.spp)
 
-veg <- veg |> fill.type.df() |> fill.hts.df()
+veg <- veg |> fill.type.df() |> fill.hts.df() |> mutate(symbol = vegnasis::fill.usda.symbols(taxon), nativity = fill.nativity(taxon, 'Northeast'))
+'20230710.001'
+'20230710.002'
+'20230711.001'
+'20230711.002'
+'20230712.001'
+'20230712.002'
+'20230713.001'
+'20230713.002'
+'20230725.001'
+'20230725.002'
+
+
 groups <- c('2023OH051003', '2023OH051001','2023OH051002', '2023523.001', '2023523.002')
 # groups <- c('s20220930.001','20230731.001', '20230801.001')
-veg1 <- subset(veg, label %in% groups)
 
-
+vegnasis::usdaplants
+veg1 <- subset(veg, label %in% '20230725.002')
+veg2 <- veg1 |> summary.ESIS(breaks = c(0.5, 2, 5, 12)) |> flat.summary(breaks = c(0.5, 2, 5, 12))
+write.csv(veg2, 'veg2.csv', row.names = FALSE, na = "")
 
 x = veg1
 breaks=c(0.5,2,5,12)
