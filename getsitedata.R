@@ -7,6 +7,7 @@ library(aqp)
 
 veg.spp <- read.delim('data/Observed_Species.txt')
 veg.site <- read.delim('data/Sites.txt')
+
 dem <- rast('D:/scripts/R12W/dem.tif'); names(dem) <- 'elev'
 slope <- rast('D:/scripts/R12W/slope.tif'); names(slope) <- 'slope'
 aspect <- rast('D:/scripts/R12W/aspect.tif'); names(aspect) <- 'aspect'
@@ -15,8 +16,10 @@ water <- read_sf('C:/a/Ecological_Sites/GIS/Base/water.shp')
 veg.site <- subset(veg.site,Latitude != 0 & Observer_Code %in% c('BEL.JH', 'TOL.NB', 'GRR.NJL', 'GRR.GJS') &
                      Year >=2011 & !Observation_Type %in% c('Bogus', 'Floristics')) #
 rownames(veg.site) <- NULL
-
-brick <- c(dem,slope,aspect,tpi)
+# nat500 <- rast('D:/scripts/demtools/lc.mean.tif')|> project(dem)|> extend(dem); names(nat500) <- 'nat500' 
+# writeRaster(nat500, 'D:/scripts/R12W/nat500.tif', overwrite=T)
+nat500 <- rast('D:/scripts/R12W/nat500.tif')
+brick <- c(dem,slope,aspect,tpi,nat500)
 site.sf <- st_as_sf(veg.site, coords	= c(x='Longitude', y='Latitude'), crs='EPSG: 4326')
 water <- water |> subset(km2 >= 2e+05) |> vect()  |> project(dem)
 site.vect <- vect(site.sf) |> project(dem)
@@ -27,53 +30,53 @@ plot(site.vect)
 elevextract <- terra::extract(brick, site.vect)
 
 site.sf.ex <- site.sf |> cbind(elevextract)
-site.sf.ex <- site.sf.ex |> subset(select=c(State, County,Observation_ID,  Observation_Label, elev,slope,aspect,tpi))
-
+site.sf.ex <- site.sf.ex |> subset(select=c(State, County,Observation_ID,  Observation_Label, elev,slope,aspect,tpi, nat500)) |> st_drop_geometry()
+write.csv(site.sf.ex, 'sitedata/site.sf.ex.csv', row.names = F)
 library(soilDB)
-# ssurgo=NULL
-# ssurgo.i<-NULL
-# for (i in 1:nrow(site.sf)){#i=400 length(db)
-#   obs.geom.i <- site.sf[i,]
-#   ssurgo.i <- SDA_spatialQuery(
-#     obs.geom.i,
-#     what = "mukey",
-#     geomIntersection = FALSE,
-#     db = c("SSURGO")
-#   )
-#   if(class(ssurgo.i)[1] %in% "try-error"){ssurgo.i <- cbind(mukey="try-error", muname="try-error")}
-#   if(!is.null(ssurgo.i)){
-#     ssurgo.i <-  cbind(list(obs.id = obs.geom.i$Observation_ID[1]), ssurgo.i) %>% as.data.frame()}
-#   else{
-#     ssurgo.i <-  list(obs.id = obs.geom.i$Observation_ID[1], mukey = NA, muname = NA)}
-#   if(is.null(ssurgo)){
-#     ssurgo <- ssurgo.i
-#   }else{
-#     ssurgo <- rbind(ssurgo,ssurgo.i)
-#   }
-# }
-# saveRDS(ssurgo, 'sitedata/ssurgo.RDS')
+ssurgo=NULL
+ssurgo.i<-NULL
+for (i in 1:nrow(site.sf)){#i=400 length(db)
+  obs.geom.i <- site.sf[i,]
+  ssurgo.i <- SDA_spatialQuery(
+    obs.geom.i,
+    what = "mukey",
+    geomIntersection = FALSE,
+    db = c("SSURGO")
+  )
+  if(class(ssurgo.i)[1] %in% "try-error"){ssurgo.i <- cbind(mukey="try-error", muname="try-error")}
+  if(!is.null(ssurgo.i)){
+    ssurgo.i <-  cbind(list(obs.id = obs.geom.i$Observation_ID[1]), ssurgo.i) %>% as.data.frame()}
+  else{
+    ssurgo.i <-  list(obs.id = obs.geom.i$Observation_ID[1], mukey = NA, muname = NA)}
+  if(is.null(ssurgo)){
+    ssurgo <- ssurgo.i
+  }else{
+    ssurgo <- rbind(ssurgo,ssurgo.i)
+  }
+}
+saveRDS(ssurgo, 'sitedata/ssurgo.RDS')
 ssurgo <- readRDS('sitedata/ssurgo.RDS')
 
 
 #Soil component tables----
-# library(soilDB)
-# library(aqp)
-# # remotes::install_github('ncss-tech/soilDB')
-# #
-# # source('fetchGDB.R')
-# #
+library(soilDB)
+library(aqp)
+# remotes::install_github('ncss-tech/soilDB')
+#
+# source('fetchGDB.R')
+#
 # MI = fetchGDB(dsn = 'D:/GIS/SOIL/2021/gSSURGO_MI.gdb', childs = TRUE)
 # IN = fetchGDB(dsn = 'D:/GIS/SOIL/2021/gSSURGO_IN.gdb', childs = TRUE)
 # OH = fetchGDB(dsn = 'D:/GIS/SOIL/2021/gSSURGO_OH.gdb', childs = TRUE)
 # IL = fetchGDB(dsn = 'D:/GIS/SOIL/2021/gSSURGO_IL.gdb', childs = TRUE)
 # NJ = fetchGDB(dsn = 'D:/GIS/SOIL/2021/gSSURGO_NJ.gdb', childs = TRUE)
-#
+# 
 # MImu = get_mapunit_from_GDB(dsn = 'D:/GIS/SOIL/2021/gSSURGO_MI.gdb')
 # INmu = get_mapunit_from_GDB(dsn = 'D:/GIS/SOIL/2021/gSSURGO_IN.gdb')
 # OHmu = get_mapunit_from_GDB(dsn = 'D:/GIS/SOIL/2021/gSSURGO_OH.gdb')
 # ILmu = get_mapunit_from_GDB(dsn = 'D:/GIS/SOIL/2021/gSSURGO_IL.gdb')
 # NJmu = get_mapunit_from_GDB(dsn = 'D:/GIS/SOIL/2021/gSSURGO_NJ.gdb')
-#
+# 
 # ssurgotabs <- c(MI,IN,OH,IL,NJ) |> subset(majcompflag %in% 'Yes')
 # ssurgomu <- rbind(MImu,INmu,OHmu,ILmu,NJmu)
 # saveRDS(ssurgotabs, 'ssurgo/ssurgotabs.RDS')
@@ -85,19 +88,19 @@ ssurgomu <- readRDS('ssurgo/ssurgomu.RDS')
 sssites <- site(ssurgotabs) |> left_join(ssurgomu)
 sshorz <- horizons(ssurgotabs)
 
-# veg.site.mi <- subset(veg.site, State %in% c('Michigan', 'Illinois', 'Indiana', 'Ohio'))
-# max(veg.site.mi$Latitude)
-# min(veg.site.mi$Latitude)
-# max(veg.site.mi$Longitude)
-# min(veg.site.mi$Longitude)
-# veg.site.nj <- subset(veg.site, State %in% c('New Jersey'))
-# max(veg.site.nj$Latitude)
-# min(veg.site.nj$Latitude)
-# max(veg.site.nj$Longitude)
-# min(veg.site.nj$Longitude)
-#
-# nasispedons <- fetchNASIS(from = 'pedons', SS=FALSE)
-# saveRDS(nasispedons, 'sitedata/nasispedons.RDS')
+veg.site.mi <- subset(veg.site, State %in% c('Michigan', 'Illinois', 'Indiana', 'Ohio'))
+max(veg.site.mi$Latitude)
+min(veg.site.mi$Latitude)
+max(veg.site.mi$Longitude)
+min(veg.site.mi$Longitude)
+veg.site.nj <- subset(veg.site, State %in% c('New Jersey'))
+max(veg.site.nj$Latitude)
+min(veg.site.nj$Latitude)
+max(veg.site.nj$Longitude)
+min(veg.site.nj$Longitude)
+
+nasispedons <- fetchNASIS(from = 'pedons', SS=FALSE)
+saveRDS(nasispedons, 'sitedata/nasispedons.RDS')
 nasispedons <- readRDS('sitedata/nasispedons.RDS')
 
 nassites <- site(nasispedons)
@@ -170,5 +173,12 @@ myrecordsplus <- myrecordsplus |> mutate(wet = ifelse(drainagecl %in% c("Poorly 
                                    rock = ifelse((grepl('Lithic', taxsubgrp))|bedrckdepth <= 50,1,0),
                                    coastal = ifelse(ocean <= 1000| lake <= 500, 1,0))
 
-write.csv(myrecordsplus, 'sitedata/myrecordsplus.csv')
-write.csv(ssurgoplus, 'sitedata/ssurgoplus.csv')
+write.csv(myrecordsplus, 'sitedata/myrecordsplus.csv', row.names = F)
+write.csv(ssurgoplus, 'sitedata/ssurgoplus.csv', row.names = F)
+
+
+#process site data  ----
+
+myrecordsplus <- read.csv('sitedata/myrecordsplus.csv')
+ssurgoplus <- read.csv('sitedata/ssurgoplus.csv')
+site.sf.ex <- read.csv('sitedata/site.sf.ex.csv')
