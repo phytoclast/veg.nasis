@@ -7,7 +7,7 @@ library(aqp)
 
 veg.spp <- read.delim('data/Observed_Species.txt')
 veg.site <- read.delim('data/Sites.txt')
-
+mlra <- st_read("C:/a/Ecological_Sites/GIS/Ecoregion/RegionalReview_296/CONUS2.shp")
 dem <- rast('D:/scripts/R12W/dem.tif'); names(dem) <- 'elev'
 slope <- rast('D:/scripts/R12W/slope.tif'); names(slope) <- 'slope'
 aspect <- rast('D:/scripts/R12W/aspect.tif'); names(aspect) <- 'aspect'
@@ -32,6 +32,13 @@ elevextract <- terra::extract(brick, site.vect)
 site.sf.ex <- site.sf |> cbind(elevextract)
 site.sf.ex <- site.sf.ex |> subset(select=c(State, County,Observation_ID,  Observation_Label, elev,slope,aspect,tpi, nat500)) |> st_drop_geometry()
 write.csv(site.sf.ex, 'sitedata/site.sf.ex.csv', row.names = F)
+#get mlra
+
+site.mlra <- site.sf |> st_transform(crs(mlra)) |> st_intersection(mlra)
+site.mlra <- subset(site.mlra, select=c(Observation_ID, LRU)) |> st_drop_geometry()
+write.csv(site.mlra, 'sitedata/site.mlra.csv', row.names = F)
+
+
 # library(soilDB)
 # ssurgo=NULL
 # ssurgo.i<-NULL
@@ -113,15 +120,15 @@ min(veg.site.nj$Latitude)
 max(veg.site.nj$Longitude)
 min(veg.site.nj$Longitude)
 
-nasispedons <- fetchNASIS(from = 'pedons', SS=FALSE)
-saveRDS(nasispedons, 'sitedata/nasispedons.RDS')
+# nasispedons <- fetchNASIS(from = 'pedons', SS=FALSE)
+# saveRDS(nasispedons, 'sitedata/nasispedons.RDS')
 nasispedons <- readRDS('sitedata/nasispedons.RDS')
 
 nassites <- site(nasispedons)
 nashorz <- horizons(nasispedons)
 
 n <- nrow(veg.site)
-for (i in 1:n){#i=1
+for (i in 1:n){#i=484
   this <- veg.site[i,]
   thislat <- this$Latitude
   thislon <- this$Longitude
@@ -145,23 +152,30 @@ sshorzsand <- sshorz |> mutate(th050 = ifelse(hzdepb_r > 50,50,hzdepb_r)-ifelse(
                                th150 = ifelse(hzdepb_r > 150,150,hzdepb_r)-ifelse(hzdept_r > 150,150,hzdept_r)) |>
   group_by(cokey) |> summarise(sand050 = sum(sandtotal_r*th050, na.rm = TRUE)/sum(th050, na.rm = TRUE),
                                sand150 = sum(sandtotal_r*th150, na.rm = TRUE)/sum(th150, na.rm = TRUE))
+sshorzpH <- sshorz |> mutate(th050 = ifelse(hzdepb_r > 50,50,hzdepb_r)-ifelse(hzdept_r > 50,50,hzdept_r),
+                             pH = ifelse(!is.na(ph1to1h2o_r), ph1to1h2o_r, ph01mcacl2_r)) |> subset(!is.na(pH)) |>
+  group_by(cokey) |> summarise(pH50 = sum(pH*th050, na.rm = TRUE)/sum(th050, na.rm = TRUE))
 #back to processing the pedon data ----
 nashorzsand <- nashorz |> mutate(th050 = ifelse(hzdept > 50,50,hzdepb)-ifelse(hzdept > 50,50,hzdept),
                                th150 = ifelse(hzdepb > 150,150,hzdepb)-ifelse(hzdept > 150,150,hzdept)) |>
   group_by(peiid) |> summarise(sand050 = sum(sand*th050, na.rm = TRUE)/sum(th050, na.rm = TRUE),
                                sand150 = sum(sand*th150, na.rm = TRUE)/sum(th150, na.rm = TRUE))
+nashorzpH <- nashorz |> mutate(th050 = ifelse(hzdept > 50,50,hzdepb)-ifelse(hzdept > 50,50,hzdept),
+                             pH = ifelse(!is.na(phfield), phfield, ifelse(!is.na(effclass) & !effclass %in% 'none',8,NA))) |> subset(!is.na(pH)) |>
+  group_by(peiid) |> summarise(pH50 = sum(pH*th050, na.rm = TRUE)/sum(th050, na.rm = TRUE))
+
 #back to processing the ssurgo data ----
 sshorzrock <- sshorz |> mutate(rock = ifelse(texture %in% c('UWB','WB','BR')|grepl('Cr', hzname), 'BR','Soil')) |> subset(rock %in% 'BR') |> group_by(cokey) |> summarise(rockdepth = min(hzdepb_r))
 
 sssitesflood <- sssites |> mutate(flood = ifelse(muname %in% c("flooded") | compname %in% c("Alluvial land")|
-                                                  (grepl("flood",geomdesc) & (grepl("fluv",taxsubgrp)|grepl("psam",taxsubgrp)|grepl("cumu",taxsubgrp))),1,0))
+                                                  (grepl("flood",tolower(geomdesc)) & (grepl("fluv",tolower(taxsubgrp))|grepl("psam",tolower(taxsubgrp))|grepl("cumu",tolower(taxsubgrp)))),1,0))
 
 #back to processing the pedon data ----
-nassitesplus <- nassites |> subset(select= c(obs_date, siteiid, peiid, pedon_id, ecositeid, drainagecl, taxonname, taxclname, taxsubgrp, bedrckdepth, flodfreqcl)) |> left_join(nashorzsand)
+nassitesplus <- nassites |> subset(select= c(obs_date, siteiid, peiid, pedon_id, ecositeid, drainagecl, taxonname, taxclname, taxsubgrp, bedrckdepth, flodfreqcl, landform_string)) |> left_join(nashorzsand) |> left_join(nashorzpH)
 
 
 #back to processing the ssurgo data ----
-ssitesplus <- sssites |> subset(select= c(mukey, cokey, drainagecl,comppct_r, compname, taxclname, taxsubgrp)) |> left_join(sshorzsand)|> left_join(sshorzrock)|> left_join(sssitesflood) |> mutate(mukey = as.integer(mukey), rockdepth = ifelse(is.na(rockdepth), 500,rockdepth))
+ssitesplus <- sssites |> subset(select= c(mukey, cokey, drainagecl,comppct_r, compname, taxclname, taxsubgrp)) |> left_join(sshorzsand)|> left_join(sshorzrock)|> left_join(sssitesflood) |> left_join(sshorzpH) |> mutate(mukey = as.integer(mukey))
 
 # ssurgoplus <- ssurgo |> left_join(ssitesplus) # previously used link to online ssurgo
 ssurgoplus <- site.dropgeo |> mutate(mukey = as.numeric(MUKEY), MUKEY = NULL) |> left_join(ssitesplus, by=join_by(mukey==mukey)) #join to mukey from downloaded gdb 
@@ -171,22 +185,42 @@ ssurgoplus <- ssurgoplus |> left_join(veg.site[,c('Observation_ID', 'ocean','lak
 myrecordsplus <- myrecords |> left_join(nassitesplus, by=join_by(pedon_id==pedon_id))
 
 #assess flood,sand,bedrock,wetland statuses of site, then of current condition
-#
-ssurgoplus <- ssurgoplus |> mutate(wet = ifelse(hydricrating %in% "Yes" | drainagecl %in% c("Poorly drained","Very poorly drained"),1,0),
+unique(ssurgoplus$drainagecl)
+unique(myrecordsplus$drainagecl)
+ssurgoplus <- ssurgoplus |> 
+  mutate(wet = ifelse(hydricrating %in% "Yes" | drainagecl %in% c("Poorly drained","Very poorly drained"),1,0),
                                    moist = ifelse(drainagecl %in% c("Moderately well drained","Somewhat poorly drained"),1,0),
                                    dry = ifelse(wet+moist > 0,0,1),
+                                   rockdepth = ifelse(is.na(rockdepth), 500,rockdepth), 
                                    mucky = ifelse(grepl('istic', taxsubgrp) | taxorder %in% 'Histosols', 1,0),
                                    sandy = ifelse(sand050 >= 80 | (sand050 >= 70 & sand150 >= 80), 1,0),
                                    rock = ifelse((grepl('Lithic', taxsubgrp))|rockdepth <= 100,1,0),
-                                   coastal = ifelse(ocean <= 1000| lake <= 500, 1,0))
+                                   coastal = ifelse(ocean <= 1000| lake <= 500, 1,0),
+                                   salty = ifelse(grepl('tidal',landform), 1,0),
+         dysic = ifelse(is.na(pH50), 
+                        ifelse(grepl('dys',taxclname)| grepl('ult',taxclname)| grepl('ods',taxclname),1,0),
+                        ifelse(pH50 <=5.5,1,0)),
+         euic = ifelse(is.na(pH50), 
+                        ifelse(grepl('eu',taxclname)| grepl('alf',taxclname)| grepl('oll',taxclname),1,0),
+                        ifelse(pH50 >5.5,1,0)))
 
-myrecordsplus <- myrecordsplus |> mutate(wet = ifelse(drainagecl %in% c("Poorly drained","Very poorly drained"),1,0),
-                                   moist = ifelse(drainagecl %in% c("Moderately well drained","Somewhat poorly drained"),1,0),
-                                   dry = ifelse(wet+moist > 0,0,1),
-                                   mucky = ifelse(grepl('ist', taxsubgrp), 1,0),
-                                   sandy = ifelse(sand050 >= 80 | (sand050 >= 70 & sand150 >= 80), 1,0),
-                                   rock = ifelse((grepl('Lithic', taxsubgrp))|bedrckdepth <= 50,1,0),
-                                   coastal = ifelse(ocean <= 1000| lake <= 500, 1,0))
+myrecordsplus <- myrecordsplus |> mutate(p_wet = ifelse(drainagecl %in% c("poorly","very poorly"),1,0),
+                                   p_moist = ifelse(drainagecl %in% c("moderately well","somewhat poorly"),1,0),
+                                   p_dry = ifelse(p_wet+p_moist > 0,0,1),
+                                   p_mucky = ifelse(grepl('ist', taxsubgrp), 1,0),
+                                   bedrckdepth=ifelse(is.na(bedrckdepth),500,bedrckdepth),
+                                   p_sandy = ifelse(sand050 >= 80 | (sand050 >= 70 & sand150 >= 80), 1,0),
+                                   p_rock = ifelse((grepl('Lithic', taxsubgrp))|bedrckdepth <= 100,1,0),
+                                   p_coastal = ifelse(ocean <= 1000| lake <= 500, 1,0),
+                                   p_flood = ifelse((!flodfreqcl %in% 'none' & !is.na(flodfreqcl)) | grepl('flood',landform_string),1,0),
+                                   p_salty = ifelse(pedon_id %in% c('2016MI037001','2016MI037002') | grepl('tidal',landform_string), 1,0),
+                                   p_dysic = ifelse(is.na(pH50), 
+                                                  ifelse(grepl('dys',taxclname)| grepl('ult',taxclname)| grepl('ods',taxclname),1,0),
+                                                  ifelse(pH50 <=5.5,1,0)),
+                                   p_euic = ifelse(is.na(pH50), 
+                                                 ifelse(grepl('eu',taxclname)| grepl('alf',taxclname)| grepl('oll',taxclname),1,0),
+                                                 ifelse(pH50 >5.5,1,0))
+                                   )
 
 write.csv(myrecordsplus, 'sitedata/myrecordsplus.csv', row.names = F)
 write.csv(ssurgoplus, 'sitedata/ssurgoplus.csv', row.names = F)
@@ -197,6 +231,27 @@ write.csv(ssurgoplus, 'sitedata/ssurgoplus.csv', row.names = F)
 myrecordsplus <- read.csv('sitedata/myrecordsplus.csv')
 ssurgoplus <- read.csv('sitedata/ssurgoplus.csv')
 site.sf.ex <- read.csv('sitedata/site.sf.ex.csv')
+site.mlra <- read.csv('sitedata/site.mlra.csv')
+
+
 colnames(ssurgoplus)
 
-ssurgoplus1 <- ssurgoplus |> subset(select = c("Observation_ID", "mukey", "muname", "flood","wet","moist","dry" ,"mucky","sandy","rock","coastal"))
+ssurgoplus1 <- ssurgoplus |> subset(select = c("Observation_ID", "mukey", "muname", "flood","wet","moist","dry" ,"mucky","sandy","rock","coastal","salty","dysic","euic"))
+ssurgoplus1 <- ssurgoplus1 |> group_by(Observation_ID, mukey, muname) |> summarise(across(c("flood","wet","moist","dry" ,"mucky","sandy","rock","coastal","salty","dysic","euic"), mean)) 
+
+myrecordsplus1 <- myrecordsplus |> subset(distance < 100, select=c("Observation_ID", "Observation_Label", "pedon_id","distance","taxonname","taxclname","p_flood","p_wet","p_moist","p_dry" ,"p_mucky","p_sandy","p_rock","p_coastal","p_salty","p_dysic","p_euic")) 
+
+ssurgoplus1 <- ssurgoplus1 |> left_join(myrecordsplus1)
+ssurgoplus1 <- ssurgoplus1 |> mutate(
+flood = ifelse(is.na(p_flood),flood,p_flood), p_flood=NULL,
+ wet = ifelse(is.na(p_wet),wet,p_wet), p_wet=NULL,
+ moist = ifelse(is.na(p_moist),moist,p_moist), p_moist=NULL,
+ dry = ifelse(is.na(p_dry),dry,p_dry), p_dry=NULL,
+ mucky = ifelse(is.na(p_mucky),mucky,p_mucky), p_mucky=NULL,
+ sandy = ifelse(is.na(p_sandy),sandy,p_sandy), p_sandy=NULL,
+ rock = ifelse(is.na(p_rock),rock,p_rock), p_rock=NULL,
+ coastal = ifelse(is.na(p_coastal),coastal,p_coastal), p_coastal=NULL,
+ salty = ifelse(is.na(p_salty),salty,p_salty), p_salty=NULL,
+ dysic = ifelse(is.na(p_dysic),dysic,p_dysic), p_dysic=NULL,
+ euic = ifelse(is.na(p_euic),euic,p_euic), p_euic=NULL
+)
