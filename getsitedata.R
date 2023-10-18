@@ -124,7 +124,7 @@ min(veg.site.nj$Longitude)
 # saveRDS(nasispedons, 'sitedata/nasispedons.RDS')
 nasispedons <- readRDS('sitedata/nasispedons.RDS')
 
-nassites <- site(nasispedons)
+nassites <- site(nasispedons)|> mutate(longstddecimaldegrees = ifelse(pedon_id %in% '2023NJ005201', -1*longstddecimaldegrees, longstddecimaldegrees))
 nashorz <- horizons(nasispedons)
 
 n <- nrow(veg.site)
