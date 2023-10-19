@@ -128,7 +128,7 @@ nassites <- site(nasispedons)|> mutate(longstddecimaldegrees = ifelse(pedon_id %
 nashorz <- horizons(nasispedons)
 
 n <- nrow(veg.site)
-for (i in 1:n){#i=484
+for (i in 1:n){#i=531
   this <- veg.site[i,]
   thislat <- this$Latitude
   thislon <- this$Longitude
@@ -171,7 +171,7 @@ sssitesflood <- sssites |> mutate(flood = ifelse(muname %in% c("flooded") | comp
                                                   (grepl("flood",tolower(geomdesc)) & (grepl("fluv",tolower(taxsubgrp))|grepl("psam",tolower(taxsubgrp))|grepl("cumu",tolower(taxsubgrp)))),1,0))
 
 #back to processing the pedon data ----
-nassitesplus <- nassites |> subset(select= c(obs_date, siteiid, peiid, pedon_id, ecositeid, drainagecl, taxonname, taxclname, taxsubgrp, bedrckdepth, flodfreqcl, landform_string)) |> left_join(nashorzsand) |> left_join(nashorzpH)
+nassitesplus <- nassites |> subset(select= c(obs_date, siteiid, peiid, pedon_id, ecositeid, drainagecl, taxonname, taxclname, taxsubgrp, bedrckdepth, flodfreqcl, landform_string, hillslopeprof, elev_field, slope_field, aspect_field)) |> left_join(nashorzsand) |> left_join(nashorzpH)
 
 
 #back to processing the ssurgo data ----
@@ -203,8 +203,10 @@ ssurgoplus <- ssurgoplus |>
          euic = ifelse(is.na(pH50), 
                         ifelse(grepl('eu',taxclname)| grepl('alf',taxclname)| grepl('oll',taxclname),1,0),
                         ifelse(pH50 >5.5,1,0)))
-
-myrecordsplus <- myrecordsplus |> mutate(p_wet = ifelse(drainagecl %in% c("poorly","very poorly"),1,0),
+unique(myrecordsplus$hillslopeprof)
+myrecordsplus <- myrecordsplus |> mutate(p_elev = elev_field, p_slope = slope_field, p_aspect = aspect_field,
+                                         tpiclass = ifelse(hillslopeprof %in% c("summit", "shoulder"), 3, ifelse(hillslopeprof %in% c("footslope" ,"toeslope"), 1,2)),
+                                                           p_wet = ifelse(drainagecl %in% c("poorly","very poorly"),1,0),
                                    p_moist = ifelse(drainagecl %in% c("moderately well","somewhat poorly"),1,0),
                                    p_dry = ifelse(p_wet+p_moist > 0,0,1),
                                    p_mucky = ifelse(grepl('ist', taxsubgrp), 1,0),
@@ -227,6 +229,8 @@ write.csv(ssurgoplus, 'sitedata/ssurgoplus.csv', row.names = F)
 
 
 #process site data  ----
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+library(vegnasis)
 
 myrecordsplus <- read.csv('sitedata/myrecordsplus.csv')
 ssurgoplus <- read.csv('sitedata/ssurgoplus.csv')
@@ -239,7 +243,7 @@ colnames(ssurgoplus)
 ssurgoplus1 <- ssurgoplus |> subset(select = c("Observation_ID", "mukey", "muname", "flood","wet","moist","dry" ,"mucky","sandy","rock","coastal","salty","dysic","euic"))
 ssurgoplus1 <- ssurgoplus1 |> group_by(Observation_ID, mukey, muname) |> summarise(across(c("flood","wet","moist","dry" ,"mucky","sandy","rock","coastal","salty","dysic","euic"), mean)) 
 
-myrecordsplus1 <- myrecordsplus |> subset(distance < 100, select=c("Observation_ID", "Observation_Label", "pedon_id","distance","taxonname","taxclname","p_flood","p_wet","p_moist","p_dry" ,"p_mucky","p_sandy","p_rock","p_coastal","p_salty","p_dysic","p_euic")) 
+myrecordsplus1 <- myrecordsplus |> subset(distance < 100, select=c("Observation_ID", "Observation_Label", "pedon_id","distance","taxonname","taxclname","p_flood","p_wet","p_moist","p_dry" ,"p_mucky","p_sandy","p_rock","p_coastal","p_salty","p_dysic","p_euic","tpiclass", "p_elev","p_slope","p_aspect")) 
 
 ssurgoplus1 <- ssurgoplus1 |> left_join(myrecordsplus1)
 ssurgoplus1 <- ssurgoplus1 |> mutate(
@@ -255,3 +259,44 @@ flood = ifelse(is.na(p_flood),flood,p_flood), p_flood=NULL,
  dysic = ifelse(is.na(p_dysic),dysic,p_dysic), p_dysic=NULL,
  euic = ifelse(is.na(p_euic),euic,p_euic), p_euic=NULL
 )
+ssurgoplus1 <- ssurgoplus1 |> left_join(subset(site.sf.ex, select=c(Observation_ID,elev,slope,aspect,tpi)))
+ssurgoplus1 <- ssurgoplus1 |> mutate(elev=ifelse(is.na(elev), p_elev, elev),p_elev=NULL,
+                                     slope=ifelse(is.na(slope), p_slope, slope),p_slope=NULL,
+                                     aspect=ifelse(is.na(aspect), p_aspect, aspect),p_aspect=NULL,
+                                     upper = ifelse((is.na(tpi) & tpiclass %in% 3)|tpi > 0.55,1,0),
+                                     middle = ifelse((is.na(tpi) & tpiclass %in% 2)|(tpi <= 0.55 & tpi >= 0.45),1,0),
+                                     lower = ifelse((is.na(tpi) & tpiclass %in% 1)|tpi < 0.45,1,0))
+write.csv(ssurgoplus1, 'sitedata/ssurgoplus1.csv', row.names=F)
+                                     
+#----
+# setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+# library(vegnasis)
+# library(sf)
+# library(terra)
+# library(soilDB)
+# library(aqp)
+# nasispedons <- readRDS('sitedata/nasispedons.RDS')
+# 
+# nassites <- site(nasispedons)|> mutate(longstddecimaldegrees = ifelse(pedon_id %in% '2023NJ005201', -1*longstddecimaldegrees, longstddecimaldegrees))
+# nashorz <- horizons(nasispedons)
+# colnames(nassites)
+# nashill <- subset(nassites, !is.na(longstddecimaldegrees) & !is.na(latstddecimaldegrees) & !(is.na(shapedown) & is.na(hillslopeprof)),  select = c(pedon_id, longstddecimaldegrees, latstddecimaldegrees, shapedown, shapeacross, hillslopeprof, geomposhill))
+# 
+# site.sf <- st_as_sf(nashill, coords	= c(x='longstddecimaldegrees', y='latstddecimaldegrees'), crs='EPSG: 4326')
+# tpi <- rast('D:/scripts/R12W/tpi.tif'); names(tpi) <- 'tpi'
+# site.sf <- site.sf |> st_transform(crs(tpi))
+# tpiextract <- terra::extract(tpi, site.sf)
+# tpiextract <- site.sf |> st_drop_geometry() |> cbind(tpiextract) |> subset(!is.na(hillslopeprof))
+# 
+# tpisum <- tpiextract |> group_by(shapedown) |> summarise(tpi=mean(tpi, na.rm=T))
+# tpisum <- tpiextract |> group_by(shapeacross) |> summarise(tpi=mean(tpi, na.rm=T))
+# tpisum <- tpiextract |> group_by(geomposhill) |> summarise(tpi=mean(tpi, na.rm=T))
+# tpisum <- tpiextract |> group_by(hillslopeprof) |> summarise(tpi=mean(tpi, na.rm=T), ct=length(hillslopeprof))
+# 
+# library(rpart)
+# library(rpart.plot)
+# rp <- rpart(hillslopeprof  ~ tpi, data=tpiextract, method="class", control = list(maxdepth = 4, cp=0.0005, minsplit=5))
+# rpart.plot(rp,  extra=108,legend.cex=0.5, digits=3) # Make plot
+# library(ggplot2)
+# ggplot(tpiextract, aes(y=tpi, color=hillslopeprof))+
+#   geom_boxplot()
