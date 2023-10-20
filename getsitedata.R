@@ -38,7 +38,6 @@ site.mlra <- site.sf |> st_transform(crs(mlra)) |> st_intersection(mlra)
 site.mlra <- subset(site.mlra, select=c(Observation_ID, LRU)) |> st_drop_geometry()
 write.csv(site.mlra, 'sitedata/site.mlra.csv', row.names = F)
 
-
 # library(soilDB)
 # ssurgo=NULL
 # ssurgo.i<-NULL
@@ -266,6 +265,26 @@ ssurgoplus1 <- ssurgoplus1 |> mutate(elev=ifelse(is.na(elev), p_elev, elev),p_el
                                      upper = ifelse((is.na(tpi) & tpiclass %in% 3)|tpi > 0.55,1,0),
                                      middle = ifelse((is.na(tpi) & tpiclass %in% 2)|(tpi <= 0.55 & tpi >= 0.45),1,0),
                                      lower = ifelse((is.na(tpi) & tpiclass %in% 1)|tpi < 0.45,1,0))
+
+
+#hydric veg ----
+library(vegnasis)
+veg.spp <- read.delim('data/Observed_Species.txt')
+veg.site <- read.delim('data/Sites.txt')
+
+veg = vegnasis::clean.veg.log(veg.site, veg.spp) 
+
+veg <- veg |> vegnasis::fill.nativity.df()
+veg.wet <- veg |> get.wetness()
+veg.nat <- veg |> group_by(plot) |> summarize(nativity = sum(ifelse(nativity %in% "native", 1,0)*cover)/sum(cover))
+
+
+
+ssurgoplus1 <- ssurgoplus1 |> left_join(veg.nat, by=join_by(Observation_ID == plot))
+ssurgoplus1 <- ssurgoplus1 |> left_join(veg.wet, by=join_by(Observation_ID == plot))
+ssurgoplus1 <- ssurgoplus1 |> left_join(site.mlra)
+
+
 write.csv(ssurgoplus1, 'sitedata/ssurgoplus1.csv', row.names=F)
                                      
 #----
