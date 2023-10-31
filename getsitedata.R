@@ -62,7 +62,7 @@ write.csv(site.mlra, 'sitedata/site.mlra.csv', row.names = F)
 # }
 # saveRDS(ssurgo, 'sitedata/ssurgo.RDS')
 # ssurgo <- readRDS('sitedata/ssurgo.RDS')
-
+# 
 # #Alternative extract directly from GDB ----
 # mi.poly <- sf::st_read('D:/GIS/SOIL/2021/gSSURGO_MI.gdb', 'MUPOLYGON')
 # oh.poly <- sf::st_read('D:/GIS/SOIL/2021/gSSURGO_OH.gdb', 'MUPOLYGON')
@@ -280,6 +280,8 @@ ssurgoplus1 <- ssurgoplus1 |> mutate(elev=ifelse(is.na(elev), p_elev, elev),p_el
 library(vegnasis)
 veg.spp <- read.delim('data/Observed_Species.txt')
 veg.site <- read.delim('data/Sites.txt')
+veg.site <- subset(veg.site, Latitude != 0 & Observer_Code %in% c('BEL.JH', 'TOL.NB', 'GRR.NJL', 'GRR.GJS') &
+         Year >=2011 & !Observation_Type %in% c('Bogus', 'Floristics'))
 veg = vegnasis::clean.veg.log(veg.site, veg.spp) 
 
 veg <- veg |> vegnasis::fill.nativity.df()
@@ -291,8 +293,8 @@ veg <- veg |> fill.hts.df() |> fill.type.df() |> mutate(habitcode = get.habit.co
 veg.aquatic <- veg |> group_by(plot) |> summarize(aqcover = sum(ifelse(grepl('A',habitcode), cover,0)), totcover=sum(cover), relaqcover = aqcover/totcover*100)
 # veg.ass <- veg |> get.assoc()
 # veg.str <- veg |> get.structure()
-# write.csv(veg.ass,'sitedata/veg.ass.csv', row.names = F)
-# write.csv(veg.str,'sitedata/vegstr.csv', row.names = F)
+# veg.ass <- veg.ass |> left_join(veg.str)
+# write.csv(veg.ass,'sitedata/vegass.csv', row.names = F)
 
 ssurgoplus1 <- ssurgoplus1 |> left_join(veg.nat, by=join_by(Observation_ID == plot))
 ssurgoplus1 <- ssurgoplus1 |> left_join(veg.wet, by=join_by(Observation_ID == plot))
@@ -303,6 +305,46 @@ write.csv(ssurgoplus1, 'sitedata/ssurgoplus1.csv', row.names=F, na="")
 
 veg.wet <- veg.obl |> left_join(veg.upl)     
 write.csv(veg.wet, 'sitedata/vegwet.csv', row.names=F, na="")
+# floristic quality index ----
+veg.ass <- read.csv('sitedata/vegass.csv')
+
+fci <- read.csv('data/plants/MichiganFCI.csv')
+fci <- fci |> mutate(actax = harmonize.taxa(taxon, fix=T))
+fci$taxon <- str_replace_all(fci$taxon, 'Opuntia cespetosa','Opuntia humifusa')
+veg.sum <- veg |> group_by(plot, taxon) |> summarize(cover = cover.agg(cover))
+fci$c
+taxa = veg.sum$taxon
+x  <-  as.data.frame(cbind(taxa=taxa)) |> mutate(fci0 = NA)
+#first try straight join ----
+x <- x |> left_join(fci[,c('taxon','c')], by = c('taxa'='taxon'), multiple = 'first')
+x <- x |> mutate(fci0 = ifelse(is.na(fci0)| fci0 %in% "", c, fci0))
+x <- x[,1:2]
+#then try synonym join ----
+x <- x |> left_join(syns[,c('acc','syn')], by=c('taxa'='syn'), multiple = 'first') |> 
+  left_join(fci[,c('taxon','c','actax')], by = c('acc'='actax'), multiple = 'first')
+x <- x |> mutate(fci0 = ifelse(is.na(fci0)| fci0 %in% "", c, fci0))
+
+x <- x[,1:2]
+
+veg.sum <- veg.sum |> left_join(x, by=c('taxon'='taxa'), multiple = 'first')
+veg.fci <- veg.sum |> mutate(lcover = (log10(cover+0.1)+100)/(log10(100+0.1)+100)*100) |> group_by(plot) |> summarize(
+  fci.nowt = mean(fci0, na.rm=T),
+  fci.wt = weighted.mean(fci0, cover, na.rm=T),
+  fci.logwt = weighted.mean(fci0, lcover, na.rm=T),
+  fci.nowt0 = mean(ifelse(fci0>=0,fci0,0), na.rm=T),
+  fci.wt0 = weighted.mean(ifelse(fci0>=0,fci0,0), cover, na.rm=T),
+  fci.logwt0 = weighted.mean(ifelse(fci0>=0,fci0,0), lcover, na.rm=T))
+
+veg.fci <- site.sf.ex |> left_join(veg.fci, by=join_by(Observation_ID == plot))
+cor(veg.fci[,c('nat500','fci.nowt','fci.wt','fci.logwt','fci.nowt0','fci.wt0','fci.logwt0')], use="complete.obs")
+library(ggplot2)
+ggplot(veg.fci, aes(x=nat500, y=fci.nowt0))+
+  geom_point(alpha=0.2)+
+  geom_smooth()
+
+write.csv(veg.fci, 'sitedata/vegfci.csv', row.names = F)
+
+veg.fci <- veg.fci |> left_join(veg.ass, by=join_by(Observation_ID == plot))
 
 #----
 # setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
