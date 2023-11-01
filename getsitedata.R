@@ -5,7 +5,7 @@ library(terra)
 library(soilDB)
 library(aqp)
 
-veg.spp <- read.delim('data/Observed_Species.txt')
+veg.spp <- read.delim('data/Observed_Species.txt', encoding = 'latin1')#prevent errors from improper encoding from hybrid symbol
 veg.site <- read.delim('data/Sites.txt')
 mlra <- st_read("C:/a/Ecological_Sites/GIS/Ecoregion/RegionalReview_296/CONUS2.shp")
 dem <- rast('D:/scripts/R12W/dem.tif'); names(dem) <- 'elev'
