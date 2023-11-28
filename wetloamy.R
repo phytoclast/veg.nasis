@@ -17,22 +17,26 @@ if(!FALSE %in% grepl('Yes|No',veg.site[,i])){
 }}
 veg.site <- veg.site |> mutate(Forest = ifelse(Structure %in% 'forest',1,ifelse(Structure %in% 'woodland',0.5,0)))
 colnames(veg.site)
-# wetloamy <- subset(veg.site, Loamy %in% 1 & Hydric %in% 1 & Floodplain %in% 0)
-wetloamy <- veg.site[sample(rownames(veg.site),100),]
-veg <- clean.veg.log(veg.site, veg.spp) 
+unique(veg.site$MLRA)
+wetloamy <- subset(veg.site, Loamy %in% 1 & Hydric %in% 1 & Euic %in% 1 & Floodplain %in% 0 & MLRA %in% c('97A','98A1','98A2','99A', '99B'))
+# wetloamy <- veg.site[sample(rownames(veg.site),100),]
 
+veg <- clean.veg.log(veg.site, veg.spp)
+veg <- subset(veg, cover > 0)
+hascover <- veg |> group_by(plot) |> summarize(cover = cover.agg(cover)) |> subset(cover >= 10)
+veg <- subset(veg, plot %in% hascover$plot)
 veg.wetloamy <- subset(veg, plot %in% wetloamy$Observation_ID) |> fill.hts.df() |> fill.type.df() |> fill.nativity.df()
 
 
-veg.abiotic <- subset(veg.site, Observation_ID %in% veg.wetloamy$plot, 
+veg.abiotic <- subset(veg.site, Observation_ID %in% veg.wetloamy$plot,
                       select = c('Observation_ID', "Upper","Middle","Lower","Coastal",
                                            "Floodplain","Inland","Hydric","Nonhydric",
                                            "Aquatic","Wet","Moist","Dry",
                                            "Mucky","Rocky","Sandy","Loamy",
                                            "Calcareous", "Euic", "Dysic", "Salty",
                                            "Fresh", "Natural", "Seminatural", "Cultural",
-                                           "Cold", "Cool", "Mild", 
-                                           "Warm", "Hot", "Humid", "Subhumid", 
+                                           "Cold", "Cool", "Mild",
+                                           "Warm", "Hot", "Humid", "Subhumid",
                                            "Arid", "Microthermal", "Mesothermal", "Megathermal","Forest"))
 
 rownames(veg.abiotic) <- veg.abiotic$Observation_ID
@@ -51,11 +55,41 @@ d2 <- (d*(1-prop)+d.abiotic*(prop))
 t <- cluster::agnes(d2, method = 'ward')|> as.hclust()
 t$labels
 rdf <- data.frame(Observation_ID = t$labels) |> left_join(veg.site[,c("Observation_ID","Community_Name","Site_Type")])
-t$labels <- paste(rdf$Site_Type,row(rdf)[,1])
+t$labels <- paste(rdf$Community_Name,row(rdf)[,1])
 
-k = 7
+k = 10
 groups <- cutree(t, k = k)
 groups <- dendrogrouporder(t, groups)
 a = 'wet loamy vegetation'
 folder = 'sitedata'
 export.dendro(a,d,t,groups,folder)
+groupdf <- as.data.frame(groups)
+rdfgroup <- cbind(rdf,groupdf)
+rownames(rdfgroup) = NULL
+veg.group <- veg |> left_join(rdfgroup, by=join_by(plot == Observation_ID)) |> subset(!is.na(groups))
+
+rdfgrouped <- rdfgroup |> left_join(wetloamy, by=join_by(Observation_ID == Observation_ID, Community_Name == Community_Name, Site_Type == Site_Type)) |> subset(select = c("Observation_ID", "groups", "Community_Name", "Upper","Middle","Lower","Coastal",
+                                                                                                                                                                         "Floodplain","Inland","Hydric","Nonhydric",
+                                                                                                                                                                         "Aquatic","Wet","Moist","Dry",
+                                                                                                                                                                         "Mucky","Rocky","Sandy","Loamy",
+                                                                                                                                                                         "Calcareous", "Euic", "Dysic", "Salty",
+                                                                                                                                                                         "Fresh", "Natural", "Seminatural", "Cultural",
+                                                                                                                                                                         "Cold", "Cool", "Mild",
+                                                                                                                                                                         "Warm", "Hot", "Humid", "Subhumid",
+                                                                                                                                                                         "Arid", "Microthermal", "Mesothermal", "Megathermal","Forest"))
+rdfgrouped <- rdfgrouped |> group_by(groups) |> summarise(across(c(Upper,Middle,Lower,Coastal,
+                                                Floodplain,Inland,Hydric,Nonhydric,
+                                                Aquatic,Wet,Moist,Dry,
+                                                Mucky,Rocky,Sandy,Loamy,
+                                                Calcareous, Euic, Dysic, Salty,
+                                                Fresh, Natural, Seminatural, Cultural,
+                                                Cold, Cool, Mild,
+                                                Warm, Hot, Humid, Subhumid,
+                                                Arid, Microthermal, Mesothermal, Megathermal,Forest), mean))
+
+
+#grouped summary
+#
+veg.summary <- veg.group |> fill.nativity.df() |> fill.type.df() |> fill.hts.df() |> mutate(symbol = fill.usda.symbols(taxon))
+
+veg.summary2  <- veg.summary |>  summary.ESIS(group='groups', lowerQ = 0.5, upperQ = 0.95, breaks = c(0.5, 2, 5, 12))
