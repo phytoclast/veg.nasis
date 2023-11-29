@@ -92,4 +92,34 @@ rdfgrouped <- rdfgrouped |> group_by(groups) |> summarise(across(c(Upper,Middle,
 #
 veg.summary <- veg.group |> fill.nativity.df() |> fill.type.df() |> fill.hts.df() |> mutate(symbol = fill.usda.symbols(taxon))
 
-veg.summary2  <- veg.summary |>  summary.ESIS(group='groups', lowerQ = 0.5, upperQ = 0.95, breaks = c(0.5, 2, 5, 12))
+veg.summary2  <- veg.summary |>  summary.ESIS(group='groups', lowerQ = 0.5, upperQ = 0.95, normalize = TRUE, breaks = c(0.5, 2, 5, 15))
+
+
+coverbounds <- function(cover.Low, cover.High, cover.min, cover.max, cover.mean){
+  upper.x = cover.High + (cover.mean - (cover.High+cover.Low)/2)
+  lower.x = cover.Low + (cover.mean - (cover.High+cover.Low)/2)
+  upper.x = upper.x + (lower.x - pmax(lower.x, cover.min))
+  lower.x = pmax(lower.x, cover.min)
+  lower.x = lower.x + (upper.x - pmin(upper.x, cover.max))
+  upper.x = pmin(upper.x, cover.max)
+  return(c(lower.x,upper.x))}
+
+#example numbers
+cover.min = 10
+cover.Low = 27.5
+cover.mean = 33.8
+cover.High = 74.0
+cover.max = 80.0
+x = coverbounds(cover.Low, cover.High, cover.min, cover.max, cover.mean)
+x
+mean(x)
+
+#species with frq of 0.444
+cover.min = 0
+cover.50 = 0.0
+cover.mean = 9
+cover.95 = 10
+cover.max = 12
+x = coverbounds(cover.50, cover.95, cover.min, cover.max, cover.mean)
+x
+mean(x)
