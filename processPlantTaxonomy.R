@@ -26,15 +26,15 @@ plants <- plants |> mutate(auct = ifelse(grepl('auct',author) |
 cleanEncoding <- function(x){
   n = length(x)
   for(i in 1:n){#i=1
-    enc = stri_enc_detect(x[i])
-    enc <- enc[[1]]$Encoding[1]
+    enc = stringi::stri_enc_detect(x[i])
+    enc <- stringi::enc[[1]]$Encoding[1]
     if(!enc %in% 'UTF-8'){
       if(enc %in% 'windows-1252'){
-        x[i] <- stri_conv(x[i], from = 'windows-1252', to='UTF-8')
+        x[i] <- stringi::stri_conv(x[i], from = 'windows-1252', to='UTF-8')
       }else if(enc %in% 'ISO-8859-1'){
-        x[i] <- stri_conv(x[i], from = 'ISO-8859-1', to='UTF-8')
+        x[i] <- stringi::stri_conv(x[i], from = 'ISO-8859-1', to='UTF-8')
       }else{
-        x[i] <- stri_conv(x[i], from = 'latin1', to='UTF-8')
+        x[i] <- stringi::stri_conv(x[i], from = 'latin1', to='UTF-8')
       }
     }
   }
@@ -59,7 +59,6 @@ m.ac <- m.ac |> mutate(acc = cleanEncoding(acc),
 m.ac <- m.ac |> mutate(acc = extractTaxon(acc),
                        syn = extractTaxon(syn))
 
-write.csv(m.ac, 'data/plants/m.ac2.csv', row.names = F)
 
 #create new three way synonymy
 #bonap
@@ -95,13 +94,22 @@ syn.bonapusda <- subset(syn, !is.na(usda), select = c(bonap, usda))
 colnames(syn.bonapusda) <- c("bonap","usda2")
 syn <- left_join(syn, syn.bonapusda, multiple = 'first')
 syn <- syn |> mutate(usda = ifelse(is.na(usda), usda2,usda), usda2 = NULL)
+write.csv(syn, 'data/plants/syns.csv', row.names = F)
 
 
+# syn <- syn |>  mutate(infrataxon0 = extractTaxon(taxon, 'infrataxon'),
+#                       epithet1 = extractTaxon(bonap, 'epithet'),
+#                       infrataxon1 = extractTaxon(bonap, 'infrataxon'), 
+#                       binomial2 = extractTaxon(kew, 'binomial'),
+#                       epithet2 = extractTaxon(kew, 'epithet'),
+#                       infrataxon2 = extractTaxon(kew, 'infrataxon'),
+#                       binomial3 = extractTaxon(usda, 'binomial'),
+#                       epithet3 = extractTaxon(usda, 'epithet'),
+#                       infrataxon3 = extractTaxon(usda, 'infrataxon'))
+# syn1 <- subset(syn, infrataxon0 == '' & infrataxon1 == '' & epithet3 == infrataxon3 & !is.na(usda) & grepl(' ',usda))
 
 
-
-
-
+syns <- vegnasis::syns
 
 
 
