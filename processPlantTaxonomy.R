@@ -23,31 +23,31 @@ plants <- plants |> mutate(auct = ifelse(grepl('auct',author) |
                                            grepl('illeg.',author) |
                                            grepl(' non',author), T,F))
 
-cleanEncoding <- function(x){
-  n = length(x)
-  for(i in 1:n){#i=1
-    enc = stringi::stri_enc_detect(x[i])
-    enc <- stringi::enc[[1]]$Encoding[1]
-    if(!enc %in% 'UTF-8'){
-      if(enc %in% 'windows-1252'){
-        x[i] <- stringi::stri_conv(x[i], from = 'windows-1252', to='UTF-8')
-      }else if(enc %in% 'ISO-8859-1'){
-        x[i] <- stringi::stri_conv(x[i], from = 'ISO-8859-1', to='UTF-8')
-      }else{
-        x[i] <- stringi::stri_conv(x[i], from = 'latin1', to='UTF-8')
-      }
-    }
-  }
-  return(x)}
-
-
-whatEncoding <- function(x){
-  n = length(x)
-  for(i in 1:n){#i=1
-    enc <- stri_enc_detect(x[i])
-    enc <- enc[[1]]$Encoding[1]
-    x[i] <- enc}
-  return(x)}
+# cleanEncoding <- function(x){
+#   n = length(x)
+#   for(i in 1:n){#i=1
+#     enc = stringi::stri_enc_detect(x[i])
+#     enc <- enc[[1]]$Encoding[1]
+#     if(!enc %in% 'UTF-8'){
+#       if(enc %in% 'windows-1252'){
+#         x[i] <- stringi::stri_conv(x[i], from = 'windows-1252', to='UTF-8')
+#       }else if(enc %in% 'ISO-8859-1'){
+#         x[i] <- stringi::stri_conv(x[i], from = 'ISO-8859-1', to='UTF-8')
+#       }else{
+#         x[i] <- stringi::stri_conv(x[i], from = 'latin1', to='UTF-8')
+#       }
+#     }
+#   }
+#   return(x)}
+# 
+# 
+# whatEncoding <- function(x){
+#   n = length(x)
+#   for(i in 1:n){#i=1
+#     enc <- stri_enc_detect(x[i])
+#     enc <- enc[[1]]$Encoding[1]
+#     x[i] <- enc}
+#   return(x)}
 
 m.ac <- read.csv('data/plants/m.ac.csv', encoding = 'UTF-8')
 #m.ac <- m.ac |> mutate(en1 = whatEncoding(syn), en2 = whatEncoding(syn.auth))
@@ -59,11 +59,11 @@ m.ac <- m.ac |> mutate(acc = cleanEncoding(acc),
 m.ac <- m.ac |> mutate(acc = extractTaxon(acc),
                        syn = extractTaxon(syn))
 
-
 #create new three way synonymy
 #bonap
 syn <- unique(data.frame(taxon = m.ac$syn, author = m.ac$syn.auth, bonap = m.ac$acc))
 #kew
+kew <- subset(kew, !(!infraspecies %in% '' & !grepl('\\.', taxon_name))) #exclude trinomials lacking trigger words for var./subsp.
 wfo <- unique(data.frame(id = kew$plant_name_id,ac = kew$accepted_plant_name_id, taxon = kew$taxon_name, author=kew$taxon_authors, status = kew$taxon_status))
 wfo <- subset(wfo, status %in% c("Synonym","Accepted","Orthographic"))
 wfo <- wfo |> mutate(taxon = extractTaxon(taxon))
