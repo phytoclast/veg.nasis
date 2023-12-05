@@ -16,6 +16,7 @@ for(i in 1:ncol(veg.site)){
 if(!FALSE %in% grepl('Yes|No',veg.site[,i])){
   veg.site[,i] <- ifelse(veg.site[,i] %in% "Yes",1,0)
 }}
+
 veg.site <- veg.site |> mutate(Forest = ifelse(Structure %in% 'forest',1,ifelse(Structure %in% 'woodland',0.5,0)))
 colnames(veg.site)
 unique(veg.site$MLRA)
@@ -24,8 +25,8 @@ wetloamy <- subset(veg.site, Loamy %in% 1 & Hydric %in% 1 & Euic %in% 1 & Floodp
 
 veg <- clean.veg.log(veg.site, veg.spp)
 veg <- subset(veg, cover > 0)
-                       
 
+# x=veg |> fill.type.df() |> fill.hts.df();simple=TRUE
 hascover <- veg |> group_by(plot) |> summarize(cover = cover.agg(cover)) |> subset(cover >= 10)
 veg <- subset(veg, plot %in% hascover$plot)
 veg <- subset(veg, plot %in% wetloamy$Observation_ID) |> fill.hts.df() |> fill.type.df() |> fill.nativity.df() |>
@@ -33,18 +34,22 @@ veg <- subset(veg, plot %in% wetloamy$Observation_ID) |> fill.hts.df() |> fill.t
          taxon = extractTaxon(taxon, 'binomial'), #use for analysis
          usda = harmonize.taxa(taxon, fix=T, sensu = 'usda'),
          symbol = fill.usda.symbols(usda)) #for entry into EDIT
+veg.structure <- veg |> get.structure(simple=FALSE)
+veg.association <- veg |> get.assoc() |> left_join(veg.structure)
 
-
-veg.abiotic <- subset(veg.site, Observation_ID %in% veg$plot,
-                      select = c('Observation_ID', "Upper","Middle","Lower","Coastal",
-                                           "Floodplain","Inland","Hydric","Nonhydric",
-                                           "Aquatic","Wet","Moist","Dry",
-                                           "Mucky","Rocky","Sandy","Loamy",
-                                           "Calcareous", "Euic", "Dysic", "Salty",
-                                           "Fresh", "Natural", "Seminatural", "Cultural",
-                                           "Cold", "Cool", "Mild",
-                                           "Warm", "Hot", "Humid", "Subhumid",
-                                           "Arid", "Microthermal", "Mesothermal", "Megathermal","Forest"))
+veg.abiotic <- subset(veg.site, Observation_ID %in% veg$plot)
+veg.abiotic<- veg.abiotic |> left_join(veg.structure, by=join_by(Observation_ID==plot)) |> 
+  subset(select = c('Observation_ID', "Wet","Moist","Natural", "Seminatural", "Forest")) 
+# subset(select = c('Observation_ID', "Wet","Moist","Natural", "Seminatural", "tree","sapling","shrub","forb","grass","ht.max")) 
+# select = c('Observation_ID', "Upper","Middle","Lower","Coastal",
+#            "Floodplain","Inland","Hydric","Nonhydric",
+#            "Aquatic","Wet","Moist","Dry",
+#            "Mucky","Rocky","Sandy","Loamy",
+#            "Calcareous", "Euic", "Dysic", "Salty",
+#            "Fresh", "Natural", "Seminatural", "Cultural",
+#            "Cold", "Cool", "Mild",
+#            "Warm", "Hot", "Humid", "Subhumid",
+#            "Arid", "Microthermal", "Mesothermal", "Megathermal","Forest"))
 
 rownames(veg.abiotic) <- veg.abiotic$Observation_ID
 veg.abiotic<- veg.abiotic[,-1]
@@ -56,7 +61,7 @@ m <- make.plot.matrix(veg, tr = 'log', label='plot', taxon='taxon')
 d = vegan::vegdist(m, method='bray')
 dtab1 <- as.data.frame(as.matrix(d))
 dtab2 <- as.data.frame(as.matrix(d.abiotic))
-prop=0.5
+prop=0.9
 d2 <- (d*(1-prop)+d.abiotic*(prop))
 
 t <- cluster::agnes(d2, method = 'ward')|> as.hclust()
@@ -64,7 +69,7 @@ t$labels
 rdf <- data.frame(Observation_ID = t$labels) |> left_join(veg.site[,c("Observation_ID","Community_Name","Site_Type")])
 t$labels <- paste(rdf$Community_Name,row(rdf)[,1])
 
-k = 10
+k = 11-3
 groups <- cutree(t, k = k)
 groups <- dendrogrouporder(t, groups)
 a = 'wet loamy vegetation'
@@ -95,29 +100,46 @@ rdfgrouped <- rdfgrouped |> group_by(groups) |> summarise(across(c(Upper,Middle,
 #
 veg.summary <- veg.group
 
-veg.summary2  <- veg.summary |>  summary.ESIS(group='groups', lowerQ = 0.5, upperQ = 0.95, normalize = TRUE, breaks = c(0.5, 2, 5, 15))
+EDIT  <- veg.summary |>  summary.ESIS(group='groups', lowerQ = 0.5, upperQ = 0.95, normalize = TRUE, breaks = c(0.5, 2, 5, 15))
 
-write.csv(veg.summary2, 'wetloamy.csv', row.names = F)
 
 #need function to convert to plant type categories and Nativity used by EDIT
 
 
-group_community <- data.frame(plot = veg.summary2$group,
-                              taxon = veg.summary2$taxon,
-                              symbol = veg.summary2$symbol,
-                              type = veg.summary2$type,
-                              nativity=veg.summary2$nativity,
-                              cover=veg.summary2$cover.mean,
-                              stratum.min = veg.summary2$stratum.min,
-                              stratum.max = veg.summary2$stratum.max,
-                              ht.min = veg.summary2$Bottom,
-                              ht.max = veg.summary2$Top) |> pre.fill.veg()
+group_community <- data.frame(plot = EDIT$group,
+                              taxon = EDIT$taxon,
+                              symbol = EDIT$symbol,
+                              type = EDIT$type,
+                              nativity=EDIT$nativity,
+                              cover=EDIT$cover.mean,
+                              stratum.min = EDIT$stratum.min,
+                              stratum.max = EDIT$stratum.max,
+                              ht.min = EDIT$Bottom,
+                              ht.max = EDIT$Top) |> pre.fill.veg()
 
 
 group_community.ass <- group_community |> fill.hts.df()
-
-  
-  
 group_community.ass <- get.assoc(group_community.ass)
+group_community.ass <- group_community.ass |> left_join(rdfgrouped[,c('groups','Wet','Forest','Natural')], by = join_by(plot==groups))
 
+EDIT <-  EDIT |> mutate(type = get.habit.name(get.habit.code(taxon), type='ESIS'),
+                        type = case_when(type %in% 'Grass/grass-like' ~ 'Grass/grass-like (Graminoids)',
+                                         Top > 5 & type %in% c('Shrub/Subshrub') ~ 'Tree',
+                                         TRUE ~ type),
+                        nativity = case_when(nativity %in% c('native','Native') ~ 'Native',
+                                             nativity %in% c('introduced','Introduced') ~ 'Introduced',
+                                             TRUE  ~ 'Unknown'),
+                        overstory = ifelse(Top > 5 & type %in% c("Tree","Shrub/Subshrub","Vine/Liana"), 1, 2),
 
+                        symbol = ifelse(is.na(symbol), case_when(grepl('moss',tolower(taxon)) ~ '2MOSS',
+                                                                grepl('alga',tolower(taxon)) ~ '2ALGA',
+                                                                TRUE ~ symbol), symbol),
+                        type = ifelse(is.na(type), case_when(symbol %in% 'POACEA' ~ 'Grass/grass-like (Graminoids)',
+                                                             symbol %in% '2MOSS' ~ 'Nonvascular',
+                                                             symbol %in% '2ALGA' ~ 'Biological Crusts',
+                                                             TRUE ~ type), type))
+
+EDIT <- EDIT |> group_by(type) |> mutate(type.top = weighted.mean(Top, w = cover.mean))
+
+EDIT <- EDIT |> subset(select=c(group,overstory, taxon,symbol,type,nativity, cover.Low,cover.High, Bottom,Top, dbh.Low, dbh.High, BA.Low, BA.High, taxon.cover, over.cover, type.top,frq.plot)) |> arrange(group, overstory, desc(type.top), desc(over.cover), desc(taxon.cover), desc(Top))
+write.csv(EDIT, 'wetloamy.csv', row.names = F, na="")
