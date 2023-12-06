@@ -10,7 +10,8 @@ veg.site <- read.delim('data/Sites.txt')
 veg.site <- subset(veg.site,Latitude != 0 & Observer_Code %in% c('BEL.JH', 'TOL.NB', 'GRR.NJL', 'GRR.GJS') &
                      Year >=2011 & !Observation_Type %in% c('Bogus', 'Floristics')) #
 veg.site$Observation_Label <- veg.site$Observation_ID
-
+mlra99plots <- subset(veg.site, MLRA %in% c('99A', '99B'))
+mlra97plots <- subset(veg.site, MLRA %in% c('97A'))
 
 for(i in 1:ncol(veg.site)){
 if(!FALSE %in% grepl('Yes|No',veg.site[,i])){
@@ -98,10 +99,17 @@ rdfgrouped <- rdfgrouped |> group_by(groups) |> summarise(across(c(Upper,Middle,
 
 #grouped summary
 #
-veg.summary <- veg.group
-
-EDIT  <- veg.summary |>  summary.ESIS(group='groups', lowerQ = 0.5, upperQ = 0.95, normalize = TRUE, breaks = c(0.5, 2, 5, 15))
-
+veg.summary <- veg.group  |> mutate(wt = ifelse(plot %in% mlra99plots$Observation_ID, 10,1))
+subset(veg.group, plot %in% mlra99plots$Observation_ID, select=c(groups, plot)) |> unique()
+# timeA = Sys.time()
+# EDIT  <- veg.summary |>  summary.ESIS(group='groups', lowerQ = 0.5, upperQ = 0.95, normalize = TRUE, breaks = c(0.5, 2, 5, 15))
+# Sys.time() - timeA
+# timeA = Sys.time()
+EDIT  <- veg.summary |>  summary.ESIS.wt(group='groups', wt='wt', lowerQ = 0.5, upperQ = 0.95, normalize = TRUE, breaks = c(0.5, 2, 5, 15))
+# Sys.time() - timeA
+# timeA = Sys.time()
+# EDIT3  <- veg.summary |>  summary.ESIS.wt.noHmisc(group='groups', lowerQ = 0.5, upperQ = 0.95, normalize = TRUE, breaks = c(0.5, 2, 5, 15))
+# Sys.time() - timeA
 
 #need function to convert to plant type categories and Nativity used by EDIT
 
