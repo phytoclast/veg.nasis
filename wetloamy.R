@@ -10,8 +10,6 @@ veg.site <- read.delim('data/Sites.txt')
 veg.site <- subset(veg.site,Latitude != 0 & Observer_Code %in% c('BEL.JH', 'TOL.NB', 'GRR.NJL', 'GRR.GJS') &
                      Year >=2011 & !Observation_Type %in% c('Bogus', 'Floristics')) #
 veg.site$Observation_Label <- veg.site$Observation_ID
-mlra99plots <- subset(veg.site, MLRA %in% c('99A', '99B'))
-mlra97plots <- subset(veg.site, MLRA %in% c('97A'))
 
 for(i in 1:ncol(veg.site)){
 if(!FALSE %in% grepl('Yes|No',veg.site[,i])){
@@ -21,8 +19,10 @@ if(!FALSE %in% grepl('Yes|No',veg.site[,i])){
 veg.site <- veg.site |> mutate(Forest = ifelse(Structure %in% 'forest',1,ifelse(Structure %in% 'woodland',0.5,0)))
 colnames(veg.site)
 unique(veg.site$MLRA)
+
 wetloamy <- subset(veg.site, Loamy %in% 1 & Hydric %in% 1 & Euic %in% 1 & Floodplain %in% 0 & MLRA %in% c('97A','98A1','98A2','99A', '99B'))
 # wetloamy <- veg.site[sample(rownames(veg.site),100),]
+veg.soil <- subset(veg.site, select = c(Observation_ID, State, County, FIPS, Site_Type, Soil.Taxon, Soil.Series, Map.Unit))
 
 veg <- clean.veg.log(veg.site, veg.spp)
 veg <- subset(veg, cover > 0)
@@ -98,8 +98,20 @@ rdfgrouped <- rdfgrouped |> group_by(groups) |> summarise(across(c(Upper,Middle,
 
 
 #grouped summary
-#
-veg.summary <- veg.group  |> mutate(wt = ifelse(plot %in% mlra99plots$Observation_ID, 10,1))
+mlra99plots <- subset(veg.site, MLRA %in% c('99A', '99B'))
+mlra97plots <- subset(veg.site, MLRA %in% c('97A'))
+mlra98A2plots <- subset(veg.site, MLRA %in% c('98A2'))
+
+theseplots = mlra99plots$Observation_ID #plots to emphasize
+thoseplots = c(mlra97plots$Observation_ID,mlra98A2plots$Observation_ID) #plots to de-emphasize
+# theseplots = mlra97plots$Observation_ID
+# thoseplots = mlra99plots$Observation_ID
+groupcounts <-  veg.group |> mutate(these = ifelse(plot %in% theseplots, 1,0), those = ifelse(plot %in% thoseplots, 1,0)) |> subset(select=c(groups, plot, these, those)) |> unique() |> group_by(groups) |> summarise(nplot = length(plot), these = sum(these), those = sum(those))
+groupcounts <- groupcounts |> mutate(prewt1 = 1/(nplot+1), prewt2 = 11/(nplot-those+1),prewt3 = 11/(these+1),actual = these/nplot,
+                                     strength = prewt3*these/(prewt3*these + prewt1*those + prewt2*(nplot-these-those)))
+veg.summary <- veg.group  |> left_join(groupcounts)|> mutate(wt = ifelse(plot %in% theseplots, prewt3,prewt2),
+                                                             wt = ifelse(plot %in% thoseplots,prewt1,wt))
+
 subset(veg.group, plot %in% mlra99plots$Observation_ID, select=c(groups, plot)) |> unique()
 # timeA = Sys.time()
 # EDIT  <- veg.summary |>  summary.ESIS(group='groups', lowerQ = 0.5, upperQ = 0.95, normalize = TRUE, breaks = c(0.5, 2, 5, 15))
@@ -112,7 +124,7 @@ EDIT  <- veg.summary |>  summary.ESIS.wt(group='groups', wt='wt', lowerQ = 0.5, 
 # Sys.time() - timeA
 
 #need function to convert to plant type categories and Nativity used by EDIT
-
+x=10;(10+1)/(x+1)
 
 group_community <- data.frame(plot = EDIT$group,
                               taxon = EDIT$taxon,
