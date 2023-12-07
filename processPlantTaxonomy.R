@@ -7,6 +7,8 @@ library(aqp)
 library(stringi)
 plants <- readRDS('data/plants/plants20231129.RDS')
 #saveRDS(plants, 'D:/scripts/veg.nasis/data/plants/plants20231129.RDS')
+#m.ac <- read.csv('D:/scripts/bonapmexico/data/m.ac.csv', encoding = 'UTF-8')
+
 
 kew <- read.table('data/plants/wcvp__2_/wcvp_names.csv', sep="|", header=TRUE, quote = "", fill=TRUE, encoding = "UTF-8")
 geo <- read.table('data/plants/wcvp__2_/wcvp_distribution.csv', sep="|", header=TRUE, quote = "", fill=TRUE, encoding = "UTF-8")
@@ -23,41 +25,25 @@ plants <- plants |> mutate(auct = ifelse(grepl('auct',author) |
                                            grepl('illeg.',author) |
                                            grepl(' non',author), T,F))
 
-# cleanEncoding <- function(x){
-#   n = length(x)
-#   for(i in 1:n){#i=1
-#     enc = stringi::stri_enc_detect(x[i])
-#     enc <- enc[[1]]$Encoding[1]
-#     if(!enc %in% 'UTF-8'){
-#       if(enc %in% 'windows-1252'){
-#         x[i] <- stringi::stri_conv(x[i], from = 'windows-1252', to='UTF-8')
-#       }else if(enc %in% 'ISO-8859-1'){
-#         x[i] <- stringi::stri_conv(x[i], from = 'ISO-8859-1', to='UTF-8')
-#       }else{
-#         x[i] <- stringi::stri_conv(x[i], from = 'latin1', to='UTF-8')
-#       }
-#     }
-#   }
-#   return(x)}
-# 
-# 
-# whatEncoding <- function(x){
-#   n = length(x)
-#   for(i in 1:n){#i=1
-#     enc <- stri_enc_detect(x[i])
-#     enc <- enc[[1]]$Encoding[1]
-#     x[i] <- enc}
-#   return(x)}
 
 m.ac <- read.csv('data/plants/m.ac.csv', encoding = 'UTF-8')
 #m.ac <- m.ac |> mutate(en1 = whatEncoding(syn), en2 = whatEncoding(syn.auth))
 
-m.ac <- m.ac |> mutate(acc = cleanEncoding(acc),
-                       acc.auth = cleanEncoding(acc.auth),
-                       syn = cleanEncoding(syn),
-                       syn.auth = cleanEncoding(syn.auth))
-m.ac <- m.ac |> mutate(acc = extractTaxon(acc),
-                       syn = extractTaxon(syn))
+m.ac <- m.ac |> mutate(acc2 = cleanEncoding(acc),
+                       acc.auth2 = cleanEncoding(acc.auth),
+                       syn2 = cleanEncoding(syn),
+                       syn.auth2 = cleanEncoding(syn.auth))
+m.ac <- m.ac |> mutate(acc3 = extractTaxon(acc2),
+                       syn3 = extractTaxon(syn2))
+m.ac <- m.ac |> mutate(acc4 = extractTaxon(acc),
+                       syn4 = extractTaxon(syn))
+
+
+m2 <- subset(m.ac, !grepl(' ',syn))
+# write.csv(m.ac, 'data/plants/m.ac.csv', row.names = FALSE)
+m.ac <-  m.ac|> mutate(syn = ifelse(!grepl(' ',syn), extractTaxon(sy.binomial),syn))
+
+
 
 #create new three way synonymy
 #bonap
