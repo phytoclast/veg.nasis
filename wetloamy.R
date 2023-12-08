@@ -37,6 +37,22 @@ veg <- subset(veg, plot %in% wetloamy$Observation_ID) |> fill.hts.df() |> fill.t
          symbol = fill.usda.symbols(usda)) #for entry into EDIT
 veg.structure <- veg |> get.structure(simple=FALSE)
 veg.association <- veg |> get.assoc() |> left_join(veg.structure)
+veg.association <- veg.association |> left_join(data.frame(plot = veg.site$Observation_ID, wet = veg.site$Wet, Natural = veg.site$Natural))
+
+veg.association <- veg.association |> 
+  mutate(groups= case_when(tree >= 25 & wet %in% 1 & Natural %in% 1 ~ '1.1 Swamp Forest',
+                           tree >= 25 & wet %in% 0 & Natural %in% 1 ~ '4 Native Drained Forest',
+                           tree >= 25 & wet %in% 1 & Natural %in% 0 ~ '3.2 Exotic Drained Forest',
+                           tree >= 25 & wet %in% 0 & Natural %in% 0 ~ '4.2 Exotic Swamp Forest',
+                           (grepl('shrubland', structure)|grepl('thick', structure)) & wet %in% 1 & Natural %in% 1 ~ '1.5 Inundated Shrub Swamp',
+                           tree < 25 & wet %in% 1 & Natural %in% 1 ~ '1.2 Wet Meadow',
+                           tree < 25 & wet %in% 0 & Natural %in% 0 ~ '3.1 Exotic Drained Meadow & Shrub',
+                           tree < 25 & wet %in% 1 & Natural %in% 0 ~ '4.1 Exotic Wet Meadow & Shrub',
+                           tree < 25 & wet %in% 0 & Natural %in% 1 ~ '4 Native Drained Meadow & Shrub',
+                           TRUE ~ 'other'))
+
+
+
 
 veg.abiotic <- subset(veg.site, Observation_ID %in% veg$plot)
 veg.abiotic<- veg.abiotic |> left_join(veg.structure, by=join_by(Observation_ID==plot)) |> 
@@ -79,7 +95,15 @@ export.dendro(a,d,t,groups,folder)
 groupdf <- as.data.frame(groups)
 rdfgroup <- cbind(rdf,groupdf)
 rownames(rdfgroup) = NULL
+
+#link cluster groups
 veg.group <- veg |> left_join(rdfgroup, by=join_by(plot == Observation_ID)) |> subset(!is.na(groups))
+
+
+#link manually determined groups based on veg structure
+veg.group <- veg |> left_join(veg.association[,c('plot','groups')], by=join_by(plot == plot)) |> subset(!is.na(groups))
+
+
 
 rdfgrouped <- rdfgroup |> left_join(wetloamy, by=join_by(Observation_ID == Observation_ID, Community_Name == Community_Name, Site_Type == Site_Type)) |> subset(select = c("Observation_ID", "groups", "Community_Name", "Upper","Middle","Lower","Coastal",                                                                     "Floodplain","Inland","Hydric","Nonhydric",
                                                                                                                                                                            "Aquatic","Wet","Moist","Dry",
@@ -113,18 +137,12 @@ veg.summary <- veg.group  |> left_join(groupcounts)|> mutate(wt = ifelse(plot %i
                                                              wt = ifelse(plot %in% thoseplots,prewt1,wt))
 
 subset(veg.group, plot %in% mlra99plots$Observation_ID, select=c(groups, plot)) |> unique()
-# timeA = Sys.time()
-# EDIT  <- veg.summary |>  summary.ESIS(group='groups', lowerQ = 0.5, upperQ = 0.95, normalize = TRUE, breaks = c(0.5, 2, 5, 15))
-# Sys.time() - timeA
-# timeA = Sys.time()
-EDIT  <- veg.summary |>  summary.ESIS.wt(group='groups', wt='wt', lowerQ = 0.5, upperQ = 0.95, normalize = TRUE, breaks = c(0.5, 2, 5, 15))
-# Sys.time() - timeA
-# timeA = Sys.time()
-# EDIT3  <- veg.summary |>  summary.ESIS.wt.noHmisc(group='groups', lowerQ = 0.5, upperQ = 0.95, normalize = TRUE, breaks = c(0.5, 2, 5, 15))
-# Sys.time() - timeA
 
-#need function to convert to plant type categories and Nativity used by EDIT
-x=10;(10+1)/(x+1)
+
+
+EDIT  <- veg.summary |>  summary.ESIS.wt(group='groups', wt='wt', lowerQ = 0.5, upperQ = 0.95, normalize = TRUE, breaks = c(0.5, 2, 5, 15), forEDIT = F)
+
+
 
 group_community <- data.frame(plot = EDIT$group,
                               taxon = EDIT$taxon,
@@ -140,26 +158,9 @@ group_community <- data.frame(plot = EDIT$group,
 
 group_community.ass <- group_community |> fill.hts.df()
 group_community.ass <- get.assoc(group_community.ass)
-group_community.ass <- group_community.ass |> left_join(rdfgrouped[,c('groups','Wet','Forest','Natural')], by = join_by(plot==groups))
+# group_community.ass <- group_community.ass |> left_join(rdfgrouped[,c('groups','Wet','Forest','Natural')], by = join_by(plot==groups))
 
-EDIT <-  EDIT |> mutate(type = get.habit.name(get.habit.code(taxon), type='ESIS'),
-                        type = case_when(type %in% 'Grass/grass-like' ~ 'Grass/grass-like (Graminoids)',
-                                         Top > 5 & type %in% c('Shrub/Subshrub') ~ 'Tree',
-                                         TRUE ~ type),
-                        nativity = case_when(nativity %in% c('native','Native') ~ 'Native',
-                                             nativity %in% c('introduced','Introduced') ~ 'Introduced',
-                                             TRUE  ~ 'Unknown'),
-                        overstory = ifelse(Top > 5 & type %in% c("Tree","Shrub/Subshrub","Vine/Liana"), 1, 2),
+EDIT  <- veg.summary |>  summary.ESIS.wt(group='groups', wt='wt', lowerQ = 0.5, upperQ = 0.95, normalize = TRUE, breaks = c(0.5, 2, 5, 15), forEDIT = T)
 
-                        symbol = ifelse(is.na(symbol), case_when(grepl('moss',tolower(taxon)) ~ '2MOSS',
-                                                                grepl('alga',tolower(taxon)) ~ '2ALGA',
-                                                                TRUE ~ symbol), symbol),
-                        type = ifelse(is.na(type), case_when(symbol %in% 'POACEA' ~ 'Grass/grass-like (Graminoids)',
-                                                             symbol %in% '2MOSS' ~ 'Nonvascular',
-                                                             symbol %in% '2ALGA' ~ 'Biological Crusts',
-                                                             TRUE ~ type), type))
-
-EDIT <- EDIT |> group_by(type) |> mutate(type.top = weighted.mean(Top, w = cover.mean))
-
-EDIT <- EDIT |> subset(select=c(group,overstory, taxon,symbol,type,nativity, cover.Low,cover.High, Bottom,Top, dbh.Low, dbh.High, BA.Low, BA.High, taxon.cover, over.cover, type.top,frq.plot)) |> arrange(group, overstory, desc(type.top), desc(over.cover), desc(taxon.cover), desc(Top))
+EDIT <- subset(EDIT, cover.High >=0.1 & frq.plot >= 0.05)
 write.csv(EDIT, 'wetloamy.csv', row.names = F, na="")
