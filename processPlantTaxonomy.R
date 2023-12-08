@@ -11,11 +11,11 @@ plants <- readRDS('data/plants/plants20231129.RDS')
 
 
 kew <- read.table('data/plants/wcvp__2_/wcvp_names.csv', sep="|", header=TRUE, quote = "", fill=TRUE, encoding = "UTF-8")
-geo <- read.table('data/plants/wcvp__2_/wcvp_distribution.csv', sep="|", header=TRUE, quote = "", fill=TRUE, encoding = "UTF-8")
-
-geo.select <- subset(geo, continent %in% 'NORTHERN AMERICA' | area %in% c('Puerto Rico','Hawaii'))
-kew.select <- subset(kew, plant_name_id %in% geo.select$plant_name_id)
-kew.select2 <- subset(kew, accepted_plant_name_id %in% kew.select$plant_name_id)
+# geo <- read.table('data/plants/wcvp__2_/wcvp_distribution.csv', sep="|", header=TRUE, quote = "", fill=TRUE, encoding = "UTF-8")
+# 
+# geo.select <- subset(geo, continent %in% 'NORTHERN AMERICA' | area %in% c('Puerto Rico','Hawaii'))
+# kew.select <- subset(kew, plant_name_id %in% geo.select$plant_name_id)
+# kew.select2 <- subset(kew, accepted_plant_name_id %in% kew.select$plant_name_id)
 
 
 
@@ -27,21 +27,15 @@ plants <- plants |> mutate(auct = ifelse(grepl('auct',author) |
 
 
 m.ac <- read.csv('data/plants/m.ac.csv', encoding = 'UTF-8')
-#m.ac <- m.ac |> mutate(en1 = whatEncoding(syn), en2 = whatEncoding(syn.auth))
 
-m.ac <- m.ac |> mutate(acc2 = cleanEncoding(acc),
-                       acc.auth2 = cleanEncoding(acc.auth),
-                       syn2 = cleanEncoding(syn),
-                       syn.auth2 = cleanEncoding(syn.auth))
-m.ac <- m.ac |> mutate(acc3 = extractTaxon(acc2),
-                       syn3 = extractTaxon(syn2))
-m.ac <- m.ac |> mutate(acc4 = extractTaxon(acc),
-                       syn4 = extractTaxon(syn))
-
-
-m2 <- subset(m.ac, !grepl(' ',syn))
-# write.csv(m.ac, 'data/plants/m.ac.csv', row.names = FALSE)
-m.ac <-  m.ac|> mutate(syn = ifelse(!grepl(' ',syn), extractTaxon(sy.binomial),syn))
+kew <- subset(kew, !(!infraspecies %in% '' & !grepl('\\.', taxon_name)))
+m.ac <- subset(m.ac, !grepl('Bohr.ana',sy.binomial))
+m.ac <- m.ac |> mutate(acc = cleanEncoding(acc),
+                       acc.auth = cleanEncoding(acc.auth),
+                       syn = cleanEncoding(syn),
+                       syn.auth = cleanEncoding(syn.auth))
+m.ac <- m.ac |> mutate(acc = extractTaxon(trimws(acc)),
+                       syn = extractTaxon(trimws(syn)))
 
 
 
