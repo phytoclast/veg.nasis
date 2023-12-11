@@ -41,14 +41,14 @@ veg.association <- veg.association |> left_join(data.frame(plot = veg.site$Obser
 
 veg.association <- veg.association |> 
   mutate(groups= case_when(tree >= 25 & wet %in% 1 & Natural %in% 1 ~ '1.1 Swamp Forest',
-                           tree >= 25 & wet %in% 0 & Natural %in% 1 ~ '4 Native Drained Forest',
+                           tree >= 25 & wet %in% 0 & Natural %in% 1 ~ '3.4 Native Drained Forest',
                            tree >= 25 & wet %in% 1 & Natural %in% 0 ~ '3.2 Exotic Drained Forest',
                            tree >= 25 & wet %in% 0 & Natural %in% 0 ~ '4.2 Exotic Swamp Forest',
                            (grepl('shrubland', structure)|grepl('thick', structure)) & wet %in% 1 & Natural %in% 1 ~ '1.5 Inundated Shrub Swamp',
                            tree < 25 & wet %in% 1 & Natural %in% 1 ~ '1.2 Wet Meadow',
                            tree < 25 & wet %in% 0 & Natural %in% 0 ~ '3.1 Exotic Drained Meadow & Shrub',
                            tree < 25 & wet %in% 1 & Natural %in% 0 ~ '4.1 Exotic Wet Meadow & Shrub',
-                           tree < 25 & wet %in% 0 & Natural %in% 1 ~ '4 Native Drained Meadow & Shrub',
+                           tree < 25 & wet %in% 0 & Natural %in% 1 ~ '3.3 Native Drained Meadow & Shrub',
                            TRUE ~ 'other'))
 
 
@@ -126,10 +126,10 @@ mlra99plots <- subset(veg.site, MLRA %in% c('99A', '99B'))
 mlra97plots <- subset(veg.site, MLRA %in% c('97A'))
 mlra98A2plots <- subset(veg.site, MLRA %in% c('98A2'))
 
-theseplots = mlra99plots$Observation_ID #plots to emphasize
-thoseplots = c(mlra97plots$Observation_ID,mlra98A2plots$Observation_ID) #plots to de-emphasize
-# theseplots = mlra97plots$Observation_ID
-# thoseplots = mlra99plots$Observation_ID
+# theseplots = mlra99plots$Observation_ID #plots to emphasize
+# thoseplots = c(mlra97plots$Observation_ID,mlra98A2plots$Observation_ID) #plots to de-emphasize
+theseplots = mlra97plots$Observation_ID
+thoseplots = mlra99plots$Observation_ID
 groupcounts <-  veg.group |> mutate(these = ifelse(plot %in% theseplots, 1,0), those = ifelse(plot %in% thoseplots, 1,0)) |> subset(select=c(groups, plot, these, those)) |> unique() |> group_by(groups) |> summarise(nplot = length(plot), these = sum(these), those = sum(those))
 groupcounts <- groupcounts |> mutate(prewt1 = 1/(nplot+1), prewt2 = 11/(nplot-those+1),prewt3 = 11/(these+1),actual = these/nplot,
                                      strength = prewt3*these/(prewt3*these + prewt1*those + prewt2*(nplot-these-those)))
@@ -160,7 +160,23 @@ group_community.ass <- group_community |> fill.hts.df()
 group_community.ass <- get.assoc(group_community.ass)
 # group_community.ass <- group_community.ass |> left_join(rdfgrouped[,c('groups','Wet','Forest','Natural')], by = join_by(plot==groups))
 
-EDIT  <- veg.summary |>  summary.ESIS.wt(group='groups', wt='wt', lowerQ = 0.5, upperQ = 0.95, normalize = TRUE, breaks = c(0.5, 2, 5, 15), forEDIT = T)
+
+#structural summary ---- 
+unique(veg.group$groups)
+veg.str <- subset(veg.group, groups %in% "4.2 Exotic Swamp Forest") |> summary.crown.thickness(breaks = c(0.15,0.3,0.6,1.4,4,12,24,37)) |> structure.fill.zero() |> 
+                                                                subset(type %in% c('tree', 'shrub/vine', 'grass/grasslike',  'forb'))
+veg.str.pct <- veg.str |> group_by(type, stratum, stratum.label, bottom, top) |>
+  summarise(X25 = quantile(Cover, 0.25),
+            X75 = quantile(Cover, 0.75))
+tree <- subset(veg.str.pct, type %in% 'tree', select=c(stratum, X25, X75)) ; colnames(tree) <- c('stratum','t25','t75')
+shrub <- subset(veg.str.pct, type %in% 'shrub/vine', select=c(stratum, X25, X75)) ; colnames(shrub) <- c('stratum','s25','s75')
+grass <- subset(veg.str.pct, type %in% 'grass/grasslike', select=c(stratum, X25, X75)) ; colnames(grass) <- c('stratum','g25','g75')
+forb <- subset(veg.str.pct, type %in% 'forb', select=c(stratum, X25, X75)) ; colnames(forb) <- c('stratum','f25','f75')
+
+veg.str.pct1 <- unique(veg.str.pct[,2:3]) |> left_join(tree) |> left_join(shrub) |> left_join(grass) |> left_join(forb)
+
+#composition summary ----
+EDIT  <- veg.summary |>  summary.ESIS.wt(group='groups', wt='wt', lowerQ = 0.5, upperQ = 0.95, normalize = TRUE, breaks = c(0.5, 5, 15), forEDIT = T)
 
 EDIT <- subset(EDIT, cover.High >=0.1 & frq.plot >= 0.05)
 write.csv(EDIT, 'wetloamy.csv', row.names = F, na="")
