@@ -41,14 +41,14 @@ veg.association <- veg.association |> left_join(data.frame(plot = veg.site$Obser
 
 veg.association <- veg.association |> 
   mutate(groups= case_when(tree >= 25 & wet %in% 1 & Natural %in% 1 ~ '1.1 Swamp Forest',
-                           tree >= 25 & wet %in% 0 & Natural %in% 1 ~ '3.4 Native Drained Forest',
+                           tree >= 25 & wet %in% 0 & Natural %in% 1 ~ '5.1 Native Drained Forest',
                            tree >= 25 & wet %in% 1 & Natural %in% 0 ~ '3.2 Exotic Drained Forest',
                            tree >= 25 & wet %in% 0 & Natural %in% 0 ~ '4.2 Exotic Swamp Forest',
                            (grepl('shrubland', structure)|grepl('thick', structure)) & wet %in% 1 & Natural %in% 1 ~ '1.5 Inundated Shrub Swamp',
                            tree < 25 & wet %in% 1 & Natural %in% 1 ~ '1.2 Wet Meadow',
                            tree < 25 & wet %in% 0 & Natural %in% 0 ~ '3.1 Exotic Drained Meadow & Shrub',
                            tree < 25 & wet %in% 1 & Natural %in% 0 ~ '4.1 Exotic Wet Meadow & Shrub',
-                           tree < 25 & wet %in% 0 & Natural %in% 1 ~ '3.3 Native Drained Meadow & Shrub',
+                           tree < 25 & wet %in% 0 & Natural %in% 1 ~ '5.2 Native Drained Meadow & Shrub',
                            TRUE ~ 'other'))
 
 
@@ -126,10 +126,10 @@ mlra99plots <- subset(veg.site, MLRA %in% c('99A', '99B'))
 mlra97plots <- subset(veg.site, MLRA %in% c('97A'))
 mlra98A2plots <- subset(veg.site, MLRA %in% c('98A2'))
 
-# theseplots = mlra99plots$Observation_ID #plots to emphasize
-# thoseplots = c(mlra97plots$Observation_ID,mlra98A2plots$Observation_ID) #plots to de-emphasize
-theseplots = mlra97plots$Observation_ID
-thoseplots = mlra99plots$Observation_ID
+theseplots = mlra99plots$Observation_ID #plots to emphasize
+thoseplots = c(mlra97plots$Observation_ID,mlra98A2plots$Observation_ID) #plots to de-emphasize
+# theseplots = mlra97plots$Observation_ID
+# thoseplots = mlra99plots$Observation_ID
 groupcounts <-  veg.group |> mutate(these = ifelse(plot %in% theseplots, 1,0), those = ifelse(plot %in% thoseplots, 1,0)) |> subset(select=c(groups, plot, these, those)) |> unique() |> group_by(groups) |> summarise(nplot = length(plot), these = sum(these), those = sum(those))
 groupcounts <- groupcounts |> mutate(prewt1 = 1/(nplot+1), prewt2 = 11/(nplot-those+1),prewt3 = 11/(these+1),actual = these/nplot,
                                      strength = prewt3*these/(prewt3*these + prewt1*those + prewt2*(nplot-these-those)))
