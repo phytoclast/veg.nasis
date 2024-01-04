@@ -21,6 +21,7 @@ comonth <- comonth |> mutate(flood = ifelse(flodfreqcl %in% c("Frequent","Occasi
 h <- h |> mutate(h50 = ifelse(hzdepb_r > 50, 50, hzdepb_r) - ifelse(hzdept_r > 50, 50, hzdept_r),
                  h150 = ifelse(hzdepb_r > 150, 150, hzdepb_r) - ifelse(hzdept_r > 150, 150, hzdept_r),
                  pH = ifelse(is.na(ph1to1h2o_r), ph01mcacl2_r, ph1to1h2o_r),
+                 Bh = ifelse(grepl('Bh', hzname),1, 0),
                  rock = ifelse(grepl('Cr|R', hzname),hzdept_r, 250),
                  carb = ifelse(caco3_r > 0, hzdept_r, 250))
 soil <- h |> group_by(cokey) |> summarise(sand50 = weighted.mean(sandtotal_r, h50, na.rm = T),
@@ -28,19 +29,22 @@ soil <- h |> group_by(cokey) |> summarise(sand50 = weighted.mean(sandtotal_r, h5
                                        pH50 = weighted.mean(pH, h50, na.rm = T),
                                        OM150 = weighted.mean(om_r, h150, na.rm = T),
                                        rockdepth = min(rock, na.rm = T),
-                                       carbdepth = min(carb, na.rm = T))
+                                       carbdepth = min(carb, na.rm = T),
+                                       Bh = min(Bh, na.rm = T))
 soil <- subset(mu, select=c(muname, mukey)) |> left_join(subset(s, select=c(mukey, cokey, compname, taxclname, taxorder, taxsubgrp, hydricrating, drainagecl, geomdesc))) |> left_join(soil, by=join_by(cokey==cokey)) |> left_join(comonth, by=join_by(cokey==cokey)) 
 
 
 soil <- soil |> mutate(
-  moist = case_when(hydricrating %in% 'yes'~'wet',
+  moist = case_when(tolower(hydricrating) %in% 'yes'~'wet',
                     drainagecl %in% c("Somewhat poorly drained","Very poorly drained","Moderately well drained","Poorly drained") ~ 'moist',
                     TRUE ~ 'dry'),
   
-  chem = case_when(carbdepth < 100 ~ 'calcareous',
+  chem = case_when(carbdepth < 50 & pH50 > 5.5 ~ 'calcareous',
+                   grepl('spod',tolower(taxorder)) & Bh > 0 & moist %in% 'dry' ~ 'spodic',
+                   grepl('spod',tolower(taxorder)) & moist %in% 'dry' ~ 'entic' ,
                    grepl('ult|ods',tolower(taxsubgrp)) | grepl('dys', tolower(taxclname)) ~ 'dysic',
                    grepl('alf|oll',tolower(taxsubgrp)) ~ 'euic',
-                   pH50 < 5.5 ~ 'dysic',
+                   pH50 <= 5.5 ~ 'dysic',
                    TRUE ~ 'euic'),
   text = case_when(rockdepth < 100 ~ 'rocky',
                    sand50 >= 70 & sand150 >= 80 | sand50 >= 80 ~ 'sandy',
@@ -49,18 +53,18 @@ soil <- soil |> mutate(
   flood = case_when(grepl('flood', muname) | (grepl('flood', geomdesc) & grepl('fluv', tolower(taxsubgrp))) | floodfrq > 0 ~ 'flood',
                     TRUE ~ ''))
 
-  
+
   
 
 
 #look at what the spatial layer is named
 mi.layers<- sf::st_layers('D:/GIS/SOIL/2021/gSSURGO_MI.gdb')
-mi.layers
+
 #extract map unit polygon layer
 mi.poly <- sf::st_read('D:/GIS/SOIL/2021/gSSURGO_MI.gdb', 'MUPOLYGON')
 
 #identify map units of interest
-Grayling = subset(mu, compname %in% 'Grayling')
+drysand = subset(mu, text %in% 'sandy', and)
 
 #filter to map units of interest
 Graylin.poly <- subset(mi.poly, MUKEY %in% Grayling$mukey)
