@@ -30,26 +30,25 @@ soil <- h |> group_by(cokey) |> summarise(sand50 = weighted.mean(sandtotal_r, h5
                                        OM150 = weighted.mean(om_r, h150, na.rm = T),
                                        rockdepth = min(rock, na.rm = T),
                                        carbdepth = min(carb, na.rm = T),
-                                       Bh = min(Bh, na.rm = T))
-soil <- subset(mu, select=c(muname, mukey)) |> left_join(subset(s, select=c(mukey, cokey, compname, taxclname, taxorder, taxsubgrp, hydricrating, drainagecl, geomdesc))) |> left_join(soil, by=join_by(cokey==cokey)) |> left_join(comonth, by=join_by(cokey==cokey)) 
+                                       Bh = max(Bh, na.rm = T))
+soil <- subset(mu, select=c(muname, mukey)) |> left_join(subset(s, select=c(mukey, cokey, comppct_r, majcompflag, compname, taxclname, taxorder, taxsubgrp, hydricrating, drainagecl, geomdesc))) |> left_join(soil, by=join_by(cokey==cokey)) |> left_join(comonth, by=join_by(cokey==cokey)) 
 
 
 soil <- soil |> mutate(
   moist = case_when(tolower(hydricrating) %in% 'yes'~'wet',
                     drainagecl %in% c("Somewhat poorly drained","Very poorly drained","Moderately well drained","Poorly drained") ~ 'moist',
                     TRUE ~ 'dry'),
-  
+    text = case_when(rockdepth < 100 ~ 'rocky',
+                   sand50 >= 70 & sand150 >= 80 | sand50 >= 80 ~ 'sandy',
+                   grepl('ist', tolower(taxsubgrp)) | grepl('ist', tolower(taxorder)) |  OM150 > 20 ~ 'mucky',
+                   TRUE ~ 'loamy'),
   chem = case_when(carbdepth < 50 & pH50 > 5.5 ~ 'calcareous',
-                   grepl('spod',tolower(taxorder)) & Bh > 0 & moist %in% 'dry' ~ 'spodic',
-                   grepl('spod',tolower(taxorder)) & moist %in% 'dry' ~ 'entic' ,
+                   grepl('spod',tolower(taxorder)) & (Bh > 0 | grepl('typic',tolower(taxsubgrp))) & moist %in% 'dry' & text %in% 'sandy' ~ 'spodic',
+                   grepl('spod',tolower(taxorder)) & moist %in% 'dry'& text %in% 'sandy' ~ 'entic' ,
                    grepl('ult|ods',tolower(taxsubgrp)) | grepl('dys', tolower(taxclname)) ~ 'dysic',
                    grepl('alf|oll',tolower(taxsubgrp)) ~ 'euic',
                    pH50 <= 5.5 ~ 'dysic',
                    TRUE ~ 'euic'),
-  text = case_when(rockdepth < 100 ~ 'rocky',
-                   sand50 >= 70 & sand150 >= 80 | sand50 >= 80 ~ 'sandy',
-                   grepl('ist', tolower(taxsubgrp)) | grepl('ist', tolower(taxorder)) |  OM150 > 20 ~ 'mucky',
-                   TRUE ~ 'loamy'),
   flood = case_when(grepl('flood', muname) | (grepl('flood', geomdesc) & grepl('fluv', tolower(taxsubgrp))) | floodfrq > 0 ~ 'flood',
                     TRUE ~ ''))
 
@@ -64,22 +63,23 @@ mi.layers<- sf::st_layers('D:/GIS/SOIL/2021/gSSURGO_MI.gdb')
 mi.poly <- sf::st_read('D:/GIS/SOIL/2021/gSSURGO_MI.gdb', 'MUPOLYGON')
 
 #identify map units of interest
-drysand = subset(mu, text %in% 'sandy', and)
+drysand = subset(soil, text %in% 'sandy' & moist %in% 'dry' & chem %in% c('dysic','euic') & flood %in% c('') & majcompflag %in% 'Yes')
+moistsand = subset(soil, text %in% 'sandy' & moist %in% 'moist' & flood %in% c('') & majcompflag %in% 'Yes')
 
 #filter to map units of interest
-Graylin.poly <- subset(mi.poly, MUKEY %in% Grayling$mukey)
+drysand.poly <- subset(mi.poly, MUKEY %in% drysand$mukey)
+moistsand.poly <- subset(mi.poly, MUKEY %in% moistsand$mukey)
 
 #display map of map units
-mapview(Graylin.poly)
+mapview(drysand.poly)
 
 #export as shapefile
-st_write(Graylin.poly, 'temp/Graylin.poly.shp')
+st_write(drysand.poly, 'temp/drysand.poly.shp')
+st_write(moistsand.poly, 'temp/moistsand.poly.shp')
 
-s.filter <-  subset(s, ((T50_sand >= 70 & T150_sand >= 80)|(T50_sand >= 80 & T150_sand >= 70)) & (T50_pH >= 6 | carbdepth <= 100) & Water_Table >= 150 & LRU %in% '94AB' & majcompflag %in% TRUE)
-s.filter2 <-  subset(s, ((T50_sand >= 70 & T150_sand >= 80)|(T50_sand >= 80 & T150_sand >= 70)) & taxorder %in% 'spodosols' & Water_Table >= 150 & LRU %in% '94AB' & majcompflag %in% TRUE)
+#huronstands
 
-calcareoussand = subset(mi.poly, MUKEY %in% s.filter$lmapunitiid)
-spodicsand = subset(mi.poly, MUKEY %in% s.filter2$lmapunitiid)
-mapview(calcareoussand)
-st_write(calcareoussand, 'temp/calcareoussand.shp', append = FALSE)
-st_write(spodicsand, 'temp/spodicsand.shp', append = FALSE)
+stands <- st_read('D:/GIS/hmnf/HNF_Stands_5_13_2022.shp')
+stands <- stands |> mutate(id = SETTING_ID, veg = EV_COMMON_, year = ifelse(YEAR_OF_OR == 0, NA, YEAR_OF_OR), age2023 = 2023-year, si = SITE_INDEX, si.sp = SITE_IND_1)
+jpstands <- subset(stands, grepl('jack',tolower(veg)), select=c(id, veg, year, age2023, si, si.sp))
+st_write(jpstands, 'temp/jpstands.shp', append = F)
