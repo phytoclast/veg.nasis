@@ -71,87 +71,157 @@ makeStem <- function(lth, wth, tip, inc=10){
                    i = i,
                    type = 'mid',
                    side=side,
-                   center = 0)
+                   center=0
+                   )
   df[c(1,nrow(df)),]$type <- 'base'
   df[c(nrow(df)/2,nrow(df)/2+1),]$type <- 'tip'
   return(df)
 }
+
+
 angle=-50
-bht=2.5
-
-attachBranch <- function(stem, branch, angle, bht){
-angle = angle/360*2*pi
-xside <- ifelse(angle>0,'R','L')
-xsine <- ifelse(angle>0,1,-1)
-branch <- branch |> mutate(h=(x^2+y^2)^0.5,a = acos(y/h),a=ifelse(x < 0,-1*a,a),
-                      x = h*sin(a+angle), y = h*cos(a+angle))
-
-branch <- branch |> mutate(y = y+bht)
-
-xd <- subset(stem, side %in% xside)
-ylower <- max(subset(xd, y < min(branch[branch$type %in% 'base',]$y))$y)
-yupper <- min(subset(xd, y > max(branch[branch$type %in% 'base',]$y))$y)
-xupper <- subset(xd, y == yupper)$x
-xlower <- subset(xd, y == ylower)$x
-cshift <- mean(subset(xd, y == yupper | y == ylower)$center)
-
-bx <- (bht-ylower)/(yupper-ylower)*(xupper-xlower)+xlower
-branch <- branch |> mutate(x = x+cshift)
-
-branch <- branch |> mutate(inside = (x-((y-ylower)/(yupper-ylower)*(xupper-xlower)+xlower))*xsine)
-#remove internal vertices
-
-internal <- branch |> mutate(near = inside^2, isinside = ifelse(inside > 0, 'no','yes')) |> group_by(isinside, side) |> mutate(minnear = min(near)) |> ungroup() |> subset(near == minnear)
-
-newbase <- internal |> group_by(side) |> mutate(amt = 1/((inside - 0)/(max(inside)-min(inside)))^2) |> 
-  summarise(x= sum(amt*x)/sum(amt), y= sum(amt*y)/sum(amt), i= mean(i), type='base', center=0) 
-
-steminternal <- stem |> subset(!(x >= min(internal$x) & x <= max(internal$x) & y >= min(internal$y) & y <= max(internal$y)))
-xdi <- mean(subset(xd, y %in% c(yupper, ylower))$i)
-
-branchinternal <- branch |> subset(inside >= 0) |> subset(select=colnames(stem)) |> rbind(newbase[,colnames(stem)]) |> mutate(i = xdi + i/1000, type=paste0('b',type), inside = NULL, h=NULL,a=NULL) 
-
-stemnew <- rbind(branchinternal,steminternal) |> arrange(i) 
-stemnew <- mutate(stemnew, i=(1:nrow(stemnew)))
-return(stemnew)}
-
-
-stem <-  makeStem(4,1,0.1,10)
-branch <- makeStem(2,.2,0.01,10)
-branch2 <- makeStem(1.5,.2,0.01,10)
-tree <- attachBranch(stem, branch, -90, 2)
-tree <- attachBranch(tree, branch2, 85, 3)
-tree2 <- tree |> mutate(x=x/2, y=y/2)
-tree <- attachBranch(stem, tree2, -100, 2)
-tree <- attachBranch(tree, tree2, 90, 3)
-
-ggplot()+
-  geom_polygon(data=stem, aes(x=x, y=y), color='red',fill='#99000050')+
-  geom_point(data=stem, aes(x=x, y=y), color='red')+
-  geom_polygon(data=branch, aes(x=x, y=y), color='blue',fill='#00009950')+
-  geom_point(data=branch, aes(x=x, y=y), color='blue')+
-  geom_polygon(data=tree, aes(x=x, y=y), color='green',fill='#00990050')+
-  geom_point(data=tree, aes(x=x, y=y), color='green')+
-  coord_fixed()
-
+bht=2
 lth=4
 wth = 0.5
-sc = .25
+sc = 0.6
 stem <-  makeStem(lth,wth,0.1*wth,20)
 stem <-  stem |> mutate(x = x + -0.2*cos(y/lth*2*pi), center = center + -0.2*cos(y/lth*2*pi))
 branch <-  stem |> mutate(x=x*sc,y=y*sc,center=center*sc)
 branch2 <-  stem |> mutate(x=x*sc*0.7,y=y*sc*0.7,center=center*sc*0.7)
+stem <- attachBranch(stem, branch, -50, 2)
+branch <- branch2
+  
+
+attachBranch <- function(stem, branch, angle, bht){
+  #establish permanent columns to end up with
+  original <- colnames(stem)
+  #convert angle to radians
+  angle = angle/360*2*pi
+  #set which side of stem branch will be fitted
+  xside <- ifelse(angle>0,'R','L')
+  xsine <- ifelse(angle>0,1,-1)
+  #rotate branch to correct angle
+  branch <- branch |> mutate(h=(x^2+y^2)^0.5,a = acos(y/h),a=ifelse(x < 0,-1*a,a),
+                             x = h*sin(a+angle), y = h*cos(a+angle))
+  #lift branch to correct height
+  branch <- branch |> mutate(y = y+bht)
+  #determine which stem vertices straddle the branch
+  xd <- subset(stem, side %in% xside & type %in% c('tip','mid','base','bbase'))
+  ylower <- max(subset(xd, y < min(branch[branch$type %in% 'base',]$y))$y)
+  yupper <- min(subset(xd, y > max(branch[branch$type %in% 'base',]$y))$y)
+  xupper <- subset(xd, y == yupper)$x
+  xlower <- subset(xd, y == ylower)$x
+  #shift branch to conform with twisted stem center position
+  cshift <- mean(subset(xd, y == yupper | y == ylower)$center)
+  branch <- branch |> mutate(x = x+cshift)
+    
+  #? bx <- (bht-ylower)/(yupper-ylower)*(xupper-xlower)+xlower
+  #identify which branch vertices are inside stem
+  branch <- branch |> mutate(inside = (x-((y-ylower)/(yupper-ylower)*(xupper-xlower)+xlower))*xsine)
+  #identify vertices which straddle inside and outside of stem to find points of intersection
+  internal <- branch |> mutate(near = inside^2, isinside = ifelse(inside < 0 | type %in% 'base', 'no','yes')) |> group_by(isinside, side) |> mutate(minnear = min(near)) |> ungroup() |> subset(near == minnear)
+  #approximate location of branch stem intersection to establish new branch base
+  newbase <- internal |> group_by(side) |> mutate(amt = 1/((inside - 0)/(max(inside)-min(inside)))^2) |> 
+    summarise(x= sum(amt*x)/sum(amt), y= sum(amt*y)/sum(amt), i= mean(i), type='base', center=0, side=xside) 
+  #remove stem vertices that may be covered by new branch
+  steminternal <- stem |> subset(!(x >= min(internal$x) & x <= max(internal$x) & y >= min(internal$y) & y <= max(internal$y))) |> subset(select=original)
+  #identify where to insert new numbering sequence to maintain correct vertex order
+  ylower2 <- max(subset(xd, y < min(newbase$y))$y)
+  yupper2 <- min(subset(xd, y > max(newbase$y))$y)
+  xdi <- mean(subset(xd, y %in% c(yupper2, ylower2))$i)
+  #assemble branch with new base, omitting internal vertices
+  branchinternal <- branch |> subset(inside >= 0) |> subset(select=original) |> rbind(newbase[,original]) |> mutate(i = xdi + i/10000, type=paste0('b',type), inside = NULL, h=NULL,a=NULL)  |> arrange(i) 
+  #append branch to stem with correct vertex order
+  stemnew <- rbind(branchinternal,steminternal) |> arrange(i) 
+  #renumber vertices
+  stemnew <- mutate(stemnew, i=(1:nrow(stemnew)))
+  return(stemnew)}
+
+ggplot()+
+  geom_polygon(data=steminternal, aes(x=x, y=y), color='red',fill='#99000050')+
+  geom_point(data=steminternal, aes(x=x, y=y), color='red')+
+  geom_polygon(data=branch, aes(x=x, y=y), color='blue',fill='#00009950')+
+  geom_point(data=branch, aes(x=x, y=y), color='blue')+
+  geom_polygon(data=branchinternal, aes(x=x, y=y), color='green',fill='#00990050')+
+  geom_point(data=branchinternal, aes(x=x, y=y), color='green')+
+  coord_fixed()
+
+
+
+#fractal tree with bend --- 
+lth=4
+wth = 0.5
+sc = 0.6
+stem <-  makeStem(lth,wth,0.1*wth,20)
+stem <-  stem |> mutate(x = x + -0.2*cos(y/lth*2*pi), center = center + -0.2*cos(y/lth*2*pi))
+branch <-  stem |> mutate(x=x*sc,y=y*sc,center=center*sc)
+branch2 <-  stem |> mutate(x=x*sc*0.7,y=y*sc*0.7,center=center*sc*0.7)
+branch3 <-  stem |> mutate(x=x*sc*0.3,y=y*sc*0.3,center=center*sc*0.3)
 
 for(i in 1:4){
   tree <- attachBranch(stem, branch, -50, 2)
-  tree <- attachBranch(tree, branch2, 50, 3)
+  branch <- branch2
+  tree <- attachBranch(tree, branch, 50, 3)
+  branch <- branch3
+  tree <- attachBranch(tree, branch, -30, 3.8)
   branch <- tree |> mutate(x=x*sc,y=y*sc,center=center*sc)
   branch2 <- tree |> mutate(x=x*sc*.7,y=y*sc*.7,center=center*sc*.7)
+  branch3 <- tree |> mutate(x=x*sc*.3,y=y*sc*.3,center=center*sc*.3)
+}
+
+crown <- tree |> subset(grepl('tip',type) & !type %in% 'tip')
+ggplot()+
+  geom_polygon(data=tree, aes(x=x, y=y), color='brown',fill='#99500050')+
+  # geom_point(data=stem, aes(x=x, y=y), color='red')+
+  geom_polygon(data=crown, aes(x=x, y=y), color='green',fill='#00990050')+
+  # geom_point(data=tree, aes(x=x, y=y), color='green')+
+  coord_fixed()
+#------
+
+
+
+
+inc=8
+s = (0:inc)/inc
+i = 1:(inc+1)
+angles <- s*2*pi/4
+
+x = cos(angles)
+y = sin(angles)
+circle <- data.frame(i=i,x=cos(angles),y=sin(angles))
+circle2 <- data.frame(i=i[(inc/2):inc],x=cos(angles[(inc/2):inc]),y=sin(angles[(inc/2):inc]))
+triangle <- data.frame(i=i,x=-1*s+1,y=s*2)
+verticle <- data.frame(i=i,x=1,y=s*2)
+combo <- data.frame(i=i,x=(circle$x+triangle$x)/2, y=(circle$y+triangle$y)/2)
+combo2 <- data.frame(i=i,x=(circle$x+verticle$x)/2, y=(circle$y+verticle$y)/2)
+ggplot()+
+  # geom_polygon(data=circle, aes(x=x, y=y), color='red',fill='#99000050')+
+  geom_point(data=circle, aes(x=x, y=y), color='red')+
+  geom_point(data=triangle, aes(x=x, y=y), color='blue')+
+  geom_point(data=verticle, aes(x=x, y=y), color='green')+
+  geom_point(data=combo, aes(x=x, y=y), color='purple')+
+  geom_point(data=circle2, aes(x=x, y=y), color='gold')+
+  coord_fixed()
+
+dfbranches <- data.frame(
+  baseht = c(1.5,2,2.5,3,3.5,4),
+  crownht = (circle[c(2:7),]$y)*2+3,
+  crownwd = (circle[c(2:7),]$x))
+
+dfbranches <- dfbranches |> mutate(branchlen = ((crownht - baseht)^2+crownwd^2)^0.5,
+                                   angle=atan((crownht - baseht)/crownwd)*180/pi)
+
+
+stem <-  makeStem(20,1,0.3*wth,20)
+for(i in 1:6){#i=2
+  lth = dfbranches$crownht[i]
+  bht <- dfbranches$baseht[i]
+  angle = dfbranches$angle[i] * ifelse(i/2==floor(i/2),-1,1)
+  branch <- makeStem(lth,lth/8,lth/13)
+  stem <- attachBranch(stem,branch,angle,bht)
+  
 }
 
 ggplot()+
-  # geom_polygon(data=stem, aes(x=x, y=y), color='red',fill='#99000050')+
-  # geom_point(data=stem, aes(x=x, y=y), color='red')+
-  geom_polygon(data=tree, aes(x=x, y=y), color='green',fill='#00990050')+
-  # geom_point(data=tree, aes(x=x, y=y), color='green')+
+  geom_polygon(data=stem, aes(x=x, y=y), color='green',fill='#00990050')+
   coord_fixed()
