@@ -222,6 +222,110 @@ for(i in 1:6){#i=2
   
 }
 
+
+x <- stem %>%
+  st_as_sf(coords = c("x", "y")) |>
+  summarise(i = list(i), type = list(type),
+            side = list(side), center = list(center), 
+            geometry = st_combine(geometry)) |> st_cast("POLYGON")
+  
+
+x <- data.frame(x=st_coordinates(x)[,1],
+                y=st_coordinates(x)[,2],
+                i=unlist(x$i),
+                type=unlist(x$type),
+                side=unlist(x$side),
+                center=unlist(x$center))
+
+poly_sf <- function(x){
+  require(sf)
+  x <- x |> st_as_sf(coords = c("x", "y")) |>
+    summarise(i = list(i), type = list(type),
+              side = list(side), center = list(center), 
+              geometry = st_combine(geometry)) |> st_cast("POLYGON")
+  return(x)
+}
+sf_poly <- function(x){
+  require(sf)
+  x <- data.frame(x=st_coordinates(x)[1:(nrow(x)-1),1],
+                  y=st_coordinates(x)[1:(nrow(x)-1),2],
+                  i=unlist(x$i),
+                  type=unlist(x$type),
+                  side=unlist(x$side),
+                  center=unlist(x$center))
+  return(x)
+}
+
+x <- poly_sf(stem)
+
+stem2 <- sf_poly(x)
+angle=50
+bht=3
+lth=4
+wth = 0.5
+sc = 0.6
+
+stem <-  makeStem(lth,wth,0.1*wth,20)
+stem <-  stem |> mutate(x = x + -0.2*cos(y/lth*2*pi), center = center + -0.2*cos(y/lth*2*pi))
+branch <-  stem |> mutate(x=x*sc,y=y*sc,center=center*sc)
+
+
+
+attachBranchsf <- function(stem, branch, angle, bht){
+  #establish permanent columns to end up with
+  original <- colnames(stem)
+  #convert angle to radians
+  angle = angle/360*2*pi
+  #set which side of stem branch will be fitted
+  xside <- ifelse(angle>0,'R','L')
+  xsine <- ifelse(angle>0,1,-1)
+  #rotate branch to correct angle
+  branch <- branch |> mutate(h=(x^2+y^2)^0.5,a = acos(y/h),a=ifelse(x < 0,-1*a,a),
+                             x = h*sin(a+angle), y = h*cos(a+angle))
+  #lift branch to correct height
+  branch <- branch |> mutate(y = y+bht)
+  #determine which stem vertices straddle the branch
+  xd <- subset(stem, side %in% xside & type %in% c('tip','mid','base','bbase'))
+  ylower <- max(subset(xd, y < min(branch[branch$type %in% 'base',]$y))$y)
+  yupper <- min(subset(xd, y > max(branch[branch$type %in% 'base',]$y))$y)
+  xupper <- subset(xd, y == yupper)$x
+  xlower <- subset(xd, y == ylower)$x
+  #shift branch to conform with twisted stem center position
+  cshift <- mean(subset(xd, y == yupper | y == ylower)$center)
+  branch <- branch |> mutate(x = x+cshift)
+  
+  #? bx <- (bht-ylower)/(yupper-ylower)*(xupper-xlower)+xlower
+  #identify which branch vertices are inside stem
+  branch <- branch |> mutate(inside = (x-((y-ylower)/(yupper-ylower)*(xupper-xlower)+xlower))*xsine)
+  #identify vertices which straddle inside and outside of stem to find points of intersection
+  internal <- branch |> mutate(near = inside^2, isinside = ifelse(inside < 0 | type %in% 'base', 'no','yes')) |> group_by(isinside, side) |> mutate(minnear = min(near)) |> ungroup() |> subset(near == minnear)
+  #approximate location of branch stem intersection to establish new branch base
+  newbase <- internal |> group_by(side) |> mutate(amt = 1/((inside - 0)/(max(inside)-min(inside)))^2) |> 
+    summarise(x= sum(amt*x)/sum(amt), y= sum(amt*y)/sum(amt), i= mean(i), type='base', center=0, side=xside) 
+  #remove stem vertices that may be covered by new branch
+  steminternal <- stem |> subset(!(x >= min(internal$x) & x <= max(internal$x) & y >= min(internal$y) & y <= max(internal$y))) |> subset(select=original)
+  #identify where to insert new numbering sequence to maintain correct vertex order
+  ylower2 <- max(subset(xd, y < min(newbase$y))$y)
+  yupper2 <- min(subset(xd, y > max(newbase$y))$y)
+  xdi <- mean(subset(xd, y %in% c(yupper2, ylower2))$i)
+  #assemble branch with new base, omitting internal vertices
+  branchinternal <- branch |> subset(inside >= 0) |> subset(select=original) |> rbind(newbase[,original]) |> mutate(i = xdi + i/10000, type=paste0('b',type), inside = NULL, h=NULL,a=NULL)  |> arrange(i) 
+  #append branch to stem with correct vertex order
+  stemnew <- rbind(branchinternal,steminternal) |> arrange(i) 
+  #renumber vertices
+  stemnew <- mutate(stemnew, i=(1:nrow(stemnew)))
+  return(stemnew)}
+
+
+
+
+
+
+
+
+
+
+tree2 <- data.frame(x=st_coordinates(polygon)[,1],y=st_coordinates(polygon)[,2])
 ggplot()+
-  geom_polygon(data=stem, aes(x=x, y=y), color='green',fill='#00990050')+
+  geom_polygon(data=tree2, aes(x=x, y=y), color='green',fill='#00990050')+
   coord_fixed()
