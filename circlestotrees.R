@@ -140,6 +140,8 @@ attachBranch <- function(stem, branch, angle, bht){
     summarise(x= sum(amt*x)/sum(amt), y= sum(amt*y)/sum(amt), i= mean(i), type='base', center=0, side=xside, width=bwd) 
   #remove stem vertices that may be covered by new branch
   steminternal <- stem |> subset(!(x >= min(internal$x) & x <= max(internal$x) & y >= min(internal$y) & y <= max(internal$y))) |> subset(select=original)
+  #remove tip of stem if branch too close to top
+  if(max(stem$y)-bht < 0.1){steminternal <- steminternal |> subset(!type %in% 'tip')}
   #identify where to insert new numbering sequence to maintain correct vertex order
   ylower2 <- max(subset(xd, y < min(newbase$y))$y)
   yupper2 <- min(subset(xd, y > max(newbase$y))$y)
@@ -178,7 +180,7 @@ for(i in 1:4){
   branch <- branch2
   tree <- attachBranch(tree, branch, 50, 3)
   branch <- branch3
-  tree <- attachBranch(tree, branch, -30, 3.9)
+  tree <- attachBranch(tree, branch, -30, 3.95)
   branch <- tree |> mutate(x=x*sc,y=y*sc,center=center*sc)
   branch2 <- tree |> mutate(x=x*sc*.7,y=y*sc*.7,center=center*sc*.7)
   branch3 <- tree |> mutate(x=x*sc*.3,y=y*sc*.3,center=center*sc*.3)
