@@ -80,7 +80,7 @@ makeStem <- function(lth, wth, tip, inc=10){
 }
 
 
-angle=-50
+angle=-30
 bht=4
 lth=4
 wth = 0.5
@@ -118,7 +118,7 @@ attachBranch <- function(stem, branch, angle, bht){
   #lift branch to correct height
   branch <- branch |> mutate(y = y+bht)
   #recheck to see if branch thickness pushes branch too high
-  bdif <- max(stem$y) - max(branch[branch$type %in% 'base',]$y)
+  bdif <- max(subset(stem, type %in% c('base','mid','tip'))$y) - max(branch[branch$type %in% 'base',]$y)
   if(bdif < 0){branch <- branch |> mutate(y = y+bdif)}
   #determine which stem vertices straddle the branch
   xd <- subset(stem, side %in% xside & type %in% c('tip','mid','base','bbase'))
@@ -141,11 +141,16 @@ attachBranch <- function(stem, branch, angle, bht){
   #remove stem vertices that may be covered by new branch
   steminternal <- stem |> subset(!(x >= min(internal$x) & x <= max(internal$x) & y >= min(internal$y) & y <= max(internal$y))) |> subset(select=original)
   #remove tip of stem if branch too close to top
-  if(max(stem$y)-bht < 0.1){steminternal <- steminternal |> subset(!type %in% 'tip')}
+  if(max(subset(stem, type %in% c('base','mid','tip'))$y) - bht < 0.1){
+    xdi <- mean(subset(steminternal, type %in% 'tip')$i)
+    steminternal <- steminternal |> subset(!type %in% 'tip')
+  }else{
+    ylower2 <- max(subset(xd, y < min(newbase$y))$y)
+    yupper2 <- min(subset(xd, y > max(newbase$y))$y)
+    xdi <- mean(subset(xd, y %in% c(yupper2, ylower2))$i)
+  }
   #identify where to insert new numbering sequence to maintain correct vertex order
-  ylower2 <- max(subset(xd, y < min(newbase$y))$y)
-  yupper2 <- min(subset(xd, y > max(newbase$y))$y)
-  xdi <- mean(subset(xd, y %in% c(yupper2, ylower2))$i)
+  
   #assemble branch with new base, omitting internal vertices
   branchinternal <- branch |> subset(inside >= 0) |> subset(select=original) |> rbind(newbase[,original]) |> mutate(i = xdi + i/10000, type=paste0('b',type), inside = NULL, h=NULL,a=NULL)  |> arrange(i) 
   #append branch to stem with correct vertex order
@@ -159,8 +164,8 @@ ggplot()+
   geom_point(data=steminternal, aes(x=x, y=y), color='red')+
   geom_polygon(data=branch, aes(x=x, y=y), color='blue',fill='#00009950')+
   geom_point(data=branch, aes(x=x, y=y), color='blue')+
-  geom_polygon(data=branch2, aes(x=x, y=y), color='green',fill='#00990050')+
-  geom_point(data=branch2, aes(x=x, y=y), color='green')+
+  geom_polygon(data=stemnew, aes(x=x, y=y), color='green',fill='#00990050')+
+  geom_point(data=stemnew, aes(x=x, y=y), color='green')+
   coord_fixed()
 
 
@@ -169,18 +174,19 @@ ggplot()+
 lth=4
 wth = 0.5
 sc = 0.6
-stem <-  makeStem(lth,wth,0.1*wth,20)
+stem <-  makeStem(lth,wth,0.2*wth,20)
 stem <-  stem |> mutate(x = x + -0.2*cos(y/lth*2*pi), center = center + -0.2*cos(y/lth*2*pi))
 branch <-  stem |> mutate(x=x*sc,y=y*sc,center=center*sc)
 branch2 <-  stem |> mutate(x=x*sc*0.7,y=y*sc*0.7,center=center*sc*0.7)
 branch3 <-  stem |> mutate(x=x*sc*0.3,y=y*sc*0.3,center=center*sc*0.3)
 
-for(i in 1:4){
+for(i in 1:3){
   tree <- attachBranch(stem, branch, -50, 2)
   branch <- branch2
   tree <- attachBranch(tree, branch, 50, 3)
   branch <- branch3
-  tree <- attachBranch(tree, branch, -30, 3.95)
+  #stem=tree
+  tree <- attachBranch(tree, branch, -30, 4)
   branch <- tree |> mutate(x=x*sc,y=y*sc,center=center*sc)
   branch2 <- tree |> mutate(x=x*sc*.7,y=y*sc*.7,center=center*sc*.7)
   branch3 <- tree |> mutate(x=x*sc*.3,y=y*sc*.3,center=center*sc*.3)
