@@ -96,8 +96,14 @@ branch <- branch2
 attachBranch <- function(stem, branch, angle, bht){
   #establish permanent columns to end up with
   original <- colnames(stem)
+  
+  #get information about stem length
+  stemax <- max(subset(stem, type %in% c('base','mid','tip'))$y)
+  stemin <- min(subset(stem, type %in% c('base','mid','tip'))$y)
+  
   #ensure that branch never rises higher than stem
-  bht <- ifelse(bht > max(stem$y),max(stem$y),bht)
+  bht <- ifelse(bht > stemax,stemax,bht)
+  
   #ensure that branch is no thicker than stem
   bhtlower <- max(stem[bht >= stem$y,]$y) 
   bhtupper <- min(stem[bht <= stem$y,]$y)
@@ -109,84 +115,118 @@ attachBranch <- function(stem, branch, angle, bht){
   
   #convert angle to radians
   angle = angle/360*2*pi
+  
   #set which side of stem branch will be fitted
   xside <- ifelse(angle>0,'R','L')
   xsine <- ifelse(angle>0,1,-1)
+  
   #rotate branch to correct angle
   branch <- branch |> mutate(h=(x^2+y^2)^0.5,a = acos(y/h),a=ifelse(x < 0,-1*a,a),
                              x = h*sin(a+angle), y = h*cos(a+angle))
+  
   #lift branch to correct height
   branch <- branch |> mutate(y = y+bht)
+  
   #recheck to see if branch thickness pushes branch too high
-  bdif <- max(subset(stem, type %in% c('base','mid','tip'))$y) - max(branch[branch$type %in% 'base',]$y)
+  bdif <- stemax - max(branch[branch$type %in% 'base',]$y)
   if(bdif < 0){branch <- branch |> mutate(y = y+bdif)}
+  
   #determine which stem vertices straddle the branch
   xd <- subset(stem, side %in% xside & type %in% c('tip','mid','base','bbase'))
   ylower <- max(subset(xd, y < min(branch[branch$type %in% 'base',]$y))$y)
   yupper <- min(subset(xd, y >= max(branch[branch$type %in% 'base',]$y))$y)
   xupper <- subset(xd, y == yupper)$x
   xlower <- subset(xd, y == ylower)$x
+  
   #shift branch to conform with twisted stem center position
   cshift <- mean(subset(xd, y == yupper | y == ylower)$center)
   branch <- branch |> mutate(x = x+cshift)
   
-  #? bx <- (bht-ylower)/(yupper-ylower)*(xupper-xlower)+xlower
   #identify which branch vertices are inside stem
   branch <- branch |> mutate(inside = (x-((y-ylower)/(yupper-ylower)*(xupper-xlower)+xlower))*xsine)
+  
   #identify vertices which straddle inside and outside of stem to find points of intersection
   internal <- branch |> mutate(near = inside^2, isinside = ifelse(inside < 0 | type %in% 'base', 'no','yes')) |> group_by(isinside, side) |> mutate(minnear = min(near)) |> ungroup() |> subset(near == minnear)
+  
   #approximate location of branch stem intersection to establish new branch base
-  newbase <- internal |> group_by(side) |> mutate(amt = 1/((inside - 0)/(max(inside)-min(inside)))^2) |> 
+  newbase <- internal |> group_by(side) |> mutate(amt = 1/((inside - 0)/(max(inside)-min(inside)+0.0001))^2) |> 
     summarise(x= sum(amt*x)/sum(amt), y= sum(amt*y)/sum(amt), i= mean(i), type='base', center=0, side=xside, width=bwd) 
-  #remove stem vertices that may be covered by new branch
-  steminternal <- stem |> subset(!(x >= min(internal$x) & x <= max(internal$x) & y >= min(internal$y) & y <= max(internal$y))) |> subset(select=original)
-  #remove tip of stem if branch too close to top
-  if(max(subset(stem, type %in% c('base','mid','tip'))$y) - bht < 0.1){
-    xdi <- mean(subset(steminternal, type %in% 'tip')$i)
-    steminternal <- steminternal |> subset(!type %in% 'tip')
+  
+  
+  #determine if stem if branch too close to top
+  if(stemax - bht < 0.05*(stemax-stemin)){
+    #identify where to insert new numbering sequence to maintain correct vertex order
+    xdi <- mean(subset(stem, type %in% 'tip')$i)
+    #remove tip of stem
+    steminternal <- stem |> subset(!type %in% 'tip' & !(y > (stemax - 0.05*(stemax-stemin)) & type %in% 'mid'))
+    #assemble branch with new base, omitting internal vertices
+    branchinternal <- branch |> subset(select=original) |> rbind(newbase[,original]) |> mutate(i = xdi + i/10000, type=paste0('b',type), inside = NULL, h=NULL,a=NULL)  |> arrange(i) 
   }else{
+    #remove stem vertices that may be covered by new branch
+    steminternal <- stem |> subset(!(x >= min(internal$x) & x <= max(internal$x) & y >= min(internal$y) & y <= max(internal$y))) |> subset(select=original)
+    #identify stem vertices near branch base
     ylower2 <- max(subset(xd, y < min(newbase$y))$y)
     yupper2 <- min(subset(xd, y > max(newbase$y))$y)
+    #identify where to insert new numbering sequence to maintain correct vertex order
     xdi <- mean(subset(xd, y %in% c(yupper2, ylower2))$i)
+    #assemble branch with new base, omitting internal vertices
+    branchinternal <- branch |> subset(inside >= 0) |> subset(select=original) |> rbind(newbase[,original]) |> mutate(i = xdi + i/10000, type=paste0('b',type), inside = NULL, h=NULL,a=NULL)  |> arrange(i) 
+    
   }
-  #identify where to insert new numbering sequence to maintain correct vertex order
   
-  #assemble branch with new base, omitting internal vertices
-  branchinternal <- branch |> subset(inside >= 0) |> subset(select=original) |> rbind(newbase[,original]) |> mutate(i = xdi + i/10000, type=paste0('b',type), inside = NULL, h=NULL,a=NULL)  |> arrange(i) 
+  
   #append branch to stem with correct vertex order
   stemnew <- rbind(branchinternal,steminternal) |> arrange(i) 
+  
   #renumber vertices
   stemnew <- mutate(stemnew, i=(1:nrow(stemnew)))
+  
   return(stemnew)}
 
 ggplot()+
-  geom_polygon(data=steminternal, aes(x=x, y=y), color='red',fill='#99000050')+
-  geom_point(data=steminternal, aes(x=x, y=y), color='red')+
-  geom_polygon(data=branch, aes(x=x, y=y), color='blue',fill='#00009950')+
-  geom_point(data=branch, aes(x=x, y=y), color='blue')+
-  geom_polygon(data=stemnew, aes(x=x, y=y), color='green',fill='#00990050')+
-  geom_point(data=stemnew, aes(x=x, y=y), color='green')+
+  geom_polygon(data=stemnew, aes(x=x, y=y), color='red',fill='#99000050')+
+  geom_point(data=stemnew, aes(x=x, y=y), color='red')+
+  # geom_polygon(data=steminternal, aes(x=x, y=y), color='blue',fill='#00009950')+
+  # geom_point(data=steminternal, aes(x=x, y=y), color='blue')+
+  # geom_polygon(data=branchinternal, aes(x=x, y=y), color='green',fill='#00990050')+
+  # geom_point(data=branchinternal, aes(x=x, y=y), color='green')+
   coord_fixed()
 
+skewStem <- function(stem, amp=0.2, phase=0, waves=1){
+  maxstem <- max(stem$y)
+  minstem <- min(stem$y)
+  lth <- maxstem - minstem
+  stem <-  stem |> mutate(x = x + amp*cos((y/lth+phase)*2*pi*waves), 
+                          center = center + amp*cos((y/lth+phase)*2*pi*waves))
+  return(stem)
+}
+
+stem <-  makeStem(lth,wth,0.2*wth,20)
+stem <-  skewStem(stem,-0.1,0.25,3)
 
 
+ggplot()+
+  geom_polygon(data=stem, aes(x=x, y=y), color='brown',fill='#99500050')+
+  coord_fixed()
+#------
 #fractal tree with bend --- 
+n=3
 lth=4
 wth = 0.5
 sc = 0.6
-stem <-  makeStem(lth,wth,0.2*wth,20)
-stem <-  stem |> mutate(x = x + -0.2*cos(y/lth*2*pi), center = center + -0.2*cos(y/lth*2*pi))
+stem <-  makeStem(lth,wth,0.1*wth,20)
+# stem <-  stem |> mutate(x = x + -0.2*cos(y/lth*2*pi), center = center + -0.2*cos(y/lth*2*pi))
+stem <-  skewStem(stem,-0.2,.5,3)
 branch <-  stem |> mutate(x=x*sc,y=y*sc,center=center*sc)
 branch2 <-  stem |> mutate(x=x*sc*0.7,y=y*sc*0.7,center=center*sc*0.7)
 branch3 <-  stem |> mutate(x=x*sc*0.3,y=y*sc*0.3,center=center*sc*0.3)
-
-for(i in 1:3){
+for(i in 1:n){
   tree <- attachBranch(stem, branch, -50, 2)
   branch <- branch2
   tree <- attachBranch(tree, branch, 50, 3)
   branch <- branch3
   #stem=tree
-  tree <- attachBranch(tree, branch, -30, 4)
+  tree <- attachBranch(tree, branch, -5, 4)
   branch <- tree |> mutate(x=x*sc,y=y*sc,center=center*sc)
   branch2 <- tree |> mutate(x=x*sc*.7,y=y*sc*.7,center=center*sc*.7)
   branch3 <- tree |> mutate(x=x*sc*.3,y=y*sc*.3,center=center*sc*.3)
@@ -294,50 +334,6 @@ branch <-  stem |> mutate(x=x*sc,y=y*sc,center=center*sc)
 
 
 
-attachBranchsf <- function(stem, branch, angle, bht){
-  #establish permanent columns to end up with
-  original <- colnames(stem)
-  #convert angle to radians
-  angle = angle/360*2*pi
-  #set which side of stem branch will be fitted
-  xside <- ifelse(angle>0,'R','L')
-  xsine <- ifelse(angle>0,1,-1)
-  #rotate branch to correct angle
-  branch <- branch |> mutate(h=(x^2+y^2)^0.5,a = acos(y/h),a=ifelse(x < 0,-1*a,a),
-                             x = h*sin(a+angle), y = h*cos(a+angle))
-  #lift branch to correct height
-  branch <- branch |> mutate(y = y+bht)
-  #determine which stem vertices straddle the branch
-  xd <- subset(stem, side %in% xside & type %in% c('tip','mid','base','bbase'))
-  ylower <- max(subset(xd, y < min(branch[branch$type %in% 'base',]$y))$y)
-  yupper <- min(subset(xd, y > max(branch[branch$type %in% 'base',]$y))$y)
-  xupper <- subset(xd, y == yupper)$x
-  xlower <- subset(xd, y == ylower)$x
-  #shift branch to conform with twisted stem center position
-  cshift <- mean(subset(xd, y == yupper | y == ylower)$center)
-  branch <- branch |> mutate(x = x+cshift)
-  
-  #? bx <- (bht-ylower)/(yupper-ylower)*(xupper-xlower)+xlower
-  #identify which branch vertices are inside stem
-  branch <- branch |> mutate(inside = (x-((y-ylower)/(yupper-ylower)*(xupper-xlower)+xlower))*xsine)
-  #identify vertices which straddle inside and outside of stem to find points of intersection
-  internal <- branch |> mutate(near = inside^2, isinside = ifelse(inside < 0 | type %in% 'base', 'no','yes')) |> group_by(isinside, side) |> mutate(minnear = min(near)) |> ungroup() |> subset(near == minnear)
-  #approximate location of branch stem intersection to establish new branch base
-  newbase <- internal |> group_by(side) |> mutate(amt = 1/((inside - 0)/(max(inside)-min(inside)))^2) |> 
-    summarise(x= sum(amt*x)/sum(amt), y= sum(amt*y)/sum(amt), i= mean(i), type='base', center=0, side=xside) 
-  #remove stem vertices that may be covered by new branch
-  steminternal <- stem |> subset(!(x >= min(internal$x) & x <= max(internal$x) & y >= min(internal$y) & y <= max(internal$y))) |> subset(select=original)
-  #identify where to insert new numbering sequence to maintain correct vertex order
-  ylower2 <- max(subset(xd, y < min(newbase$y))$y)
-  yupper2 <- min(subset(xd, y > max(newbase$y))$y)
-  xdi <- mean(subset(xd, y %in% c(yupper2, ylower2))$i)
-  #assemble branch with new base, omitting internal vertices
-  branchinternal <- branch |> subset(inside >= 0) |> subset(select=original) |> rbind(newbase[,original]) |> mutate(i = xdi + i/10000, type=paste0('b',type), inside = NULL, h=NULL,a=NULL)  |> arrange(i) 
-  #append branch to stem with correct vertex order
-  stemnew <- rbind(branchinternal,steminternal) |> arrange(i) 
-  #renumber vertices
-  stemnew <- mutate(stemnew, i=(1:nrow(stemnew)))
-  return(stemnew)}
 
 
 
