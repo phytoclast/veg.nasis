@@ -252,18 +252,19 @@ angles <- s*2*pi/4
 x = cos(angles)
 y = sin(angles)
 circle <- data.frame(i=i,x=cos(angles),y=sin(angles))
-circle2 <- data.frame(i=i[(inc/2):inc],x=cos(angles[(inc/2):inc]),y=sin(angles[(inc/2):inc]))
-triangle <- data.frame(i=i,x=-1*s+1,y=s*2)
-verticle <- data.frame(i=i,x=1,y=s*2)
-combo <- data.frame(i=i,x=(circle$x+triangle$x)/2, y=(circle$y+triangle$y)/2)
-combo2 <- data.frame(i=i,x=(circle$x+verticle$x)/2, y=(circle$y+verticle$y)/2)
+triangle <- data.frame(i=i,x=-1*s+1,y=s*1)
+shapes <- data.frame(i=i,s=s,angle=s*2*pi/4)
+shapes <- shapes |> mutate(lx=-1*s+1,ly=s,cx=cos(angles),cy=sin(angles))
+shapes1 <- shapes |> mutate(x=(lx+cx)/2, y=(cy+ly)/2)
+
+
 ggplot()+
   # geom_polygon(data=circle, aes(x=x, y=y), color='red',fill='#99000050')+
   geom_point(data=circle, aes(x=x, y=y), color='red')+
   geom_point(data=triangle, aes(x=x, y=y), color='blue')+
-  geom_point(data=verticle, aes(x=x, y=y), color='green')+
-  geom_point(data=combo, aes(x=x, y=y), color='purple')+
-  geom_point(data=circle2, aes(x=x, y=y), color='gold')+
+  geom_point(data=shapes1, aes(x=x, y=y), color='green')+
+  # geom_point(data=shapes2, aes(x=x, y=y), color='purple')+
+  # geom_point(data=circle2, aes(x=x, y=y), color='gold')+
   coord_fixed()
 
 dfbranches <- data.frame(
