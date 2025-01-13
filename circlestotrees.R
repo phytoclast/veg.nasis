@@ -242,38 +242,106 @@ ggplot()+
 #------
 
 
+makeCrowShape <- function(n=9, h, w, shape=c('pyramid','dome','round','column'))
+  shape=c('pyramid','dome','round','column')
+h=2
+w=5
+wd=w/2
+n=6
 
+r <- c('pyramid','dome','round','column') %in% shape |> as.numeric(r)
 
-inc=8
-s = (0:inc)/inc
-i = 1:(inc+1)
-angles <- s*2*pi/4
+s = (0:n)/n
+i = 1:(n+1)
+d = 1-wd/h
+sc <- (s-d)*1/(1-d)
+p=0
+shapes <- data.frame(i=i,s=s)
+shapes <- shapes |> mutate(sc = (s-d)*1/(1-d),
+                           a1=s*2*pi/4,
+                           a2=(s*2-1)*2*pi/4,
+                           a3=sc*2*pi/4)
 
-x = cos(angles)
-y = sin(angles)
-circle <- data.frame(i=i,x=cos(angles),y=sin(angles))
-triangle <- data.frame(i=i,x=-1*s+1,y=s*1)
-shapes <- data.frame(i=i,s=s,angle=s*2*pi/4)
-shapes <- shapes |> mutate(lx=-1*s+1,ly=s,cx=cos(angles),cy=sin(angles))
-shapes1 <- shapes |> mutate(x=(lx+cx)/2, y=(cy+ly)/2)
-
+shapes <- shapes |> mutate(x0=-1*s+1,y0=s,#pyramid
+                           x1=cos(a1),y1=sin(a1),#dome
+                           x2=cos(a2),y2=sin(a2),#round 
+                           x3=cos(a3),y3=sin(a3),#column
+                           x3=ifelse(s > d,x3,1),y3=ifelse(s > d,(y3*(1-d)+d),y0))
+shapes <- shapes |> mutate(tx = (r[1]*x0+r[2]*x1+r[3]*x2+r[4]*x3)/sum(r),
+                           ty = (r[1]*y0+r[2]*y1+r[3]*y2+r[4]*y3)/sum(r))
+#normalize shape
+shapes <- shapes |> mutate(ty=h*(ty-min(ty))/(max(ty)-min(ty)), tx=wd*(tx-min(tx))/(max(tx)-min(tx)))
+#branch base
+shapes <- shapes |> mutate(bx = 0, by=(h-w)*s) |> subset(select = c(i,s,tx,ty,bx,by))
 
 ggplot()+
   # geom_polygon(data=circle, aes(x=x, y=y), color='red',fill='#99000050')+
-  geom_point(data=circle, aes(x=x, y=y), color='red')+
-  geom_point(data=triangle, aes(x=x, y=y), color='blue')+
-  geom_point(data=shapes1, aes(x=x, y=y), color='green')+
+  geom_point(data=shapes, aes(x=bx, y=by), color='red')+
+  # geom_point(data=shapes, aes(x=x0, y=y0), color='blue')+
+  geom_point(data=shapes, aes(x=tx, y=ty), color='green')+
+  geom_path(data=shapes, aes(x=bx, y=by), color='red')+
+  # geom_path(data=shapes, aes(x=x0, y=y0), color='blue')+
+  geom_path(data=shapes, aes(x=tx, y=ty), color='green')+
   # geom_point(data=shapes2, aes(x=x, y=y), color='purple')+
   # geom_point(data=circle2, aes(x=x, y=y), color='gold')+
   coord_fixed()
 
-dfbranches <- data.frame(
-  baseht = c(1.5,2,2.5,3,3.5,4),
-  crownht = (circle[c(2:7),]$y)*2+3,
-  crownwd = (circle[c(2:7),]$x))
 
-dfbranches <- dfbranches |> mutate(branchlen = ((crownht - baseht)^2+crownwd^2)^0.5,
-                                   angle=atan((crownht - baseht)/crownwd)*180/pi)
+makeCrowShape <- function(ht.max=5, ht.min=1, crwd=2, dbh, crshape=c('pyramid','dome','round','column'), n=5, bu=0.8, bl=0){
+
+  h <- ht.max - ht.min
+  wd <- crwd/2
+  
+  s <- (0:n)/n
+  i <- 1:(n+1)
+  d <- 1-wd/h
+  sc <- (s-d)*1/(1-d)
+  #create index sequence and proportion
+  shapes <- data.frame(i=i,s=s)
+  #create angles needed for round crowns
+  shapes <- shapes |> mutate(sc = (s-d)*1/(1-d),
+                             a1=s*2*pi/4,
+                             a2=(s*2-1)*2*pi/4,
+                             a3=sc*2*pi/4)
+  #create choices of xy coordinates
+  shapes <- shapes |> mutate(x0=-1*s+1,y0=s,#pyramid
+                             x1=cos(a1),y1=sin(a1),#dome
+                             x2=cos(a2),y2=sin(a2),#round 
+                             x3=cos(a3),y3=sin(a3),#column
+                             x3=ifelse(s > d,x3,1),y3=ifelse(s > d,(y3*(1-d)+d),y0))
+  #weights to determine shape output as branch tip coordinates
+  r <- c('pyramid','dome','round','column') %in% crshape |> as.numeric()
+  shapes <- shapes |> mutate(tx = (r[1]*x0+r[2]*x1+r[3]*x2+r[4]*x3)/sum(r),
+                             ty = (r[1]*y0+r[2]*y1+r[3]*y2+r[4]*y3)/sum(r))
+  #normalize shape
+  shapes <- shapes |> mutate(ty=h*(ty-min(ty))/(max(ty)-min(ty)), tx=wd*(tx-min(tx))/(max(tx)-min(tx)))
+  #branch base
+  shapes <- shapes |> mutate(bx = 0, by=(bu*h-bl*h)*s+bl*h) |> subset(select = c(i,s,tx,ty,bx,by))
+  #lift branches to crown base
+  shapes <- shapes |> mutate(by=by+ht.min, ty=ty+ht.min)
+  
+  return(shapes)
+  }
+
+shapes <- makeCrowShape(ht.max=3, ht.min=2, crwd=2, dbh, crshape=c('pyramid','dome','round','column'), n=5, bu=0.8, bl=0)
+
+ggplot()+
+  # geom_polygon(data=circle, aes(x=x, y=y), color='red',fill='#99000050')+
+  geom_point(data=shapes, aes(x=bx, y=by), color='red')+
+  # geom_point(data=shapes, aes(x=x0, y=y0), color='blue')+
+  geom_point(data=shapes, aes(x=tx, y=ty), color='green')+
+  geom_path(data=shapes, aes(x=bx, y=by), color='red')+
+  # geom_path(data=shapes, aes(x=x0, y=y0), color='blue')+
+  geom_path(data=shapes, aes(x=tx, y=ty), color='green')+
+  # geom_point(data=shapes2, aes(x=x, y=y), color='purple')+
+  # geom_point(data=circle2, aes(x=x, y=y), color='gold')+
+  coord_fixed()
+
+
+
+
+
+
 
 
 stem <-  makeStem(20,1,0.3*wth,20)
