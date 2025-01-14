@@ -256,6 +256,7 @@ i = 1:(n+1)
 d = 1-wd/h
 sc <- (s-d)*1/(1-d)
 p=0
+opposite = TRUE
 shapes <- data.frame(i=i,s=s)
 shapes <- shapes |> mutate(sc = (s-d)*1/(1-d),
                            a1=s*2*pi/4,
@@ -273,6 +274,14 @@ shapes <- shapes |> mutate(tx = (r[1]*x0+r[2]*x1+r[3]*x2+r[4]*x3)/sum(r),
 shapes <- shapes |> mutate(ty=h*(ty-min(ty))/(max(ty)-min(ty)), tx=wd*(tx-min(tx))/(max(tx)-min(tx)))
 #branch base
 shapes <- shapes |> mutate(bx = 0, by=(h-w)*s) |> subset(select = c(i,s,tx,ty,bx,by))
+shapes <- shapes |> mutate(a = 360/(2*pi)*acos((ty-by)/((ty-by)^2+(tx-bx)^2)^0.5))
+if(opposite){
+  shapes2 <- shapes |> mutate(a = a*-1, i=i+0.5) |> subset(!a %in% 0)
+  shapes <- shapes |> rbind(shapes2) |> arrange(i) 
+  shapes <- shapes |> mutate(i = 1:nrow(shapes))
+}else{
+shapes <- shapes |> mutate(a = ifelse(i/2 == floor(i/2), a*-1,a))
+}
 
 ggplot()+
   # geom_polygon(data=circle, aes(x=x, y=y), color='red',fill='#99000050')+
@@ -287,8 +296,8 @@ ggplot()+
   coord_fixed()
 
 
-makeCrowShape <- function(ht.max=5, ht.min=1, crwd=2, dbh, crshape=c('pyramid','dome','round','column'), n=5, bu=0.8, bl=0){
-
+makeCrowShape <- function(ht.max=5, ht.min=1, crwd=2, dbh, crshape=c('pyramid','dome','round','column'), n=5, bu=0.8, bl=0, opposite = FALSE){
+  
   h <- ht.max - ht.min
   wd <- crwd/2
   
@@ -319,11 +328,20 @@ makeCrowShape <- function(ht.max=5, ht.min=1, crwd=2, dbh, crshape=c('pyramid','
   shapes <- shapes |> mutate(bx = 0, by=(bu*h-bl*h)*s+bl*h) |> subset(select = c(i,s,tx,ty,bx,by))
   #lift branches to crown base
   shapes <- shapes |> mutate(by=by+ht.min, ty=ty+ht.min)
+  #angle of branch
+  shapes <- shapes |> mutate(a = 360/(2*pi)*acos((ty-by)/((ty-by)^2+(tx-bx)^2)^0.5))
+  if(opposite){
+    shapes2 <- shapes |> mutate(a = a*-1, tx = tx*-1, i=i+0.5) |> subset(!a %in% 0)
+    shapes <- shapes |> rbind(shapes2) |> arrange(i) 
+    shapes <- shapes |> mutate(i = 1:nrow(shapes))
+  }else{
+    shapes <- shapes |> mutate(o = ifelse(i/2 == floor(i/2), -1,1), a = a*o, tx = tx*o, o = NULL)
+  }
   
   return(shapes)
-  }
+}
 
-shapes <- makeCrowShape(ht.max=3, ht.min=2, crwd=2, dbh, crshape=c('pyramid','dome','round','column'), n=5, bu=0.8, bl=0)
+shapes <- makeCrowShape(ht.max=3, ht.min=2, crwd=2, dbh, crshape=c('pyramid','dome','round','column'), n=10, bu=0.8, bl=0, opposite = F)
 
 ggplot()+
   # geom_polygon(data=circle, aes(x=x, y=y), color='red',fill='#99000050')+
