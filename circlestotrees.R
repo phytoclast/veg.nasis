@@ -15,8 +15,8 @@ tree2 <- tree2 |> mutate(angles=angles/2/3.141592*360,
   mutate(dmin = min(d)) |> ungroup() |> mutate(p = (dmin==d))  |> subset(y >= 0)
 top <- tree2$top[1]
 for(i in 1:15){
-treex0 <- tree |> mutate(circle=i, x=cos(angles)/nbr*i, y=sin(angles)/nbr*i+top)
-if(i==1){treex=treex0}else{treex<-rbind(treex,treex0)}}
+  treex0 <- tree |> mutate(circle=i, x=cos(angles)/nbr*i, y=sin(angles)/nbr*i+top)
+  if(i==1){treex=treex0}else{treex<-rbind(treex,treex0)}}
 tree2 <- subset(tree2, p)
 
 ggplot()+
@@ -58,7 +58,7 @@ library(ggplot2)
 library(dplyr)
 
 
-makeStem <- function(lth, wth, tip, inc=10){
+makeStem <- function(lth, wth, tip=0.01, inc=10){
   
   
   s <- (0:inc)/inc
@@ -73,25 +73,26 @@ makeStem <- function(lth, wth, tip, inc=10){
                    side=side,
                    center=0,
                    width=abs(x*2)
-                   )
+  )
   df[c(1,nrow(df)),]$type <- 'base'
   df[c(nrow(df)/2,nrow(df)/2+1),]$type <- 'tip'
   return(df)
 }
 
 
-angle=-30
-bht=4
+angle=30
+bht=2
 lth=4
-wth = 0.5
+wth = 1
 sc = 0.6
 stem <-  makeStem(lth,wth,0.1*wth,20)
+branch <-  makeStem(0.2,0.1,0.01,10)
 stem <-  stem |> mutate(x = x + -0.2*cos(y/lth*2*pi), center = center + -0.2*cos(y/lth*2*pi))
 branch <-  stem |> mutate(x=x*sc,y=y*sc,center=center*sc, width = width*sc)
 branch2 <-  stem |> mutate(x=x*sc*0.7,y=y*sc*0.7,center=center*sc*0.7)
 stem <- attachBranch(stem, branch, -50, 2)
 branch <- branch2
-  
+
 
 attachBranch <- function(stem, branch, angle, bht){
   #establish permanent columns to end up with
@@ -186,8 +187,8 @@ attachBranch <- function(stem, branch, angle, bht){
 ggplot()+
   geom_polygon(data=stemnew, aes(x=x, y=y), color='red',fill='#99000050')+
   geom_point(data=stemnew, aes(x=x, y=y), color='red')+
-  # geom_polygon(data=steminternal, aes(x=x, y=y), color='blue',fill='#00009950')+
-  # geom_point(data=steminternal, aes(x=x, y=y), color='blue')+
+  geom_polygon(data=branch, aes(x=x, y=y), color='blue',fill='#00009950')+
+  geom_point(data=branch, aes(x=x, y=y), color='blue')+
   # geom_polygon(data=branchinternal, aes(x=x, y=y), color='green',fill='#00990050')+
   # geom_point(data=branchinternal, aes(x=x, y=y), color='green')+
   coord_fixed()
@@ -280,7 +281,7 @@ if(opposite){
   shapes <- shapes |> rbind(shapes2) |> arrange(i) 
   shapes <- shapes |> mutate(i = 1:nrow(shapes))
 }else{
-shapes <- shapes |> mutate(a = ifelse(i/2 == floor(i/2), a*-1,a))
+  shapes <- shapes |> mutate(a = ifelse(i/2 == floor(i/2), a*-1,a))
 }
 
 ggplot()+
@@ -329,7 +330,9 @@ makeCrowShape <- function(ht.max=5, ht.min=1, crwd=2, dbh, crshape=c('pyramid','
   #lift branches to crown base
   shapes <- shapes |> mutate(by=by+ht.min, ty=ty+ht.min)
   #angle of branch
-  shapes <- shapes |> mutate(a = 360/(2*pi)*acos((ty-by)/((ty-by)^2+(tx-bx)^2)^0.5))
+  shapes <- shapes |> mutate(l = pmax(dbh/2,((ty-by)^2+(tx-bx)^2)^0.5), a = 360/(2*pi)*acos((ty-by)/l))
+  #branch diameter
+  shapes <- shapes |> mutate(d = dbh*pmin(l*2,(ht.max-by))/ht.max+0.01)
   if(opposite){
     shapes2 <- shapes |> mutate(a = a*-1, tx = tx*-1, i=i+0.5) |> subset(!a %in% 0)
     shapes <- shapes |> rbind(shapes2) |> arrange(i) 
@@ -341,16 +344,34 @@ makeCrowShape <- function(ht.max=5, ht.min=1, crwd=2, dbh, crshape=c('pyramid','
   return(shapes)
 }
 
-shapes <- makeCrowShape(ht.max=3, ht.min=2, crwd=2, dbh, crshape=c('pyramid','dome','round','column'), n=10, bu=0.8, bl=0, opposite = F)
+shapes <- makeCrowShape(ht.max=10, ht.min=4, crwd=6, dbh=0.5, crshape=c('pyramid'), n=10, bu=0.8, bl=-0.2, opposite = F)
+
+stem <-  makeStem(10,1,0.1,10)
+for(i in 1:nrow(shapes)){#i=1
+  branch <- makeStem(shapes$l[i], shapes$d[i],0.01,10)
+  branch <- skewStem(branch, amp=ifelse(shapes$a[i] >= 0,-0.2,0.2), phase=0, waves=1.2)
+  stem <- attachBranch(stem, branch, shapes$a[i], shapes$by[i])
+}
+crown <- stem |> subset(grepl('tip',type))
+
+
+ggplot()+
+  geom_polygon(data=stem, aes(x=x, y=y), color='brown',fill='#99500050')+
+  # geom_point(data=stem, aes(x=x, y=y), color='red')+
+  geom_polygon(data=crown, aes(x=x, y=y), color='green',fill='#00990050')+
+  # geom_point(data=tree, aes(x=x, y=y), color='green')+
+  coord_fixed()
+
+
 
 ggplot()+
   # geom_polygon(data=circle, aes(x=x, y=y), color='red',fill='#99000050')+
   geom_point(data=shapes, aes(x=bx, y=by), color='red')+
   # geom_point(data=shapes, aes(x=x0, y=y0), color='blue')+
   geom_point(data=shapes, aes(x=tx, y=ty), color='green')+
-  geom_path(data=shapes, aes(x=bx, y=by), color='red')+
+  geom_path(data=crown, aes(x=bx, y=by), color='red')+
   # geom_path(data=shapes, aes(x=x0, y=y0), color='blue')+
-  geom_path(data=shapes, aes(x=tx, y=ty), color='green')+
+  geom_path(data=crown, aes(x=tx, y=ty), color='green')+
   # geom_point(data=shapes2, aes(x=x, y=y), color='purple')+
   # geom_point(data=circle2, aes(x=x, y=y), color='gold')+
   coord_fixed()
@@ -378,7 +399,7 @@ x <- stem %>%
   summarise(i = list(i), type = list(type),
             side = list(side), center = list(center), 
             geometry = st_combine(geometry)) |> st_cast("POLYGON")
-  
+
 
 x <- data.frame(x=st_coordinates(x)[,1],
                 y=st_coordinates(x)[,2],
