@@ -23,8 +23,9 @@ makeStem <- function(lth, wth, tip=0.01, inc=10){
 }
 
 
+#add options to add branch constraint by height and crown width rather than just angle
 
-attachBranch <- function(stem, branch, angle, bht){
+attachBranch <- function(stem, branch, angle=90, bht, tht=NA, tx=NA){
   #establish permanent columns to end up with
   original <- colnames(stem)
   
@@ -45,7 +46,18 @@ attachBranch <- function(stem, branch, angle, bht){
   # if(bwd > swd) {branch <- branch |> mutate(x = x*swd/bwd)}
   
   #convert angle to radians
-  angle = angle/360*2*pi
+  angle = angle/360*2*pi  
+  
+  #optional establish branch angle based on branch distance from stem
+  if(!is.na(tht) & !is.na(tx)){
+  l = ((tht-bht)^2+(tx)^2)^0.5
+  bmaxlen <- max((branch$x^2+branch$y^2)^0.5)
+  #resize branch to fit specified height and width
+  branch <- branch |> mutate(x=x*l/bmaxlen, y=y*l/bmaxlen)
+  angle <- asin(tx/l)
+  }
+  
+
   
   #set which side of stem branch will be fitted
   xside <- ifelse(angle>0,'R','L')
@@ -197,44 +209,156 @@ for(i in 1:n){
 
 crown <- tree |> subset(grepl('tip',type) & !type %in% 'tip')
 ggplot()+
+  geom_polygon(data=tree, aes(x=x, y=y), color='brown',fill='#99500090')+
+  # geom_point(data=stem, aes(x=x, y=y), color='red')+
+  geom_polygon(data=crown, aes(x=x, y=y), color='green',fill='#00990090')+
+  # geom_point(data=tree, aes(x=x, y=y), color='green')+
+  coord_fixed()
+
+#------conifer
+
+crshape = c('pyramid','dome','round','column')
+
+crshape = c('pyramid','column')
+shapes <- makeCrowShape(ht.max=10, ht.min=3, crwd=3, dbh=0.5, n=7, bu=1, bl=0.2, crshape=crshape,
+                        opposite = T)
+shapes <- subset(shapes, !(a > 175 | a < -175 | a == 0)  & l> 0.3)
+stem <-  makeStem(10,0.5,0.01,10)
+for(i in 1:nrow(shapes)){#i=1
+  branch <- makeStem(shapes$l[i], shapes$d[i]*.5,0.01,10)
+  bpos <- max(branch$y)
+  branch2 <- branch |> mutate(x=x*0.3,y=y*0.3)
+  branch3 <- branch |> mutate(x=x*0.2,y=y*0.2)
+  
+  branch <- skewStem(branch, amp=ifelse(shapes$a[i] >= 0,-0.07*(shapes$s[i]*-1+1),0.07*(shapes$s[i]*-1+1)), 
+                     phase=0, waves=1)
+  branchA <- attachBranch(branch, branch2, ifelse(shapes$a[i] >= 0,30,-30), bpos*0.3)
+  branchA <- attachBranch(branchA, branch3, ifelse(shapes$a[i] >= 0,-30,30), bpos*0.7)
+  
+  
+  stem <- attachBranch(stem, branchA, shapes$a[i], shapes$by[i])
+}
+crown <- stem |> subset(grepl('tip',type) | type %in% 'bbase')
+
+
+ggplot()+
+  geom_polygon(data=stem, aes(x=x, y=y), color='brown',fill='#99500090')+
+  # geom_point(data=stem, aes(x=x, y=y), color='red')+
+  geom_polygon(data=crown, aes(x=x, y=y), color='green',fill='#00990090')+
+  # geom_point(data=tree, aes(x=x, y=y), color='green')+
+  coord_fixed()
+
+#------cottonwood
+
+crshape = c('pyramid','dome','round','column')
+
+crshape = c('dome')
+shapes <- makeCrowShape(ht.max=10, ht.min=5, crwd=6, dbh=0.5, n=3, bu=0.5, bl=0, crshape=crshape,
+                        opposite = F)
+shapes <- subset(shapes, !(a > 175 | a < -175 | a==0)  & l> 0.3)
+stem <-  makeStem(10,0.5,0.01,25)
+stem <- skewStem(stem, amp=-0, 
+                   phase=0, waves=0.5)
+
+for(i in 1:nrow(shapes)){#i=1
+  branch <- makeStem(shapes$l[i], shapes$d[i]*.5,0.01,15)
+  bpos <- max(branch$y)
+  branch2 <- branch |> mutate(x=x*0.3,y=y*0.3)
+  branch3 <- branch |> mutate(x=x*0.2,y=y*0.2)
+  
+  branch <- skewStem(branch, amp=ifelse(shapes$a[i] >= 0,-0.2,0.2), 
+                     phase=0, waves=1)
+  branchA <- attachBranch(branch, branch2, ifelse(shapes$a[i] >= 0,30,-30), bpos*0.5)
+  branchA <- attachBranch(branchA, branch3, ifelse(shapes$a[i] >= 0,-30,30), bpos*0.6)
+  
+  
+  stem <- attachBranch(stem, branchA, shapes$a[i], shapes$by[i], tht = shapes$ty[i], tx = shapes$tx[i])
+}
+
+branchB <- stem |> mutate(x=x*1,y=y) |> skewStem(amp=0.3)
+
+stem2 <-  makeStem(5,0.5,0.3,30)
+tree <- attachBranch(stem2, branchB, bht=4.5, tht = 11, tx=-4)
+tree <- attachBranch(tree, branchB, bht=5, tht = 11, tx=3)
+
+crown <- tree |> subset(grepl('tip',type))
+crown2 <- crown[chull(x=crown$x, y=crown$y),]
+
+ggplot()+
   geom_polygon(data=tree, aes(x=x, y=y), color='brown',fill='#99500050')+
   # geom_point(data=stem, aes(x=x, y=y), color='red')+
-  geom_polygon(data=crown, aes(x=x, y=y), color='green',fill='#00990050')+
-  # geom_point(data=tree, aes(x=x, y=y), color='green')+
-  coord_fixed()
-#------
-
-
-
-shapes <- makeCrowShape(ht.max=10, ht.min=4, crwd=3, dbh=0.5, n=9,bu=0.9, bl=0.1, 
-                        opposite = T)
-shapes <- subset(shapes, !(a > 175 | a < -175 | a == 0))
-stem <-  makeStem(10,0.5,0.1,10)
-for(i in 1:nrow(shapes)){#i=1
-  branch <- makeStem(shapes$l[i], shapes$d[i],0.01,10)
-  branch <- skewStem(branch, amp=ifelse(shapes$a[i] >= 0,-0.1,0.1), phase=0, waves=1.2)
-  stem <- attachBranch(stem, branch, shapes$a[i], shapes$by[i])
-}
-crown <- stem |> subset(grepl('tip',type))
-
-
-ggplot()+
-  geom_polygon(data=stem, aes(x=x, y=y), color='brown',fill='#99500050')+
-  # geom_point(data=stem, aes(x=x, y=y), color='red')+
-  geom_polygon(data=crown, aes(x=x, y=y), color='green',fill='#00990050')+
+  geom_polygon(data=crown2, aes(x=x, y=y), color='green',fill='#00990050')+
   # geom_point(data=tree, aes(x=x, y=y), color='green')+
   coord_fixed()
 
 
 
+
+
+
+
+
+
+#Convex hull (trying to modify to allow some limited concavity)
+#eliminate redundant points via rounding
+df <- crown |> mutate(x = round(x,2),y = round(y,2)) 
+x = df$x 
+y = df$y 
+
+#set up data frame for calculations 
+df <-  data.frame(a=NA,l1=NA,l2=NA,x=x,y=y) |> unique()
+#track original order for troubleshooting
+df <- df |> mutate(q = 1:nrow(df))
+#find starting point at bottom of plot
+miny <- min(df$y)
+minx <- min(df[df$y==miny,]$x)
+df <- mutate(df, s = ifelse(x==minx & y==miny, 1,NA))
+i=1
+refx1 <- df[df$s %in% i,]$x
+refy1 <- df[df$s %in% i,]$y
+
+df <- df |> mutate(l1 = ((x-refx1)^2+(y-refy1)^2)^0.5,
+                   a = asin((x-refx1)/l1), a=ifelse(l1==0,0,a),
+                   deg = a/2/pi*360)
+amax <- max(df[!df$s %in% c(i,i-1),]$a)
+amin <- min(df[!df$s %in% c(i,i-1),]$a)
+nxtpt <- df |> subset(a == amax | a == amin)
+minl <- min(nxtpt$l1)
+nxtpt <- nxtpt |> subset(l1 == minl)
+
+df <- df |> mutate(s = ifelse(x == nxtpt$x & y == nxtpt$y, i+1, s))
+#establish variable that will indicate when to stop
+check <- TRUE 
+#loop through subsequent points to identify which points to retain
+for (i in 2:nrow(df)){#i=11
+  if(check){
+    #current and previous points
+    refx1 <- df[df$s %in% (i-1),]$x
+    refy1 <- df[df$s %in% (i-1),]$y
+    refx2 <- df[df$s %in% i,]$x
+    refy2 <- df[df$s %in% i,]$y
+    #distance between current and previous points
+    l3 = ((refx1-refx2)^2+(refy1-refy2)^2)^0.5
+    #distance between current and previous points to every other point to get the total angle of current point relative to potential next point
+    df <- df |> mutate(l1 = ((x-refx1)^2+(y-refy1)^2)^0.5,
+                       l2 = ((x-refx2)^2+(y-refy2)^2)^0.5,
+                       a=acos((l2^2+l3^2-l1^2)/(2*l2*l3)),
+                       a=ifelse(is.na(a),0,a),
+                       deg = a/2/pi*360,
+                       a1 = ifelse(l2 > 1,a,a))#experimental -  trying to find a alternative path based on distance 
+    #identify which angle is the largest to ensure convexivity
+    amax <- max(subset(df, !s %in% c(i,i-1))$a1)
+    #set trigger if next point is already assigned, which means perimeter has been closed
+    check <- is.na(subset(df,a1 == amax)$s)
+    #assign next point number
+    df <- df |> mutate(s = ifelse(a1 == amax & is.na(s), i+1, s))
+  }}
+#exclude exess points and sort the by path order
+df2 <- subset(df,!is.na(s)) |> arrange(s) 
 ggplot()+
-  # geom_polygon(data=circle, aes(x=x, y=y), color='red',fill='#99000050')+
-  geom_point(data=shapes, aes(x=bx, y=by), color='red')+
-  # geom_point(data=shapes, aes(x=x0, y=y0), color='blue')+
-  geom_point(data=shapes, aes(x=tx, y=ty), color='green')+
-  geom_path(data=crown, aes(x=bx, y=by), color='red')+
-  # geom_path(data=shapes, aes(x=x0, y=y0), color='blue')+
-  geom_path(data=crown, aes(x=tx, y=ty), color='green')+
-  # geom_point(data=shapes2, aes(x=x, y=y), color='purple')+
-  # geom_point(data=circle2, aes(x=x, y=y), color='gold')+
+  geom_polygon(data=df, aes(x=x, y=y), color='blue',fill='#50500050')+
+  geom_point(data=df, aes(x=x, y=y), color='blue',fill='#50500050')+
+  geom_polygon(data=df2, aes(x=x, y=y), color='red',fill='#99000050')+
+  geom_point(data=df2, aes(x=x, y=y), color='red',fill='#99000050')+
   coord_fixed()
+
