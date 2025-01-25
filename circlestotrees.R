@@ -296,12 +296,13 @@ ggplot()+
 
 
 
-
-
+x = c(-2,-2,0,2,2)
+y = c(0,1,0.5,1,0)
+df <- data.frame(x=x,y=y)
 
 #Convex hull (trying to modify to allow some limited concavity)
 #eliminate redundant points via rounding
-df <- crown |> mutate(x = round(x,2),y = round(y,2)) 
+df <- df |> mutate(x = round(x,2),y = round(y,2)) 
 x = df$x 
 y = df$y 
 
@@ -309,6 +310,8 @@ y = df$y
 df <-  data.frame(a=NA,l1=NA,l2=NA,x=x,y=y) |> unique()
 #track original order for troubleshooting
 df <- df |> mutate(q = 1:nrow(df))
+rm(x,y)
+
 #find starting point at bottom of plot
 miny <- min(df$y)
 minx <- min(df[df$y==miny,]$x)
@@ -322,30 +325,37 @@ df <- df |> mutate(l1 = ((x-refx1)^2+(y-refy1)^2)^0.5,
                    deg = a/2/pi*360)
 amax <- max(df[!df$s %in% c(i,i-1),]$a)
 amin <- min(df[!df$s %in% c(i,i-1),]$a)
-nxtpt <- df |> subset(a == amax | a == amin)
+nxtpt <- df |> subset((a == amax | a == amin) & is.na(s))
 minl <- min(nxtpt$l1)
-nxtpt <- nxtpt |> subset(l1 == minl)
+nxtpt <- nxtpt |> subset(l1 == minl & is.na(s))
 
 df <- df |> mutate(s = ifelse(x == nxtpt$x & y == nxtpt$y, i+1, s))
 #establish variable that will indicate when to stop
 check <- TRUE 
 #loop through subsequent points to identify which points to retain
-for (i in 2:nrow(df)){#i=11
+for (i in 2:2){# nrow(df)  i=2
   if(check){
     #current and previous points
     refx1 <- df[df$s %in% (i-1),]$x
     refy1 <- df[df$s %in% (i-1),]$y
     refx2 <- df[df$s %in% i,]$x
     refy2 <- df[df$s %in% i,]$y
+    
     #distance between current and previous points
     l3 = ((refx1-refx2)^2+(refy1-refy2)^2)^0.5
+    #angle of first seqment
+    a0=acos((refx1-refx2)/l3)
+    a0=ifelse(refy1-refy2 >=0,a0,-1*a0)
     #distance between current and previous points to every other point to get the total angle of current point relative to potential next point
     df <- df |> mutate(l1 = ((x-refx1)^2+(y-refy1)^2)^0.5,
                        l2 = ((x-refx2)^2+(y-refy2)^2)^0.5,
                        a=acos((l2^2+l3^2-l1^2)/(2*l2*l3)),
                        a=ifelse(is.na(a),0,a),
+                       anew=acos((x-refx2)/l2),
+                       anew=ifelse(y-refy2 >=0,anew,-1*anew),
+                       adif=anew-(a0-pi),#angle difference between 2nd and 1st segments to see if left or right
                        deg = a/2/pi*360,
-                       a1 = ifelse(l2 > 1,a,a))#experimental -  trying to find a alternative path based on distance 
+                       a1 = ifelse(l2 > 3,a/2,a))#experimental -  trying to find a alternative path based on distance 
     #identify which angle is the largest to ensure convexivity
     amax <- max(subset(df, !s %in% c(i,i-1))$a1)
     #set trigger if next point is already assigned, which means perimeter has been closed
@@ -360,5 +370,38 @@ ggplot()+
   geom_point(data=df, aes(x=x, y=y), color='blue',fill='#50500050')+
   geom_polygon(data=df2, aes(x=x, y=y), color='red',fill='#99000050')+
   geom_point(data=df2, aes(x=x, y=y), color='red',fill='#99000050')+
-  coord_fixed()
+  coord_fix
 
+
+df$x[3];df$y[3]
+l1 = ((df$x[3]-refx1)^2+(df$y[3]-refy1)^2)^0.5
+l2 = ((df$x[3]-refx2)^2+(df$y[3]-refy2)^2)^0.5
+a=acos((l2^2+l3^2-l1^2)/(2*l2*l3))
+a/2/pi*360
+df$a[3]/2/pi*360
+
+df$x[4];df$y[4]
+l1 = ((df$x[4]-refx1)^2+(df$y[4]-refy1)^2)^0.5
+l2 = ((df$x[4]-refx2)^2+(df$y[4]-refy2)^2)^0.5
+a=acos((l2^2+l3^2-l1^2)/(2*l2*l3))
+a/2/pi*360
+df$a[4]/2/pi*360
+
+df$x[5];df$y[5]
+l1 = ((df$x[5]-refx1)^2+(df$y[5]-refy1)^2)^0.5
+l2 = ((df$x[5]-refx2)^2+(df$y[5]-refy2)^2)^0.5
+a=acos((l2^2+l3^2-l1^2)/(2*l2*l3))
+a/2/pi*360
+df$a[5]/2/pi*360
+
+a=acos((refx1-refx2)/l3)
+a/2/pi*360
+a=acos((df$x[4]-refx2)/df$l2[4])
+a/2/pi*360
+a=acos((df$x[5]-refx2)/df$l2[5])
+a=ifelse(df$y[5]-refy2 >=0,a,-1*a)
+a/2/pi*360
+
+a0/2/pi*360-180
+df$anew[4]/2/pi*360-(a0/2/pi*360-180)
+df$anew[5]/2/pi*360-(a0/2/pi*360-180)
