@@ -332,8 +332,9 @@ nxtpt <- nxtpt |> subset(l1 == minl & is.na(s))
 df <- df |> mutate(s = ifelse(x == nxtpt$x & y == nxtpt$y, i+1, s))
 #establish variable that will indicate when to stop
 check <- TRUE 
+
 #loop through subsequent points to identify which points to retain
-for (i in 2:2){# nrow(df)  i=2
+for (i in 2:nrow(df)){#   i=4
   if(check){
     #current and previous points
     refx1 <- df[df$s %in% (i-1),]$x
@@ -351,11 +352,12 @@ for (i in 2:2){# nrow(df)  i=2
                        l2 = ((x-refx2)^2+(y-refy2)^2)^0.5,
                        a=acos((l2^2+l3^2-l1^2)/(2*l2*l3)),
                        a=ifelse(is.na(a),0,a),
-                       anew=acos((x-refx2)/l2),
+                       anew=cos((x-refx2)/l2),
                        anew=ifelse(y-refy2 >=0,anew,-1*anew),
                        adif=anew-(a0-pi),#angle difference between 2nd and 1st segments to see if left or right
                        deg = a/2/pi*360,
-                       a1 = ifelse(l2 > 3,a/2,a))#experimental -  trying to find a alternative path based on distance 
+                       a1 = ifelse(l2 > 3,a/2,a),
+                       a1 = ifelse(l2 > 3,adif/2,adif))#experimental -  trying to find a alternative path based on distance 
     #identify which angle is the largest to ensure convexivity
     amax <- max(subset(df, !s %in% c(i,i-1))$a1)
     #set trigger if next point is already assigned, which means perimeter has been closed
@@ -370,38 +372,169 @@ ggplot()+
   geom_point(data=df, aes(x=x, y=y), color='blue',fill='#50500050')+
   geom_polygon(data=df2, aes(x=x, y=y), color='red',fill='#99000050')+
   geom_point(data=df2, aes(x=x, y=y), color='red',fill='#99000050')+
-  coord_fix
+  coord_fixed()
 
 
-df$x[3];df$y[3]
-l1 = ((df$x[3]-refx1)^2+(df$y[3]-refy1)^2)^0.5
-l2 = ((df$x[3]-refx2)^2+(df$y[3]-refy2)^2)^0.5
-a=acos((l2^2+l3^2-l1^2)/(2*l2*l3))
-a/2/pi*360
-df$a[3]/2/pi*360
 
-df$x[4];df$y[4]
-l1 = ((df$x[4]-refx1)^2+(df$y[4]-refy1)^2)^0.5
-l2 = ((df$x[4]-refx2)^2+(df$y[4]-refy2)^2)^0.5
-a=acos((l2^2+l3^2-l1^2)/(2*l2*l3))
-a/2/pi*360
-df$a[4]/2/pi*360
 
-df$x[5];df$y[5]
-l1 = ((df$x[5]-refx1)^2+(df$y[5]-refy1)^2)^0.5
-l2 = ((df$x[5]-refx2)^2+(df$y[5]-refy2)^2)^0.5
-a=acos((l2^2+l3^2-l1^2)/(2*l2*l3))
-a/2/pi*360
-df$a[5]/2/pi*360
 
-a=acos((refx1-refx2)/l3)
-a/2/pi*360
-a=acos((df$x[4]-refx2)/df$l2[4])
-a/2/pi*360
-a=acos((df$x[5]-refx2)/df$l2[5])
-a=ifelse(df$y[5]-refy2 >=0,a,-1*a)
-a/2/pi*360
 
-a0/2/pi*360-180
-df$anew[4]/2/pi*360-(a0/2/pi*360-180)
-df$anew[5]/2/pi*360-(a0/2/pi*360-180)
+############XXXXXXXXXXXXXXXXXXXXXxx trial 2
+
+
+x = c(-1,-1.5,0,1,3,1,0.5)
+y = c(0,1,0.5,1,0.5,0,0.2)
+df <- data.frame(x=x,y=y)
+
+df <- df |> mutate(q = 1:nrow(df))
+rm(x,y)
+check <- TRUE 
+#find starting point at bottom of plot
+miny <- min(df$y)
+minx <- min(df[df$y==miny,]$x)
+df <- mutate(df, s = ifelse(x==minx & y==miny, 1,NA))
+x1 <- df[df$s %in% 1,]$x
+y1 <- df[df$s %in% 1,]$y
+df <- df |> mutate(l1 = ((x-x1)^2+(y-y1)^2)^0.5,
+                   a1=acos((x-x1)/l1)/2/pi*360,
+                   a1=ifelse(y-y1 >=0,a1,-1*a1))
+amin = min(subset(df, !s %in% 1)$a1)
+df <- df |> mutate(s = ifelse(a1 == amin & is.na(s), 0, s))
+for(i in 1:2){#nrow(df) i=1
+  if(check){
+x0 <- df[df$s %in% (i-1),]$x
+y0 <- df[df$s %in% (i-1),]$y
+x1 <- df[df$s %in% i,]$x
+y1 <- df[df$s %in% i,]$y
+l0 = ((x1-x0)^2+(y1-y0)^2)^0.5
+a0 = acos((x1-x0)/l0)/2/pi*360
+a0 = ifelse(y1 - y0 >=0,a0,-1*a0)
+df <- df |> mutate(l1 = ((x-x1)^2+(y-y1)^2)^0.5,
+             a1=acos((x-x1)/l1)/2/pi*360,
+             a1=ifelse(y-y1 >=0,a1,-1*a1),
+             a1= a1-a0,
+             a1= ifelse(a1 > 180, 360-a1,ifelse(a1 < -180, -360-a1, a1)),
+             a1= case_when(x >= x1 & y >= y1 & y1 < y0 ~ -a1,
+                           x < x1 & y < y1 & y1 >= y0 ~ -a1,
+                           TRUE ~ a1))
+
+
+amax = max(subset(df, !s %in% c(i-1,i) )$a1)#& a1 < 90
+lmin = min(subset(df, !s %in% c(i-1,i) & a1 %in% amax)$l1)
+df <- df |> mutate(s = ifelse(s %in% 0,NA,s))
+check <- is.na(subset(df,a1 %in% amax & l1 %in% lmin)$s)
+df <- df |> mutate(s = ifelse(a1 == amax & is.na(s) & l1 %in% lmin, i+1, s))
+}
+}
+
+df2 <- subset(df,!is.na(s)) |> arrange(s) 
+ggplot()+
+  geom_polygon(data=df, aes(x=x, y=y), color='blue',fill='#20200060')+
+  geom_point(data=df, aes(x=x, y=y), color='blue',fill='#20200060')+
+  geom_polygon(data=df2, aes(x=x, y=y), color='red',fill='#99000050')+
+  geom_point(data=df2, aes(x=x, y=y), color='red',fill='#99000050')+
+  coord_fixed()
+
+
+
+
+
+
+
+#trial 3 -----
+x = c(-1,-1.5,0,1,3,1,0.5)
+y = c(0,1,0.5,1,0.5,0,0.2)
+n=5
+df <- data.frame(x=tree$x,y=tree$y)
+
+df <- df |> mutate(q = 1:nrow(df))
+rm(x,y)
+check <- TRUE 
+#find starting point at bottom of plot
+miny <- min(df$y)
+minx <- min(df[df$y==miny,]$x)
+df <- mutate(df, s = ifelse(x==minx & y==miny, 1,NA))
+x1 <- df[df$s %in% 1,]$x
+y1 <- df[df$s %in% 1,]$y
+df <- df |> mutate(l1 = ((x-x1)^2+(y-y1)^2)^0.5,
+                   a1=acos((x-x1)/l1)/2/pi*360,
+                   a1=ifelse(y-y1 >=0,a1,-1*a1))
+amin = min(subset(df, !s %in% 1)$a1)
+df <- df |> mutate(s = ifelse(a1 == amin & is.na(s), 0, s))
+for(i in 1:nrow(df)){#nrow(df) i=2
+  if(check){
+    x0 <- df[df$s %in% (i-1),]$x
+    y0 <- df[df$s %in% (i-1),]$y
+    x1 <- df[df$s %in% i,]$x
+    y1 <- df[df$s %in% i,]$y
+    l0 = ((x1-x0)^2+(y1-y0)^2)^0.5
+    a0 = acos((x1-x0)/l0)
+    a0 = ifelse(y1 - y0 >=0,a0,-1*a0)
+    df <- df |> mutate(
+      l2 = ((x-x0)^2+(y-y0)^2)^0.5,
+      l1 = ((x-x1)^2+(y-y1)^2)^0.5,
+      a1=acos((l1^2+l0^2-l2^2)/(2*l1*l0)),
+      a1=ifelse(is.na(a1),0,a1))
+    
+    
+    amax = max(subset(df, !s %in% c(i-1,i) )$a1)
+    lmin = min(subset(df, !s %in% c(i-1,i) & a1 %in% amax)$l1)
+    df <- df |> mutate(s = ifelse(s %in% 0,NA,s))
+    check <- is.na(subset(df,a1 %in% amax & l1 %in% lmin)$s)
+    df <- df |> mutate(s = ifelse(a1 == amax & is.na(s) & l1 %in% lmin, i+1, s))
+  }
+}
+
+df <- df |> mutate(s1 = s)
+
+smax <- max(df$s, na.rm = TRUE)
+
+for(i in 1:smax){
+i0=ifelse(i == 1,smax,i-1)
+x0 <- df[df$s %in% (i0),]$x
+y0 <- df[df$s %in% (i0),]$y
+x1 <- df[df$s %in% i,]$x
+y1 <- df[df$s %in% i,]$y
+l0 <- ((x1-x0)^2+(y1-y0)^2)^0.5
+a0 = acos((x1-x0)/l0)
+a0 = ifelse(y1 - y0 >=0,a0,-1*a0)
+df <- df |> mutate(xr= x-x0,
+                   yr= y-y0,
+                   h=(xr^2+yr^2)^0.5,
+                   a1=acos(yr/h),
+                   a1=ifelse(xr >=0,a1,-1*a1),
+                   a1= a1+a0,
+                   xr = ifelse(h==0,0,h*sin(a1)), 
+                   yr = ifelse(h==0,0,h*cos(a1)),
+                   xr = xr/l0)
+bottom <- min(l0,abs(min(df[df$xr > -1.25 & df$xr < 1.25 ,]$yr)))*-1
+df <- df |> mutate(yr= yr/(bottom))
+
+for(j in 1:n){
+psmin1 <- (subset(df, xr >= (j-1)/n & xr < j/n)$yr)
+
+smin1 <- ifelse(length(psmin1)>0,min(psmin1),1)
+
+df <- df |> mutate(s1 = case_when(xr >= (j-1)/n & xr < j/n & yr %in% smin1 & yr < 0.5 ~ i0+j/n/100,
+                                  TRUE ~ s1))
+}
+}
+
+
+
+
+
+
+
+
+
+df2 <- subset(df,!is.na(s)) |> arrange(s) 
+df3 <- subset(df,!is.na(s1)) |> arrange(s1) 
+ggplot()+
+  geom_polygon(data=df, aes(x=x, y=y), color='blue',fill='#20200060')+
+  geom_point(data=df, aes(x=x, y=y), color='blue',fill='#20200060')+
+  geom_polygon(data=df2, aes(x=x, y=y), color='red',fill='#99000050')+
+  geom_point(data=df2, aes(x=x, y=y), color='red',fill='#99000050')+
+  geom_polygon(data=df3, aes(x=x, y=y), color='green',fill='#00990050')+
+  geom_point(data=df3, aes(x=x, y=y), color='green',fill='#00990050')+
+  coord_fixed()
