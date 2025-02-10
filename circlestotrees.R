@@ -136,7 +136,7 @@ skewStem <- function(stem, amp=0.2, phase=0, waves=1){
   return(stem)
 }
 
-makeCrowShape <- function(ht.max=5, ht.min=1, crwd=2, dbh, crshape=c('pyramid','dome','round','column'), n=5, bu=0.8, bl=0, opposite = FALSE){
+makeCrownShape <- function(ht.max=5, ht.min=1, crwd=2, dbh, crshape=c('pyramid','dome','round','column'), n=5, bu=0.8, bl=0, opposite = FALSE){
   
   h <- ht.max - ht.min
   wd <- crwd/2
@@ -220,7 +220,7 @@ ggplot()+
 crshape = c('pyramid','dome','round','column')
 
 crshape = c('pyramid','column')
-shapes <- makeCrowShape(ht.max=10, ht.min=3, crwd=3, dbh=0.5, n=7, bu=1, bl=0.2, crshape=crshape,
+shapes <- makeCrownShape(ht.max=10, ht.min=3, crwd=3, dbh=0.5, n=7, bu=1, bl=0.2, crshape=crshape,
                         opposite = T)
 shapes <- subset(shapes, !(a > 175 | a < -175 | a == 0)  & l> 0.3)
 stem <-  makeStem(10,0.5,0.01,10)
@@ -253,7 +253,7 @@ ggplot()+
 crshape = c('pyramid','dome','round','column')
 
 crshape = c('dome')
-shapes <- makeCrowShape(ht.max=10, ht.min=5, crwd=6, dbh=0.5, n=3, bu=0.5, bl=0, crshape=crshape,
+shapes <- makeCrownShape(ht.max=10, ht.min=5, crwd=6, dbh=0.5, n=3, bu=0.5, bl=0, crshape=crshape,
                         opposite = F)
 shapes <- subset(shapes, !(a > 175 | a < -175 | a==0)  & l> 0.3)
 stem <-  makeStem(10,0.5,0.01,25)
@@ -358,14 +358,14 @@ for (i in 2:nrow(df)){#   i=4
                        deg = a/2/pi*360,
                        a1 = ifelse(l2 > 3,a/2,a),
                        a1 = ifelse(l2 > 3,adif/2,adif))#experimental -  trying to find a alternative path based on distance 
-    #identify which angle is the largest to ensure convexivity
+    #identify which angle is the largest to ensure convexity
     amax <- max(subset(df, !s %in% c(i,i-1))$a1)
     #set trigger if next point is already assigned, which means perimeter has been closed
     check <- is.na(subset(df,a1 == amax)$s)
     #assign next point number
     df <- df |> mutate(s = ifelse(a1 == amax & is.na(s), i+1, s))
   }}
-#exclude exess points and sort the by path order
+#exclude excess points and sort the by path order
 df2 <- subset(df,!is.na(s)) |> arrange(s) 
 ggplot()+
   geom_polygon(data=df, aes(x=x, y=y), color='blue',fill='#50500050')+
@@ -402,29 +402,29 @@ amin = min(subset(df, !s %in% 1)$a1)
 df <- df |> mutate(s = ifelse(a1 == amin & is.na(s), 0, s))
 for(i in 1:2){#nrow(df) i=1
   if(check){
-x0 <- df[df$s %in% (i-1),]$x
-y0 <- df[df$s %in% (i-1),]$y
-x1 <- df[df$s %in% i,]$x
-y1 <- df[df$s %in% i,]$y
-l0 = ((x1-x0)^2+(y1-y0)^2)^0.5
-a0 = acos((x1-x0)/l0)/2/pi*360
-a0 = ifelse(y1 - y0 >=0,a0,-1*a0)
-df <- df |> mutate(l1 = ((x-x1)^2+(y-y1)^2)^0.5,
-             a1=acos((x-x1)/l1)/2/pi*360,
-             a1=ifelse(y-y1 >=0,a1,-1*a1),
-             a1= a1-a0,
-             a1= ifelse(a1 > 180, 360-a1,ifelse(a1 < -180, -360-a1, a1)),
-             a1= case_when(x >= x1 & y >= y1 & y1 < y0 ~ -a1,
-                           x < x1 & y < y1 & y1 >= y0 ~ -a1,
-                           TRUE ~ a1))
-
-
-amax = max(subset(df, !s %in% c(i-1,i) )$a1)#& a1 < 90
-lmin = min(subset(df, !s %in% c(i-1,i) & a1 %in% amax)$l1)
-df <- df |> mutate(s = ifelse(s %in% 0,NA,s))
-check <- is.na(subset(df,a1 %in% amax & l1 %in% lmin)$s)
-df <- df |> mutate(s = ifelse(a1 == amax & is.na(s) & l1 %in% lmin, i+1, s))
-}
+    x0 <- df[df$s %in% (i-1),]$x
+    y0 <- df[df$s %in% (i-1),]$y
+    x1 <- df[df$s %in% i,]$x
+    y1 <- df[df$s %in% i,]$y
+    l0 = ((x1-x0)^2+(y1-y0)^2)^0.5
+    a0 = acos((x1-x0)/l0)/2/pi*360
+    a0 = ifelse(y1 - y0 >=0,a0,-1*a0)
+    df <- df |> mutate(l1 = ((x-x1)^2+(y-y1)^2)^0.5,
+                       a1=acos((x-x1)/l1)/2/pi*360,
+                       a1=ifelse(y-y1 >=0,a1,-1*a1),
+                       a1= a1-a0,
+                       a1= ifelse(a1 > 180, 360-a1,ifelse(a1 < -180, -360-a1, a1)),
+                       a1= case_when(x >= x1 & y >= y1 & y1 < y0 ~ -a1,
+                                     x < x1 & y < y1 & y1 >= y0 ~ -a1,
+                                     TRUE ~ a1))
+    
+    
+    amax = max(subset(df, !s %in% c(i-1,i) )$a1)#& a1 < 90
+    lmin = min(subset(df, !s %in% c(i-1,i) & a1 %in% amax)$l1)
+    df <- df |> mutate(s = ifelse(s %in% 0,NA,s))
+    check <- is.na(subset(df,a1 %in% amax & l1 %in% lmin)$s)
+    df <- df |> mutate(s = ifelse(a1 == amax & is.na(s) & l1 %in% lmin, i+1, s))
+  }
 }
 
 df2 <- subset(df,!is.na(s)) |> arrange(s) 
@@ -443,12 +443,15 @@ ggplot()+
 
 #trial 3 -----
 x = c(-1,-1.5,0,1,3,1,0.5)
-y = c(0,1,0.5,1,0.5,0,0.2)
-n=5
+y = c(0,1,0.51,1,0.5,0,0.2)
+n=3
 df <- data.frame(x=tree$x,y=tree$y)
+#df <- data.frame(x=x,y=y)
 
 df <- df |> mutate(q = 1:nrow(df))
 rm(x,y)
+
+#convex hull ----
 check <- TRUE 
 #find starting point at bottom of plot
 miny <- min(df$y)
@@ -485,51 +488,90 @@ for(i in 1:nrow(df)){#nrow(df) i=2
   }
 }
 
+#concave hull first degree ----
 df <- df |> mutate(s1 = s)
 
 smax <- max(df$s, na.rm = TRUE)
 
 for(i in 1:smax){
-i0=ifelse(i == 1,smax,i-1)
-x0 <- df[df$s %in% (i0),]$x
-y0 <- df[df$s %in% (i0),]$y
-x1 <- df[df$s %in% i,]$x
-y1 <- df[df$s %in% i,]$y
-l0 <- ((x1-x0)^2+(y1-y0)^2)^0.5
-a0 = acos((x1-x0)/l0)
-a0 = ifelse(y1 - y0 >=0,a0,-1*a0)
-df <- df |> mutate(xr= x-x0,
-                   yr= y-y0,
-                   h=(xr^2+yr^2)^0.5,
-                   a1=acos(yr/h),
-                   a1=ifelse(xr >=0,a1,-1*a1),
-                   a1= a1+a0,
-                   xr = ifelse(h==0,0,h*sin(a1)), 
-                   yr = ifelse(h==0,0,h*cos(a1)),
-                   xr = xr/l0)
-bottom <- min(l0,abs(min(df[df$xr > -1.25 & df$xr < 1.25 ,]$yr)))*-1
-df <- df |> mutate(yr= yr/(bottom))
-
-for(j in 1:n){
-psmin1 <- (subset(df, xr >= (j-1)/n & xr < j/n)$yr)
-
-smin1 <- ifelse(length(psmin1)>0,min(psmin1),1)
-
-df <- df |> mutate(s1 = case_when(xr >= (j-1)/n & xr < j/n & yr %in% smin1 & yr < 0.5 ~ i0+j/n/100,
-                                  TRUE ~ s1))
+  i0=ifelse(i == 1,smax,i-1)
+  x0 <- df[df$s %in% (i0),]$x
+  y0 <- df[df$s %in% (i0),]$y
+  x1 <- df[df$s %in% i,]$x
+  y1 <- df[df$s %in% i,]$y
+  l0 <- ((x1-x0)^2+(y1-y0)^2)^0.5
+  a0 = acos((x1-x0)/l0)
+  a0 = ifelse(y1 - y0 >=0,a0,-1*a0)
+  df <- df |> mutate(xr= x-x0,
+                     yr= y-y0,
+                     h=(xr^2+yr^2)^0.5,
+                     a1=acos(yr/h),
+                     a1=ifelse(xr >=0,a1,-1*a1),
+                     a1= a1+a0,
+                     xr = ifelse(h==0,0,h*sin(a1)), 
+                     yr = ifelse(h==0,0,h*cos(a1)),
+                     xr = xr/l0)
+  bottom <- min(l0,abs(min(df[df$xr > -1.25 & df$xr < 1.25 ,]$yr)))*-1
+  df <- df |> mutate(yr= yr/(bottom))
+  
+  for(j in 1:n){
+    psmin1 <- (subset(df, xr >= (j-1)/n & xr < j/n)$yr)
+    
+    smin1 <- ifelse(length(psmin1)>0,min(psmin1),1)
+    
+    df <- df |> mutate(s1 = case_when(xr >= (j-1)/n & xr < j/n & yr %in% smin1 & yr < 0.5 ~ i0+j/n/100,
+                                      TRUE ~ s1))
+  }
 }
+#concave hull second degree ----
+n=5
+df$s2 <- df$s1
+gather <- df$s1
+notblank <- !is.na(gather)
+justthese <- gather[notblank]
+smax <- length(justthese)
+for(k in 1:smax){
+  i <- justthese[k]
+  i0=ifelse(k == 1,justthese[length(justthese)],justthese[k-1])
+  x0 <- df[df$s1 %in% (i0),]$x
+  y0 <- df[df$s1 %in% (i0),]$y
+  x1 <- df[df$s1 %in% i,]$x
+  y1 <- df[df$s1 %in% i,]$y
+  l0 <- ((x1-x0)^2+(y1-y0)^2)^0.5
+  a0 = acos((x1-x0)/l0)
+  a0 = ifelse(y1 - y0 >=0,a0,-1*a0)
+  df <- df |> mutate(xr= x-x0,
+                     yr= y-y0,
+                     h=(xr^2+yr^2)^0.5,
+                     a1=acos(yr/h),
+                     a1=ifelse(xr >=0,a1,-1*a1),
+                     a1= a1+a0,
+                     xr = ifelse(h==0,0,h*sin(a1)), 
+                     yr = ifelse(h==0,0,h*cos(a1)),
+                     xr = xr/l0)
+  bottom <- min(l0,abs(min(df[df$xr > -1.25 & df$xr < 1.25 ,]$yr)))*-1
+  df <- df |> mutate(yr= yr/(bottom))
+  j=1
+  for(j in 1:n){
+    psmin1 <- (subset(df, xr >= (j-1)/n & xr < j/n)$yr)
+    
+    smin1 <- ifelse(length(psmin1)>0,min(psmin1),1)
+    
+    df <- df |> mutate(s2 = case_when(xr >= (j-1)/n & xr < j/n & yr %in% smin1 & yr < 0.5 ~ i0+j/n/10000,
+                                      TRUE ~ s2))
+  }
 }
 
+x <- df$s1
+xna <- !is.na(x)
+xnew <- order(x)
+xnao <- xna[xnew]
+ret <- xnew[xnao]
 
 
 
-
-
-
-
-
-df2 <- subset(df,!is.na(s)) |> arrange(s) 
-df3 <- subset(df,!is.na(s1)) |> arrange(s1) 
+df2 <- subset(df,!is.na(s1)) |> arrange(s1) 
+df3 <- df[ret,]
 ggplot()+
   geom_polygon(data=df, aes(x=x, y=y), color='blue',fill='#20200060')+
   geom_point(data=df, aes(x=x, y=y), color='blue',fill='#20200060')+
@@ -538,3 +580,18 @@ ggplot()+
   geom_polygon(data=df3, aes(x=x, y=y), color='green',fill='#00990050')+
   geom_point(data=df3, aes(x=x, y=y), color='green',fill='#00990050')+
   coord_fixed()
+
+ggplot()+
+  geom_polygon(data=df, aes(x=x, y=y), color='blue',fill='#20200060')+
+  geom_point(data=df, aes(x=x, y=y), color='blue',fill='#20200060')+
+  geom_polygon(data=df, aes(x=xr, y=yr), color='red',fill='#99000050')+
+  geom_point(data=df, aes(x=xr, y=yr), color='red',fill='#99000050')+
+  coord_fixed()
+
+x <- c(1,2,9,NA,3,NA,8,7,6)
+xna <- !is.na(x)
+xnew <- order(x)
+xnao <- xna[xnew]
+return(xnew[xnao])
+xfinal <-  x[xnew[xnao]]
+xfinal
