@@ -19,7 +19,7 @@ crshape = c('pyramid','dome','round','column')
 ht.max=15
 ht.min=5
 crwd=5
-dbh=25
+dbh=40
 bu=1
 bl=0.1
 opposite=T
@@ -30,7 +30,7 @@ crshape = c('pyramid')
 bf <- ifelse(opposite, 5/n,10/n)
 shapes <- makeCrownShape(ht.max=ht.max,ht.min=ht.min, crwd=crwd, dbh=dbh/100, n=n, bu=bu, bl=bl, crshape=crshape,opposite = opposite)
 
-shapes <- subset(shapes, !(a > 175 | a < -175 | a == 0)  & l> 0.15)
+shapes <- subset(shapes, !(a > 175 | a < -175 | a == 0)  & l> 0.15 & by < ht.max)
 stem <-  makeStem(ht.max,dbh/100,0.05,15)
 cstem <- stem
 for(i in 1:nrow(shapes)){#i=1
@@ -53,23 +53,24 @@ for(i in 1:nrow(shapes)){#i=1
   #basal branch twigs to attach crown
   branchB <- attachBranch(branchA, branchx1, ifelse(shapes$a[i] >= 0,-90,90), bpos*0.05)
   branchB <- attachBranch(branchB, branchx1, ifelse(shapes$a[i] >= 0,30,-30), bpos*0.05)
-  
+
   stem <- attachBranch(stem, branchA, shapes$a[i], shapes$by[i])#branches to show bare
   cstem <- attachBranch(cstem, branchB, shapes$a[i], shapes$by[i])#branches to attach crown
 }
 crown <- cstem |> subset(grepl('tip',type))
 crown2 <- vegnasis::cavhull(x=crown$x,y=crown$y, concave = F)
-
+stem2 <- stem
+crown2=crown
 ggplot()+
-  geom_polygon(data=stem, aes(x=x, y=y), color='brown',fill='#99500090')+
+  geom_polygon(data=stem2, aes(x=x, y=y), color='brown',fill='#99500090')+
   # geom_point(data=stem, aes(x=x, y=y), color='red')+
   # geom_polygon(data=crown2, aes(x=x, y=y), color='green',fill='#00990090')+
-  geom_polygon(data=crown, aes(x=x, y=y), color='green',fill='#00990090')+
+  geom_polygon(data=crown2, aes(x=x, y=y), color='green',fill='#00990090')+
   # geom_point(data=tree, aes(x=x, y=y), color='green')+
   coord_fixed()
 
 
- 
+
  ###########################################
  crshape = c('pyramid','dome','round','column')
  ht.max=15
@@ -85,14 +86,14 @@ ggplot()+
  ca <- pmin(1,(crwd*(ht.max-ht.min)*(bu-bl)/80))
 
  shapes <- makeCrownShape(ht.max=ht.max,ht.min=ht.min, crwd=crwd, dbh=dbh/100, n=n, bu=bu, bl=bl, crshape=crshape,opposite = opposite)
- shapes <- subset(shapes, !(a > 175 | a < -175 | a == 0)  & l> 0.15)
- 
+ shapes <- subset(shapes, !(a > 175 | a < -175 | a == 0)  & l> 0.15 & by < ht.max)
+
  bf <- ifelse(opposite, 5/n,10/n)#twig size based on number of branches
  af <- pmin(1,mean(abs(shapes$a))/30)#twig size based on angles
- 
+
  stem <-  makeStem(ht.max,dbh/100,0.02,15)
  stem <- skewStem(stem, amp = 0.1, phase = 0, waves = 1)
- 
+
  branch <- makeStem(crwd*0.1*ca*af, dbh/100*0.1,0.01,10)#small branch near top
  stem <- attachBranch(stem, branch, -30*af, ht.max*0.93)
  cstem <- stem
@@ -124,7 +125,7 @@ ggplot()+
  circles <- data.frame(a=(0:7)/7*2*pi) |> mutate(cx=cos(a),cy=sin(a))
  crown2 <- merge(crown, circles)# |> mutate(x=x+0.2*cx,y=y+0.2*cy)
  crown2 <- vegnasis::cavhull(x=crown2$x,y=crown2$y, concave = F)
- 
+
  ggplot()+
    geom_polygon(data=stem, aes(x=x, y=y), color='brown',fill='#99500090')+
    # geom_point(data=stem, aes(x=x, y=y), color='red')+
@@ -132,4 +133,35 @@ ggplot()+
    # geom_polygon(data=crown, aes(x=x, y=y), color='green',fill='#00990090')+
    # geom_point(data=tree, aes(x=x, y=y), color='green')+
    coord_fixed()
- 
+
+ library(ggplot2)
+ library(vegnasis)
+ tree <-  make_tree(ht.max=15, ht.min=5, crwd=5, dbh=60,crshape='hardwood', stshape='trunk')
+
+ ggplot()+
+   geom_polygon(data=subset(tree, obj %in% 'stem'), aes(x=x, y=z), color='brown',fill='#99500090')+
+   geom_polygon(data=subset(tree, obj %in% 'crown'), aes(x=x, y=z), color='green',fill='#00990090')+
+   coord_fixed()
+ veg.raw <-  vegnasis::nasis.veg
+ veg <- clean.veg(veg.raw)
+
+ veg.select <- subset(veg,  grepl('2022MI165023.P',plot))
+ plants <- grow_plants(veg.select)
+
+ veg_profile_plot(plants, unit='m',  skycolor = 'white', fadecolor = 'lightgray', gridalpha = 0.1, groundcolor = 'darkgray')
+
+
+ veg.select <- subset(veg,  grepl('2022MI165021.P',plot))
+
+ taxon <- c('Acer rubrum', 'Pinus resinosa')
+ crfill <- c("#80991A01","#80991A")
+ stfill <- c('gray',"#B36666")
+ crshape <- c('hardwood','boreal')
+ override <- data.frame(taxon=taxon,stfill=stfill,crfill=crfill,crshape=crshape)
+ veg.select <- veg.select |> left_join(override)
+
+ plants <- grow_plants(veg.select)
+plants2 <- plants |> subset(!(shape %in% 'hardwoodcrown' & obj %in% 'crown'))
+ veg_profile_plot1(plants2)
+
+
