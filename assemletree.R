@@ -136,7 +136,7 @@ ggplot()+
 
  library(ggplot2)
  library(vegnasis)
- tree <-  tree.001a(ht.max=15, ht.min=5, crwd=5, dbh=35)
+ tree <-  tree.001a(ht.max=15, ht.min=3, crwd=5, dbh=35)
 
  ggplot()+
    geom_polygon(data=subset(tree, obj %in% 'stem'), aes(x=x, y=z), color='brown',fill='#99500090')+
@@ -173,8 +173,9 @@ plants2 <- plants |> subset(!(shape %in% 'hardwoodcrown' & obj %in% 'crown'))
                        dbh){
    ht.max=15
    ht.min=5
-   crwd=5
+   crwd=3
    dbh=35
+   tip=0.05
    bu=1
    bl=0.1
    opposite=T
@@ -183,7 +184,7 @@ plants2 <- plants |> subset(!(shape %in% 'hardwoodcrown' & obj %in% 'crown'))
    crshape = c('pyramid','column')
    
    bf <- ifelse(opposite, 5/n,10/n)
-   shapes <- makeCrownShape2(ht.max=ht.max,ht.min=ht.min, crwd=crwd, dbh=dbh/100, n=n, bu=bu, bl=bl, crshape=crshape,opposite = opposite)
+   shapes <- makeCrownShape(ht.max=ht.max,ht.min=ht.min, crwd=crwd, dbh=dbh/100, tip=tip, n=n, bu=bu, bl=bl, crshape=crshape,opposite = opposite)
    #alternate branch length
    q<-c(1,0.5)
    q<-c(1,1,0.5,0.5)
@@ -193,8 +194,8 @@ plants2 <- plants |> subset(!(shape %in% 'hardwoodcrown' & obj %in% 'crown'))
    shapes <- shapes |> mutate(tx2=bx+cos((90-a)/360*2*pi)*l,
                               ty2=by+sin((90-a)/360*2*pi)*l)
    #filter bad branches
-   shapes <- subset(shapes, !(a > 175 | a < -175 | a == 0)  & l> 0.15 & by < ht.max-d*2 & l > 0.5)
-   stem <-  makeStem(ht.max,dbh/100,0.05,15)
+   shapes <- subset(shapes, !(a > 175 | a < -175 | a == 0)  & l>= 0.6 & by < ht.max-d*2)
+   stem <-  makeStem(ht.max,dbh/100,tip,15)
    cstem <- stem
    for(i in 1:nrow(shapes)){#i=1
      branch <- makeStem(shapes$l[i], shapes$d[i]*0.5,0.01,10)
@@ -206,14 +207,14 @@ plants2 <- plants |> subset(!(shape %in% 'hardwoodcrown' & obj %in% 'crown'))
      branch <- skewStem(branch, amp=ifelse(shapes$a[i] >= 0,-0.07*(shapes$s[i]*-1+1),0.07*(shapes$s[i]*-1+1)), phase=0, waves=1)
      # branchA <- attachBranch(branch,  twigB, ifelse(shapes$a[i] >= 0,40,-40), bpos*0.15)#lower
      # branchA <- attachBranch(branchA, twigC, ifelse(shapes$a[i] >= 0,40,-40), bpos*0.3)#lower
-     #branchA <- attachBranch(branch, twigB, ifelse(shapes$a[i] >= 0,35,-35), bpos*0.4)#lower
+     branchA <- attachBranch(branch, twigB, ifelse(shapes$a[i] >= 0,35,-35), bpos*0.4)#lower
      # branchA <- attachBranch(branchA, twigC, ifelse(shapes$a[i] >= 0,35,-35), bpos*0.5)#lower
      # branchA <- attachBranch(branchA, twigB, ifelse(shapes$a[i] >= 0,30,-30), bpos*0.6)#lower
      # branchA <- attachBranch(branchA, twigC, ifelse(shapes$a[i] >= 0,30,-30), bpos*0.7)#lower
-     #branchA <- attachBranch(branchA, twigC, ifelse(shapes$a[i] >= 0,-30,30), bpos*0.7)#upper
+     branchA <- attachBranch(branchA, twigC, ifelse(shapes$a[i] >= 0,-30,30), bpos*0.7)#upper
      # branchA <- attachBranch(branchA, twigB, ifelse(shapes$a[i] >= 0,-30,30), bpos*0.5)#upper
      
-     branchA <- branch
+     # branchA <- branch
      #basal branch twigs to attach crown
      branchB <- attachBranch(branchA, branchx1, ifelse(shapes$a[i] >= 0,-90,90), bpos*0.05)
      branchB <- attachBranch(branchB, branchx1, ifelse(shapes$a[i] >= 0,30,-30), bpos*0.05)
