@@ -178,7 +178,7 @@ gprast1 <- ifel(gprast1 <= 0,1,0)
 gdf <- as.data.frame(gprast1)
 
 pcover0 <- mean(gdf$standplot_1)
-vegstr <- vegstr |> mutate(pcover = ifelse(thisproj %in% plot, pcover0, pcover))
+vegstr <- vegstr |> mutate(pcover = ifelse(plot %in% thisproj, pcover0, pcover))
 }
 
 
