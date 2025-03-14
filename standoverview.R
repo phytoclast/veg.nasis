@@ -1,5 +1,8 @@
 library(ggplot2)
 library(vegnasis)
+library(terra)
+#set working directory to folder where this R file is saved
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
 shapes <- vegnasis::shapes
 
@@ -15,7 +18,7 @@ vegstr <- vegstr |> mutate(pcover = NA)
 isforest <- subset(vegstr, tree > 0)
 veg0 <- subset(veg0,  plot %in% isforest$plot)
 projs <- veg0$plot |> unique()
-for (j in 1:length(projs)) {#j=1
+for(j in 1:length(projs)) {#j=4;
   thisproj <- projs[j]
 veg <- subset(veg0,  plot %in% thisproj)
 
@@ -165,19 +168,20 @@ gp <- ggplot() +
   scale_y_continuous(name = NULL, labels = NULL, breaks = NULL, minor_breaks = NULL)+
   scale_x_continuous(name = NULL, labels = NULL, breaks = NULL, minor_breaks = NULL)
 
-library(terra)
-tiff('standplot.tif', width = 1000, height = 1000)
-gp
-dev.off()
+
+# tiff('standplot.tif', width = 1000, height = 1000)
+ggsave(filename = 'standplot.tif', plot=gp, width = 1000, height = 1000, units='px')
+# dev.off()
 gprast <- rast('standplot.tif')
-plot(gprast)
-gprast1 <- gprast$standplot_1
-gprast1 <- ifel(gprast1 <= 0,1,0)
+ # plot(gprast)
+gprast1 <- gprast
+# gprast1 <- ifel(gprast1 <= 0,1,0)
 #plot(gprast1)
 
 gdf <- as.data.frame(gprast1)
+gdf[,1] <- ifelse(gdf[,1] <= 0,1,0)
 
-pcover0 <- mean(gdf$standplot_1)
+pcover0 <- mean(gdf[,1])*100
 vegstr <- vegstr |> mutate(pcover = ifelse(plot %in% thisproj, pcover0, pcover))
 }
 
