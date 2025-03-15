@@ -105,6 +105,7 @@ ggplot()+
         l0 <- ((x1-x0)^2+(y1-y0)^2)^0.5
         a0 = acos((x1-x0)/l0)
         a0 = ifelse(y1 - y0 >=0,a0,-1*a0)
+        dfr <- vegnasis::rotate(x=df$x, y=df$y, a=a0/2/pi*360, cx=x0, cy=y0)
         df <- df |> mutate(xr= x-x0,
                            yr= y-y0,
                            h=(xr^2+yr^2)^0.5,
@@ -112,16 +113,22 @@ ggplot()+
                            a1=ifelse(xr >=0,a1,-1*a1),
                            a1= a1+a0,
                            xr = ifelse(h==0,0,h*sin(a1)),
-                           yr = ifelse(h==0,0,h*cos(a1)),
-                           xr = xr/l0)
-        df <- df |> mutate(yr= yr/l0)
+                           yr = ifelse(h==0,0,h*cos(a1)))
+        df <- df |> mutate(xr2= dfr$x-x0,
+                           yr2= dfr$y-y0)
         #adjust wave
-        wave <- wave0 |> mutate(y = y*l0)
+        en <- pmax(3,pmin(n,l0*n/1))
+        wave0 <- data.frame(x=(0:(en+1))/(en+1))
+        wave0 <- wave0 |> mutate(a=x*2*pi,y=(cos(a)-1)/2)
+        wave <- data.frame(x=NA, y=NA, q=NA,s=NA,l1=NA,a1=NA,xr=wave0$x*l0,
+                           yr=wave0$y*l0,h=NA,s1=NA)
+        wavr <- vegnasis::rotate(x=wave$xr, y=wave$yr, a=-a0/2/pi*360, cx=0,cy=0)
+        wave <- wave |> mutate(x=wavr$x+x0,y=wavr$y+y0)
 
+        
         ggplot()+
-          geom_path(data=ccir,aes(x=x,y=y))+
-          geom_path(data=lcir,aes(x=x,y=y))+
-          geom_path(data=rcir,aes(x=x,y=y))+
+          geom_point(data=df,aes(x=xr,y=yr))+
+          geom_point(data=df,aes(x=xr2,y=yr2), color='red')+
           coord_fixed()
 
 
