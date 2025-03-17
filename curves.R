@@ -5,6 +5,10 @@ df <- data.frame(
   x=c(runif(50,0,50),0,50),
   y=c(rnorm(50,5,5),20,20),
   s = NA)
+df <- data.frame(
+  x=c(runif(50,0,50)),
+  y=c(rnorm(50,5,15)),
+  s = NA)
 
 # ggplot(df, aes(x=x,y=y))+
 #   geom_point()
@@ -96,7 +100,7 @@ df3 <- subset(df, !is.na(s)) |> arrange(s)
     if(concave){
       smax <- max(df$s, na.rm = TRUE)
       #visit each convex hull boundary and rotate to a common reference
-      for(i in 1:smax){#i=2
+      for(i in 1:smax){#i=5
         i0 = ifelse(i == 1,smax,i-1)
         x0 <- df[df$s %in% (i0),]$x
         y0 <- df[df$s %in% (i0),]$y
@@ -108,38 +112,41 @@ df3 <- subset(df, !is.na(s)) |> arrange(s)
         dfr <- vegnasis::rotate(x=df$x, y=df$y, a=a0/2/pi*360, cx=x0, cy=y0)
         df <- df |> mutate(xr= dfr$x-x0,
                            yr= dfr$y-y0)
-        #adjust wave
+        #use wave to select closest concave points
         en <- pmax(3,floor(pmin(n,l0/5)))*3
-        #get max wave depth
-        psmax01 <- max(subset(df, xr >  (1-1)/3*l0 & xr < 1/n*l0)$yr)
-        psmax02 <- max(subset(df, xr >= (2-1)/3*l0 & xr < 2/n*l0)$yr)
-        psmax03 <- max(subset(df, xr >= (3-1)/3*l0 & xr < 3/n*l0)$yr)
-        psmax01 <- ifelse(is.infinite(psmax01),NA,psmax01)
-        psmax02 <- ifelse(is.infinite(psmax02),NA,psmax02)
-        psmax03 <- ifelse(is.infinite(psmax03),NA,psmax03)
+            df <- df |> mutate(xs = xr/l0, xa = xs*2*pi, ys = cos(xa)^1-1,
+                           yl0 = (yr/l0), ydiff = yl0-ys)
+        curmax <- max(subset(df, xs > 0 & xs < 1)$ydiff)
+        curcur <- subset(df, xs >= 0 & xs <=1  & ydiff == curmax)$ys
+        currat <- ifelse(curmax == 0, 1, 1-curmax/abs(curcur))
+        currat <- ifelse(currat > 1,1,currat)
+        df <- df |> mutate(ys = ys*currat, ydiff = yl0-ys)
+        curmax <- max(subset(df, xs > 0 & xs < 1)$ydiff)
+        curcur <- subset(df, xs >  0 & xs < 1  & ydiff == curmax)$ys
+        currat2 <- ifelse(curmax == 0, 1, 1-curmax/abs(curcur))
+        currat2 <- ifelse(currat2 > 1,1,currat2)
+
         
-        psmean <- weighted.mean(c(psmax01,psmax02,psmax03),
-                                w=c(2,5,2), na.rm =TRUE)
-        newdepth <- ifelse(is.na(abs(psmean)),l0,pmin(l0,abs(psmean)))
-        wave0 <- data.frame(x=(0:(en+1))/(en+1))
-        wave0 <- wave0 |> mutate(a=x*2*pi,y=(cos(a)^1-1)/2)
-        wave <- data.frame(x=NA, y=NA, q=NA,s=NA,l1=NA,a1=NA,xr=wave0$x*l0,
-                           yr=wave0$y*newdepth,h=NA,s1=NA, type='wave')
-        wavr <- vegnasis::rotate(x=wave$xr, y=wave$yr, a=-a0/2/pi*360, cx=0,cy=0)
-        wave <- wave |> mutate(x=wavr$x+x0,y=wavr$y+y0) |> subset(!yr >=0)
-        df <- df |> rbind(rbind(wave))
-       
+        ggplot()+
+          geom_point(data=subset(df, xs >= 0 & xs <=1),aes(x=xs,y=yl0))+
+          geom_path(data=arrange(subset(df, xs >= 0 & xs <=1), xs),aes(x=xs,y=ys), color='blue')
+          coord_fixed()
 
+          df <- df |> mutate(ys = ys*currat2, ydiff = yl0-ys)
+          pickthispoint <- min(abs(subset(df, xs >= 0 & xs <=1)$ydiff))
+          df <- df |> mutate(s1 = case_when(xs >  0 & xs < 1  & round(abs(ydiff),10) %in% round(pickthispoint,10) ~ i0+j/n/100,                                                                                                            TRUE ~ s1))
+          
+          
         #find nearest vertex within n segments of the hull boundary
-        for(j in 1:n){#j=3
-          psmax1 <- (subset(df, xr >= (j-1)/n*l0 & xr < j/n*l0)$yr)
-
-          smax1 <- max(psmax1)
-
-          df <- df |> mutate(s1 = case_when(xr >= (j-1)/n*l0 & xr < j/n*l0 &
-                                              yr %in% smax1 ~ i0+j/n/100,
-                                            TRUE ~ s1))
-        }
+        # for(j in 1:n){#j=3
+        #   psmax1 <- (subset(df, xr >= (j-1)/n*l0 & xr < j/n*l0)$yr)
+        # 
+        #   smax1 <- max(psmax1)
+        # 
+        #   df <- df |> mutate(s1 = case_when(xr >= (j-1)/n*l0 & xr < j/n*l0 &
+        #                                       yr %in% smax1 ~ i0+j/n/100,
+        #                                     TRUE ~ s1))
+        # }
       }
       df <- df |> subset(type %in% 'core' | !is.na(s1))
       }
