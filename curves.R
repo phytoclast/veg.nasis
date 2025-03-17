@@ -165,9 +165,10 @@ ggplot()+
   coord_fixed()
 
 
-
-
-
+df <- data.frame(s=c(1.1,NA,1.5,5,2,4,NA, 1.2), neworder = NA, ind = 1:8)
+dfsort <- df[order(df$s),]
+dfsort[!is.na(dfsort$s),]$neworder <- 1:6
+resort <- dfsort[order(dfsort$ind),]$neworder
 
 
 
