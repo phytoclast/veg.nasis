@@ -1,6 +1,6 @@
 library(ggplot2)
 library(vegnasis)
-x<- df$microinc
+
 renumber <- function(x){
   n <- length(x)
   df <- data.frame(s=x, neworder = NA, ind = 1:n)
@@ -23,47 +23,15 @@ df <- data.frame(
   y=c(rnorm(50,5,15)),
   s = NA)
 
-# ggplot(df, aes(x=x,y=y))+
-#   geom_point()
 
-df2 <- cavhull(df$x,df$y, concave=F)
-ch <- chull(df$x,df$y)
-chn <- 1:length(ch)
-df$s <- NA
-df[ch,]$s <- chn
-df2 <- subset(df, !is.na(s)) |> arrange(s)
 
-# ggplot()+
-#   geom_point(data=df, aes(x=x,y=y))+
-#   geom_path(data=df2, aes(x=x,y=y))
-
-dp <- 50-0
-
-concavity = 0
-
-sc=1
-df$s <- NA
-for(i in 1:(50*sc)){# (10*sc) i=1
-  
-  j = i/sc
-  df1 <- subset(df, x >= j-1/sc & x < j)
-  ymax <- max(df1$y)
-  df1 <- subset(df1, y %in% ymax)
-  df <- df |> mutate(s =  ifelse(x %in% df1$x & y %in% df1$y, j,s))
-}
-
-df3 <- subset(df, !is.na(s)) |> arrange(s)
-
-# ggplot()+
-#   geom_point(data=df, aes(x=x,y=y))+
-#   geom_path(data=df3, aes(x=x,y=y))
-#   coord_fixed()
 x=df$x
 y=df$y
+concavity = 1; curvy = TRUE; mag = 1
+
 cavhull2 <- function(x,y, concavity = 0, curvy = FALSE, mag = 1){
   n=5 #number of segments to search between convex faces
   df <- data.frame(x=floor(x*1000)/1000,y=floor(y*1000)/1000) |> unique()
-  df <- df |> mutate(q = 1:nrow(df))
   
   #convex hull ----
   check <- TRUE #stopping rule
@@ -111,10 +79,10 @@ cavhull2 <- function(x,y, concavity = 0, curvy = FALSE, mag = 1){
   
   
   if(concavity > 0){
-    for(k in 1:concavity){ #k=2
+    for(k in 1:concavity){ #k=1
       smax <- max(df$s, na.rm = TRUE)
       #visit each convex hull boundary and rotate to a common reference
-      for(i in 1:smax){#i=1
+      for(i in 1:smax){#i=2
         i0 = ifelse(i == 1,smax,i-1)
         x0 <- df[df$s %in% (i0),]$x
         y0 <- df[df$s %in% (i0),]$y
@@ -145,20 +113,19 @@ cavhull2 <- function(x,y, concavity = 0, curvy = FALSE, mag = 1){
         if(curvy & k == concavity){
         wave0 <- data.frame(x=(0:(en+1))/(en+1))
         wave0 <- wave0 |> mutate(a=x*2*pi,y=(cos(a)^1-1)/2*mag)
-        wave <- data.frame(x=NA, y=NA, q=NA,s=NA,l1=NA,a1=NA,xr=wave0$x*l0,
+        wave <- data.frame(x=NA, y=NA, s=NA,l1=NA,a1=NA,xr=wave0$x*l0,
         yr=wave0$y*l0*currat*currat2,h=NA,s1=NA, type='wave',
         xs=NA,xa=NA,ys=NA,yl0=NA,ydiff=NA,microinc=NA)
         wavr <- vegnasis::rotate(x=wave$xr, y=wave$yr, a=-a0/2/pi*360, cx=0,cy=0)
         wave <- wave |> mutate(x=wavr$x+x0,y=wavr$y+y0) |> subset(!yr >=0)
-        df <- df |> rbind(rbind(wave))}
-        
-        
+        df <- df |> rbind(rbind(wave))
+        }
         pickthispoint <- min(abs(subset(df, xs >= 0 & xs <=1)$ydiff))
-        df <- df |> mutate(microinc = ifelse(xs >  0 & xs < 1  & round(abs(ydiff),10) %in% round(pickthispoint,10) | type %in% 'wave',xr,NA))
+        df <- df |> mutate(microinc = ifelse((xs >  0 & xs < 1  & round(abs(ydiff),10) %in% round(pickthispoint,10) | type %in% 'wave') & is.na(s1),xr,NA))
        
         df$microinc <- renumber(df$microinc)
         
-        df <- df |> mutate(s1 = ifelse(!is.na(microinc), i0+j/n/100+microinc/10000,s1))
+        df <- df |> mutate(s1 = ifelse(!is.na(microinc) & is.na(s), i0+microinc/1000,s1))
        df <- df |> subset(type %in% 'core' | !is.na(s1)) 
       }
             df <- df |> mutate(s = renumber(s1), s1 = s)
@@ -169,7 +136,7 @@ cavhull2 <- function(x,y, concavity = 0, curvy = FALSE, mag = 1){
 
 d1 <- cavhull2(df$x,df$y, concavity = 0)
 d2 <- cavhull2(df$x,df$y, concavity = 1, mag = 1)
-d3 <- cavhull2(df$x,df$y, concavity = 2,curvy = TRUE, mag = 1)
+d3 <- cavhull2(df$x,df$y, concavity = 1,curvy = T, mag = 1)
 
 ggplot()+
   geom_polygon(data=d1,aes(x=x,y=y), color='blue', fill='blue')+
