@@ -29,7 +29,7 @@ x=df$x
 y=df$y
 concavity = 1; curvy = TRUE; mag = 1
 
-cavhull2 <- function(x,y, concavity = 0, curvy = FALSE, mag = 1){
+cavhull2 <- function(x,y, concavity = 0, curvy = FALSE, mag = 1, deep=FALSE){
   n=5 #number of segments to search between convex faces
   df <- data.frame(x=floor(x*1000)/1000,y=floor(y*1000)/1000) |> unique()
   
@@ -93,9 +93,21 @@ cavhull2 <- function(x,y, concavity = 0, curvy = FALSE, mag = 1){
         a0 = ifelse(y1 - y0 >=0,a0,-1*a0)
         dfr <- vegnasis::rotate(x=df$x, y=df$y, a=a0/2/pi*360, cx=x0, cy=y0)
         df <- df |> mutate(xr= dfr$x-x0,
-                           yr= dfr$y-y0)
+                           yr= dfr$y-y0,
+                           xs=NA,xa=NA,ys=NA,yl0=NA,ydiff=NA,microinc=NA)
         #use wave to select closest concave points
         en <- pmax(3,floor(pmin(n,l0/5)))*3
+        #deep curve
+        if(deep & k == concavity){
+          wave0 <- data.frame(x=(0:(en+1))/(en+1))
+          wave0 <- wave0 |> mutate(a=x*2*pi,y=(cos(a)^1-1)/2*mag)
+          wave <- data.frame(x=NA, y=NA, s=NA,l1=NA,a1=NA,xr=wave0$x*l0,
+                             yr=wave0$y*l0,h=NA,s1=NA, type='cave',
+                             xs=NA,xa=NA,ys=NA,yl0=NA,ydiff=NA,microinc=NA)
+          wavr <- vegnasis::rotate(x=wave$xr, y=wave$yr, a=-a0/2/pi*360, cx=0,cy=0)
+          wave <- wave |> mutate(x=wavr$x+x0,y=wavr$y+y0) |> subset(!yr >=0)
+          df <- df |> rbind(rbind(wave))
+        }
         df <- df |> mutate(xs = xr/l0, xa = xs*2*pi, ys = (cos(xa)^1-1)/2*mag,
                            yl0 = (yr/l0), ydiff = yl0-ys)
         curmax <- max(subset(df, xs > 0 & xs < 1)$ydiff)
@@ -136,7 +148,7 @@ cavhull2 <- function(x,y, concavity = 0, curvy = FALSE, mag = 1){
 
 d1 <- cavhull2(df$x,df$y, concavity = 0)
 d2 <- cavhull2(df$x,df$y, concavity = 1, mag = 1)
-d3 <- cavhull2(df$x,df$y, concavity = 1,curvy = T, mag = 1)
+d3 <- cavhull2(df$x,df$y, concavity = 2, curvy = F, mag = 1, deep=F)
 
 ggplot()+
   geom_polygon(data=d1,aes(x=x,y=y), color='blue', fill='blue')+
