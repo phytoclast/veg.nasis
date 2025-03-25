@@ -278,7 +278,15 @@ cavhull2 <- function(x,y, concavity = 0, curvy = FALSE, mag = 1, deep=FALSE){
   }
   #concave hull first degree ----
   df <- df |> mutate(s1 = s, type = 'core')
-  
+  #deep curve
+  if(deep & k == concavity){
+    buff0 <- hull.buffer(df$x, df$y, df$s, b=-1)
+    buff <- data.frame(x=NA, y=NA, s=NA,l1=NA,a1=NA,xr=buff0$x,
+                       yr=buff0$y,h=NA,s1=NA, type='cave',
+                       xs=NA,xa=NA,ys=NA,yl0=NA,ydiff=NA,microinc=NA)
+    
+    df <- df |> rbind(rbind(buff))
+  }
   if(concavity > 0){
     for(k in 1:concavity){ #k=1
       smax <- max(df$s, na.rm = TRUE)
@@ -300,17 +308,7 @@ cavhull2 <- function(x,y, concavity = 0, curvy = FALSE, mag = 1, deep=FALSE){
                              xs=NA,xa=NA,ys=NA,yl0=NA,ydiff=NA,microinc=NA)
           #use wave to select closest concave points
           en <- pmax(3,floor(pmin(n,l0/5)))*3
-          #deep curve
-          if(deep & k == concavity){
-            wave0 <- data.frame(x=(0:(en+1))/(en+1))
-            wave0 <- wave0 |> mutate(a=x*2*pi,y=(cos(a)^1-1)/2*mag)
-            wave <- data.frame(x=NA, y=NA, s=NA,l1=NA,a1=NA,xr=wave0$x*l0,
-                               yr=wave0$y*l0,h=NA,s1=NA, type='cave',
-                               xs=NA,xa=NA,ys=NA,yl0=NA,ydiff=NA,microinc=NA)
-            wavr <- vegnasis::rotate(x=wave$xr, y=wave$yr, a=-a0/2/pi*360, cx=0,cy=0)
-            wave <- wave |> mutate(x=wavr$x+x0,y=wavr$y+y0) |> subset(!yr >=0)
-            df <- df |> rbind(rbind(wave))
-          }
+
           df <- df |> mutate(xs = xr/l0, xa = xs*2*pi, ys = (cos(xa)^1-1)/2*mag,
                              yl0 = (yr/l0), ydiff = yl0-ys)
           curmax <- max(subset(df, xs > 0 & xs < 1)$ydiff)
