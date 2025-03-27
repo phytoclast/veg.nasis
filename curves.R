@@ -59,10 +59,11 @@ ggplot()+
 
 #new inner border maker
 
-cavhull2 <- function(x,y, concavity = 0, curvy = FALSE, mag = 1, deep=FALSE){
+cavhull2 <- function(x,y, concavity = 0, curvy = FALSE, maxdepth=NA, minspan=0, mag = 1){
   n=5 #number of segments to search between convex faces
-  df <- data.frame(x=floor(x*1000)/1000,y=floor(y*1000)/1000) |> unique()
   
+  df <- data.frame(x=floor(x*1000)/1000,y=floor(y*1000)/1000) |> unique()
+
   #convex hull ----
   check <- TRUE #stopping rule
   #find starting point at bottom of plot
@@ -107,8 +108,9 @@ cavhull2 <- function(x,y, concavity = 0, curvy = FALSE, mag = 1, deep=FALSE){
   #concave hull first degree ----
   df <- df |> mutate(s1 = s, type = 'core')
   #deep curve
-  if(deep){
-    buff0 <- hull.buffer(df$x, df$y, df$s, b=-1)
+  if(TRUE){
+    if(is.na(maxdepth)){maxdepth=-1*minXY(x=df$x,y=df$y)/2}else{maxdepth=-1*maxdepth}
+    buff0 <- hull.buffer(df$x, df$y, df$s, b=maxdepth)
     buff <- data.frame(x=buff0$x, y=buff0$y, s=NA,l1=NA,a1=NA,xr=NA,
                        yr=NA,h=NA,s1=NA, type='core1')
     df <- df |> rbind(rbind(buff))
@@ -125,7 +127,7 @@ cavhull2 <- function(x,y, concavity = 0, curvy = FALSE, mag = 1, deep=FALSE){
         x1 <- df[df$s %in% i,]$x
         y1 <- df[df$s %in% i,]$y
         l0 <- ((x1-x0)^2+(y1-y0)^2)^0.5
-        if(l0 > 0){
+        if(l0 > minspan){
           a0 = acos((x1-x0)/l0)
           a0 = ifelse(y1 - y0 >=0,a0,-1*a0)
           dfr <- vegnasis::rotate(x=df$x, y=df$y, a=a0/2/pi*360, cx=x0, cy=y0)
@@ -190,14 +192,14 @@ dfmax <- max(df)
 
 
 d1 <- cavhull2(df$x,df$y, concavity = 0)
-d2 <- cavhull2(df$x,df$y, concavity = 1, curvy = F, mag = 1, deep=F)
-d3 <- cavhull2(df$x,df$y, concavity = 2, curvy = T, mag = 1, deep=T)
-
+d2 <- cavhull2(df$x,df$y, concavity = 1, curvy = F, minspan = 0)
+d3 <- cavhull2(df$x,df$y, concavity = 2, curvy = F, maxdepth = 0.5, minspan = 0, mag=0.5)
+minXY(df$x,df$y)
 ggplot()+
   geom_polygon(data=d1,aes(x=x,y=y), color='blue', fill='blue')+
   geom_polygon(data=d2,aes(x=x,y=y), color='red', fill='red')+
   geom_polygon(data=d3,aes(x=x,y=y), color='green', fill='green')+
-  geom_point(data=d1,aes(x=x,y=y))+
+  geom_point(data=df,aes(x=x,y=y))+
   coord_fixed()
 
 
