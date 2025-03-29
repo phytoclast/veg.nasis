@@ -58,14 +58,14 @@ for(i in 1:nrow(shapes)){#i=1
   cstem <- attachBranch(cstem, branchB, shapes$a[i], shapes$by[i])#branches to attach crown
 }
 crown <- cstem |> subset(grepl('tip',type))
-crown2 <- cavhull(x=crown$x,y=crown$y, concave = T)
+crown2 <- cavhull(x=crown$x,y=crown$y, concavity = 3, curvy = T, mag = 2, minspan = 0.1, maxdepth = -1)
 
 ggplot()+
   geom_polygon(data=stem, aes(x=x, y=y), color='brown',fill='#99500090')+
   # geom_point(data=stem, aes(x=x, y=y), color='red')+
   # geom_polygon(data=crown2, aes(x=x, y=y), color='green',fill='#00990090')+
   geom_polygon(data=crown2, aes(x=x, y=y), color='green',fill='#00990090')+
-  # geom_point(data=tree, aes(x=x, y=y), color='green')+
+  geom_point(data=crown2, aes(x=x, y=y), color='green')+
   coord_fixed()
 
 
@@ -123,7 +123,8 @@ for(i in 1:nrow(shapes)){#i=1
 crown <- cstem |> subset(grepl('tip',type))
 circles <- data.frame(a=(0:7)/7*2*pi) |> mutate(cx=cos(a),cy=sin(a))
 crown2 <- merge(crown, circles)# |> mutate(x=x+0.2*cx,y=y+0.2*cy)
-crown2 <- vegnasis::cavhull(x=crown2$x,y=crown2$y, concave = F)
+crown2 <- cavhull(x=crown2$x,y=crown2$y, concavity = 1, curvy = T, maxdepth = 1, minspan = 2, 
+                   mag = 3)
 
 ggplot()+
   geom_polygon(data=stem, aes(x=x, y=y), color='brown',fill='#99500090')+
