@@ -58,14 +58,14 @@ for(i in 1:nrow(shapes)){#i=1
   cstem <- attachBranch(cstem, branchB, shapes$a[i], shapes$by[i])#branches to attach crown
 }
 crown <- cstem |> subset(grepl('tip',type))
-crown2 <- cavhull(x=crown$x,y=crown$y, concavity = 3, curvy = T, mag = 2, minspan = 0.1, maxdepth = -1)
-
+crown2 <- cavhull(x=crown$x,y=crown$y, concavity = 1, curvy = T, mag = 1, minspan = 0.0, maxdepth = 1)
+saveRDS(crown,'C:/scripts/veg.nasis/df.rds')
 ggplot()+
   geom_polygon(data=stem, aes(x=x, y=y), color='brown',fill='#99500090')+
   # geom_point(data=stem, aes(x=x, y=y), color='red')+
   # geom_polygon(data=crown2, aes(x=x, y=y), color='green',fill='#00990090')+
   geom_polygon(data=crown2, aes(x=x, y=y), color='green',fill='#00990090')+
-  geom_point(data=crown2, aes(x=x, y=y), color='green')+
+  geom_point(data=crown, aes(x=x, y=y), color='green')+
   coord_fixed()
 
 

@@ -56,11 +56,13 @@ ggplot()+
 #l0 <- 39.65157
 
 
-
+x=c(1,2,3,4,5, 4,3,2,1);
+y=c(1,1,1,1,1, 2,3,2,1)
+concavity = 1; curvy = T; mag = 1; maxdepth=0.7; minspan=0
 #new inner border maker
 
 cavhull2 <- function(x,y, concavity = 0, curvy = FALSE, maxdepth=NA, minspan=0, mag = 1){
-  n=5 #number of segments to search between convex faces
+  n=20 #number of segments to search between convex faces
   
   df <- data.frame(x=floor(x*1000)/1000,y=floor(y*1000)/1000) |> unique()
 
@@ -76,26 +78,26 @@ cavhull2 <- function(x,y, concavity = 0, curvy = FALSE, maxdepth=NA, minspan=0, 
                      a1=acos((x-x1)/l1)/2/pi*360,
                      a1=ifelse(y-y1 >=0,a1,-1*a1))
   amin = min(subset(df, !s %in% 1)$a1)
-  df <- df |> mutate(s = ifelse(a1 == amin & is.na(s), 0, s))
+  lmin = min(subset(df, !s %in% 1 & a1 %in% amin)$l1)
+  df <- df |> mutate(s = ifelse(a1 == amin & l1 == lmin & is.na(s), 0, s))
   for(i in 1:nrow(df)){
-    if(check){
+    if(check){#i=5
       x0 <- df[df$s %in% (i-1),]$x
       y0 <- df[df$s %in% (i-1),]$y
       x1 <- df[df$s %in% i,]$x
       y1 <- df[df$s %in% i,]$y
       l0 = ((x1-x0)^2+(y1-y0)^2)^0.5
-      a0 = acos((x1-x0)/l0)
+      a0 = round(acos((x1-x0)/l0),9)
       a0 = ifelse(y1 - y0 >=0,a0,-1*a0)
       df <- df |> mutate(xr= x-x1,
                          yr= y-y1,
-                         h=(xr^2+yr^2)^0.5,
-                         a1=acos(yr/h),
+                         l1=round((xr^2+yr^2)^0.5,9),
+                         a1=round(acos(yr/l1),9),
                          a1=ifelse(xr >=0,a1,-1*a1),
                          a1= a1+a0,
-                         xr = ifelse(h==0,0,h*sin(a1)),
-                         yr = ifelse(h==0,0,h*cos(a1)),
-                         xr = xr,
-                         a1=asin(yr/h),
+                         xr = round(ifelse(l1==0,0,l1*sin(a1)),9),
+                         yr = round(ifelse(l1==0,0,l1*cos(a1)),9),
+                         a1=asin(round(yr/l1,9)),
                          a1=ifelse(xr >=0,-a1,pi+a1))
       
       amin = min(subset(df, !s %in% c(i-1,i) )$a1)
@@ -112,7 +114,7 @@ cavhull2 <- function(x,y, concavity = 0, curvy = FALSE, maxdepth=NA, minspan=0, 
     if(is.na(maxdepth)){maxdepth=-1*minXY(x=df$x,y=df$y)/2}else{maxdepth=-1*maxdepth}
     buff0 <- hull.buffer(df$x, df$y, df$s, b=maxdepth)
     buff <- data.frame(x=buff0$x, y=buff0$y, s=NA,l1=NA,a1=NA,xr=NA,
-                       yr=NA,h=NA,s1=NA, type='core1')
+                       yr=NA,s1=NA, type='core1')
     df <- df |> rbind(rbind(buff))
   }
   if(concavity > 0){
@@ -137,17 +139,18 @@ cavhull2 <- function(x,y, concavity = 0, curvy = FALSE, maxdepth=NA, minspan=0, 
           #use wave to select closest concave points
           en <- pmax(3,floor(pmin(n,l0/5)))*3
 
-          df <- df |> mutate(xs = xr/l0, xa = xs*2*pi, ys = (cos(xa)^1-1)/2*mag,
+          df <- df |> mutate(xs = round(xr/l0,6), xa = xs*2*pi, ys = (cos(xa)^1-1)/2*mag,
                              yl0 = (yr/l0), ydiff = yl0-ys)
           curmax <- max(subset(df, xs > 0 & xs < 1)$ydiff)
           curcur <- subset(df, xs >= 0 & xs <=1  & ydiff == curmax)$ys
           currat <- ifelse(curmax == 0, 1, 1-curmax/abs(curcur))
           currat <- ifelse(currat < 0,0, ifelse(currat > 1,1,currat))
           df <- df |> mutate(ys = ys*currat, ydiff = yl0-ys)
-          curmax <- max(subset(df, xs > 0 & xs < 1)$ydiff)
-          curcur <- subset(df, xs >  0 & xs < 1  & ydiff == curmax)$ys
-          currat2 <- ifelse(curmax == 0, 1, 1-curmax/abs(curcur))
+          curmax2 <- max(subset(df, xs > 0 & xs < 1)$ydiff)
+          curcur2 <- subset(df, xs >  0 & xs < 1  & ydiff == curmax2)$ys
+          currat2 <- ifelse(curmax2 == 0, 1, 1-curmax2/abs(curcur2))
           currat2 <- ifelse(currat2 < 0,0, ifelse(currat2 > 1,1,currat2))
+          # df <- df |> mutate(check = xs <1)
           df <- df |> mutate(ys = ys*currat2, ydiff = yl0-ys)
           df$microinc <- NA
           #introduce wave
@@ -155,7 +158,7 @@ cavhull2 <- function(x,y, concavity = 0, curvy = FALSE, maxdepth=NA, minspan=0, 
             wave0 <- data.frame(x=(0:(en+1))/(en+1))
             wave0 <- wave0 |> mutate(a=x*2*pi,y=(cos(a)^1-1)/2*mag)
             wave <- data.frame(x=NA, y=NA, s=NA,l1=NA,a1=NA,xr=wave0$x*l0,
-                               yr=wave0$y*l0*currat*currat2,h=NA,s1=NA, type='wave',
+                               yr=wave0$y*l0*currat*currat2,s1=NA, type='wave',
                                xs=NA,xa=NA,ys=NA,yl0=NA,ydiff=NA,microinc=NA)
             wavr <- vegnasis::rotate(x=wave$xr, y=wave$yr, a=-a0/2/pi*360, cx=0,cy=0)
             wave <- wave |> mutate(x=wavr$x+x0,y=wavr$y+y0) |> subset(!yr >=0)
@@ -174,32 +177,46 @@ cavhull2 <- function(x,y, concavity = 0, curvy = FALSE, maxdepth=NA, minspan=0, 
   }
   df <- subset(df, !is.na(s), select=c(x,y,s)) |> arrange(s)
   return(df)}
+  df2 <- subset(df, !is.na(s), select=c(x,y,s)) |> arrange(s)
 
+  
+  ggplot()+
+    geom_point(data=subset(df, is.na(s)),aes(x=xs,y=ys), color='green', fill='green')+
+    geom_point(data=subset(df),aes(x=xs,y=yl0), color='blue', fill='blue')+
+    geom_point(data=subset(df, type %in% 'core1'),aes(x=xs,y=yl0), color='red', fill='red')+
+    geom_point(data=subset(df, type %in% 'core' & !is.na(s)),aes(x=xs,y=yl0), color='black', fill='black')+
+    coord_fixed()
+  
+  ggplot()+
+    geom_point(data=subset(df),aes(x=xr,y=yr), color='black', fill='black')+
+    coord_fixed()
+  
+  
+  
+ggplot()+
+  geom_polygon(data=df2,aes(x=x,y=y), color='lightblue', fill='lightblue')+
+  geom_point(data=df,aes(x=x,y=y), color='red', fill='red')+
+  geom_point(data=df2,aes(x=x,y=y), color='black', fill='black')+
+  coord_fixed()
 
-x=c(1,2,3,4,5,
-    1.51,2.1,  2.9,3.5,4.9,
-    1,2,3,4,5,
-    1,2,3,4,5);
-y=c(1,1,1,1,1,
-    2.5,2.9, 2.99,2.9,2.9,
-    2,2,2,2,2,
-    3,3,3,3,3)
+x=c(1,2,3,4,5, 4,3,2,1);
+y=c(1,1,1,1,1, 2,3,2,1)
 
 df <- data.frame(x=x,y=y)
 concavity = 2; curvy = TRUE; mag = 1; deep=T
-dfmax <- max(df)
+
 
 
 
 d1 <- cavhull2(df$x,df$y, concavity = 0)
 d2 <- cavhull2(df$x,df$y, concavity = 1, curvy = F, minspan = 0)
-d3 <- cavhull2(df$x,df$y, concavity = 2, curvy = F, maxdepth = 0.5, minspan = 0, mag=0.5)
+d3 <- cavhull2(df$x,df$y, concavity = 1, curvy = T, maxdepth = .15, minspan = 0, mag=1)
 minXY(df$x,df$y)
 ggplot()+
   geom_polygon(data=d1,aes(x=x,y=y), color='blue', fill='blue')+
   geom_polygon(data=d2,aes(x=x,y=y), color='red', fill='red')+
   geom_polygon(data=d3,aes(x=x,y=y), color='green', fill='green')+
-  geom_point(data=df,aes(x=x,y=y))+
+  geom_point(data=d1,aes(x=x,y=y))+
   coord_fixed()
 
 
@@ -222,8 +239,8 @@ minXY <- function(x,y){
   return(x)}
 
 
-
-hull.buffer <- function(x, y, s, b){
+x=df$x; y=df$y; s=df$s; b=maxdepth
+# hull.buffer <- function(x, y, s, b){
   df <- data.frame(x=x,y=y,s=s)
   df <- subset(df, !is.na(s))
   df <- mutate(df,nx=NA,ny=NA)
@@ -232,7 +249,7 @@ hull.buffer <- function(x, y, s, b){
   f = ifelse(b < 0, -1*pmin(abs(b),mxy/2),b)
   smax <- max(df$s, na.rm = TRUE)
   #create inner border to contain convexity
-  for(i in 1:smax){#i=5
+  for(i in 1:smax){#i=2
     i0 = ifelse(i == 1,smax,i-1)
     i2 = ifelse(i == smax,1,i+1)
     x0 <- df[df$s %in% i0,]$x
@@ -244,7 +261,7 @@ hull.buffer <- function(x, y, s, b){
     l0 <- ((x1-x0)^2+(y1-y0)^2)^0.5
     l2 <- ((x1-x2)^2+(y1-y2)^2)^0.5
     
-    a0 = acos((x1-x0)/l0)
+    a0 = acos(pmin(1,(x1-x0)/l0))
     a0 = ifelse(y1 - y0 >=0,a0,-1*a0)
     dfr <- vegnasis::rotate(x=x1, y=y1, a=a0/2/pi*360, cx=x0, cy=y0)
     xr1 <- dfr$x[1]
@@ -252,7 +269,7 @@ hull.buffer <- function(x, y, s, b){
     dfr <- vegnasis::rotate(x=x2, y=y2, a=a0/2/pi*360, cx=x0, cy=y0)
     xr2 <- dfr$x
     yr2 <- dfr$y
-    a2 <- acos((xr2-xr1)/l2)
+    a2 <- acos(pmin(1,(xr2-xr1)/l2))
     a2 <- ifelse(yr2 - yr1 >=0,a2,-1*a2)
     a3 <- pi-(pi-a2)/2
     yr3 <- f*sin(a3)+yr1
@@ -265,7 +282,7 @@ hull.buffer <- function(x, y, s, b){
   }
   #insert new points on inner border
   
-  for(i in 1:nrow(df)){#i=3
+    for(i in 1:nrow(df)){#i=1
     i0 = ifelse(i == 1,smax,i-1)
     x0 <- df[df$s %in% (i0),]$nx
     y0 <- df[df$s %in% (i0),]$ny
