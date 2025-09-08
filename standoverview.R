@@ -74,7 +74,7 @@ ggplot()+
   geom_line(data=covertab, aes(x=n,y=mxcover), color='black')+
   geom_line(data=covertab2, aes(x=n,y=cover), color='blue')+
   geom_line(data=covertab3, aes(x=n,y=cover), color='green')#+
-  #scale_x_continuous(limits = c(0,500))
+#scale_x_continuous(limits = c(0,500))
 
 
 cw = 7
@@ -91,33 +91,84 @@ ggplot()+
 
 #-----------new method to grow stand based on shade
 plength = 100
-cw = 7
+cw = 9
 scf = cw/9 
 stand <- make_hex_stand(plength/100/scf,1*scf)
+
 # nudgx <- runif(nrow(stand), min=-0.25, max=0.25)
 # nudgy <- runif(nrow(stand), min=-0.25, max=0.25)
 # stand <- stand |> mutate(xp=xp+nudgx, yp=yp+nudgy)
-stand <- stand |> mutate(dbh = 0, cwd = 0, shd=0, d=NA, cd = 100)
-for(i in 1:1000){#i=1
-empty <- stand[stand$dbh == 0,]
-empty <- empty[sample(1:nrow(empty),size=1, replace = FALSE, prob = empty$wt),]$stumpid
-stand <- stand |> mutate(dbh = ifelse(stumpid %in% empty, 30,dbh),
-                           cwd = ifelse(stumpid %in% empty, 9,cwd))
-newtree <- subset(stand, stumpid %in% empty)
-newtree <- newtree |> mutate(cwd = pmax(cwd/15,pmin(cwd, cd*15)))
-stand <- stand |> mutate(d = ((newtree$yp-yp)^2+(newtree$xp-xp)^2)^0.5,
-                           shd = ifelse(d < newtree$cwd/2, shd+0.1,shd),
-                           cd = pmin(d-newtree$cwd/2, cd, na.rm = TRUE),
-                           wt = ifelse(shd <= 0, 1,ifelse(shd <= 0.1, 0.5, 0.25)))
+seeds <- c(0,1,2,3,4)
+cws <- c(6,7,8,9,10)
+for(k in 1:5){
+  cw = cws[k]
+  set.seed(seeds[k])
+  stand <- stand |> mutate(dbh = 0, cwd = 0, shd=0, d=NA, cd = 100)
+  for(i in 1:1000){#i=1
+    empty <- stand[stand$dbh == 0,]
+    empty <- empty[sample(1:nrow(empty),size=1, replace = FALSE, prob = empty$wt),]$stumpid
+    stand <- stand |> mutate(dbh = ifelse(stumpid %in% empty, 30,dbh),
+                             cwd = ifelse(stumpid %in% empty, cw,cwd))
+    newtree <- subset(stand, stumpid %in% empty)
+    newtree <- newtree |> mutate(cwd = pmax(cwd/1,pmin(cwd, cd*1)))
+    stand <- stand |> mutate(d = ((newtree$yp-yp)^2+(newtree$xp-xp)^2)^0.5,
+                             shd = ifelse(d < newtree$cwd/2, shd+0.1,shd),
+                             cd = pmin(d-newtree$cwd/2, cd, na.rm = TRUE),
+                             wt = ifelse(shd <= 0, 1,ifelse(shd <= 0.1, 1, 1)))
+    totcov <- subset(stand, xp >= 10 & xp <= 90 & yp >= 10 & yp <= 90) |> 
+      mutate(shd =  ifelse(shd >0,1,0), stem =  ifelse(dbh >0,1,0))
+    
+    cdf0 <- data.frame(stems=sum(totcov$stem)/6400*10000*(cw/2)^2*pi/100, ccov = mean(totcov$shd)*100)
+    if(i==1){cdf <- cdf0}else{cdf <- rbind(cdf, cdf0)}
+  }
+  if(k==1){cdfx <- cdf}else{cdfx <- rbind(cdfx, cdf)}
 }
+ggplot(cdfx, aes(x=stems,y=ccov))+
+  geom_point(size=0.1)
 
+cdf <- cdfx
+
+
+ccv <- function(x){
+  #avoid overlap
+  b1 = 0.002985  ; b2 = 1.348765 
+  #random overlap
+  b1 = 0.00975   ; b2 = 1
+    
+  y = -100*(exp(b1*x^b2))^-1+100
+  return(y)
+}
+cdf <- cdf |> mutate(pred = ccv(stems))
+ggplot(cdf)+
+  geom_point(aes(x=stems,y=ccov),color='red')+
+  geom_line(aes(x=stems,y=pred))
+
+cv <- nls(ccov ~ -100*(exp(b1*stems^b2))^-1+100, data = cdf, 
+          start = list(b1 = 0.1,b2 = 1))
+cdf <- cdf |> mutate(pred = predict(cv, stems))
+ggplot(cdf)+
+  geom_point(aes(x=stems,y=ccov),color='red')+
+  geom_line(aes(x=stems,y=pred))
+
+
+
+cv <- nls(ccov ~ 100*(1-exp(b1*stems))^b2, data = cdf, 
+          start = list(b1 = -0.01767, b2=1))
+cdf <- cdf |> mutate(pred = predict(cv, stems))
+ggplot(cdf)+
+  geom_point(aes(x=stems,y=ccov),color='red')+
+  geom_line(aes(x=stems,y=pred))
+
+
+
+cdf3 <- cdf
 
 cp <- c('white',colorRampPalette(c('green','darkgreen'))(3))
 stand$category <- cut(stand$shd,
                       breaks = c(-Inf,0.1, 0.2,Inf),
                       labels = c(0,0.1, 0.2),
-                   
-                   right = FALSE)
+                      
+                      right = FALSE)
 ggplot(stand, aes(x=xp,y=yp, color = category))+
   geom_point()+
   coord_fixed()+
@@ -127,10 +178,13 @@ ggplot(stand, aes(x=xp,y=yp, color = cd))+
   geom_point()+
   coord_fixed()+
   scale_color_gradient(low = 'green', high = 'darkgreen')
+
+
+
 #totalcover
 
 totcov <- subset(stand, xp >= 10 & xp <= 90 & yp >= 10 & yp <= 90) |> 
-mutate(shd =  ifelse(shd >0,1,0))
+  mutate(shd =  ifelse(shd >0,1,0))
 mean(totcov$shd)
 
 # library(aqp)
