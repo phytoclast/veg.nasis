@@ -114,7 +114,7 @@ for(k in 1:5){
     stand <- stand |> mutate(d = ((newtree$yp-yp)^2+(newtree$xp-xp)^2)^0.5,
                              shd = ifelse(d < newtree$cwd/2, shd+0.1,shd),
                              cd = pmin(d-newtree$cwd/2, cd, na.rm = TRUE),
-                             wt = ifelse(shd <= 0, 1,ifelse(shd <= 0.1, 1, 1)))
+                             wt = ifelse(shd <= 0, 1,ifelse(shd <= 0.1, 0.1, 0.01)))
     totcov <- subset(stand, xp >= 10 & xp <= 90 & yp >= 10 & yp <= 90) |> 
       mutate(shd =  ifelse(shd >0,1,0), stem =  ifelse(dbh >0,1,0))
     
@@ -133,7 +133,7 @@ ccv <- function(x){
   #avoid overlap
   b1 = 0.002985  ; b2 = 1.348765 
   #random overlap
-  b1 = 0.00975   ; b2 = 1
+  # b1 = 0.00975   ; b2 = 1
     
   y = -100*(exp(b1*x^b2))^-1+100
   return(y)
@@ -159,7 +159,39 @@ ggplot(cdf)+
   geom_point(aes(x=stems,y=ccov),color='red')+
   geom_line(aes(x=stems,y=pred))
 
+cdf2 <- subset(cdf, ccov <= 99.9)
+cv <- nls(stems ~  b1*log(1-log(1-ccov/100))^b2, data = cdf2, 
+          start = list(b1 = 110, b2=1.2 ))
+cdf2 <- cdf2 |> mutate(pred = predict(cv, ccov))
 
+
+ccov = 100*(1-exp(b1*stems))^b2
+log(1-log(ccov/100))/b1 = stems
+
+
+
+b1 = 118.648;   b2=1.158 
+cdf <- mutate(cdf, pred = b1*log(1-log(1-ccov/100.))^b2)
+ggplot(cdf)+
+  geom_point(aes(x=ccov,y=stems),color='red')+
+  geom_line(aes(x=ccov,y=pred))
+
+nstem <- function(k,cw, a=1){
+  #k = canopy cover %
+  #crown width m
+  #a = area ha
+  a0 = 10000*a
+  b1 = 118.648;   b2=1.158 
+  #component area
+  kk = b1*log(1-log(1-k/100))^b2
+  #relative crown area per unit area
+  sa = (cw/2)^2*pi/a0
+  #number of stems oer unit area
+  st = round(kk/sa/100, 0)
+  return(st)
+}
+
+nstem(k=50, cw=15, a=1)
 
 cdf3 <- cdf
 
