@@ -191,7 +191,25 @@ nstem <- function(k,cw, a=1){
   return(st)
 }
 
+
+findcw <- function(k, st, a=1){
+  #k = canopy cover %
+  #crown width m
+  #a = area ha
+  a0 = 10000*a
+  b1 = 118.648;   b2=1.158 
+  #component area
+  kk = b1*log(1-log(1-k/100))^b2
+  #relative crown area per unit area
+  sa = a0*kk/100/st
+  #number of stems oer unit area
+  cw = round((sa/pi)^0.5*2,1)
+  return(cw)
+}
+
 nstem(k=50, cw=15, a=1)
+findcw(k=50, st=32, a=1)
+
 
 cdf3 <- cdf
 
