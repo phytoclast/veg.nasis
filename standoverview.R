@@ -105,6 +105,37 @@ for(k in 1:5){
   set.seed(seeds[k])
   stand <- stand |> mutate(dbh = 0, cwd = 0, shd=0, d=NA, cd = 100)
   for(i in 1:1000){#i=1
+    empty <- stand#[stand$dbh == 0,]
+    empty <- empty[sample(1:nrow(empty),size=1, replace = FALSE, prob = empty$wt),]$stumpid
+    stand <- stand |> mutate(dbh = ifelse(stumpid %in% empty, 30,dbh),
+                             cwd = ifelse(stumpid %in% empty, cw,cwd))
+    newtree <- subset(stand, stumpid %in% empty)
+    newtree <- newtree |> mutate(cwd = pmax(cwd/1,pmin(cwd, cd*1)))
+    stand <- stand |> mutate(d = ((newtree$yp-yp)^2+(newtree$xp-xp)^2)^0.5,
+                             shd = ifelse(d < newtree$cwd/2, shd+0.1,shd),
+                             cd = pmin(d-newtree$cwd/2, cd, na.rm = TRUE),
+                             wt = ifelse(shd <= 0, 1,ifelse(shd <= 0.1, 1, 1)))
+    totcov <- subset(stand, xp >= 10 & xp <= 90 & yp >= 10 & yp <= 90) |> 
+      mutate(shd =  ifelse(shd >0,1,0), stem =  ifelse(dbh >0,1,0))
+    
+    cdf0 <- data.frame(crowns=sum(totcov$stem)/6400*10000*(cw/2)^2*pi/100, tcov = mean(totcov$shd)*100)
+    if(i==1){cdf <- cdf0}else{cdf <- rbind(cdf, cdf0)}
+  }
+  if(k==1){cdfx <- cdf}else{cdfx <- rbind(cdfx, cdf)}
+}
+cdfoverlap <- cdfx
+
+plength = 100
+cw = 9
+scf = cw/9 
+stand <- make_hex_stand(plength/100/scf,1*scf)
+seeds <- c(0,1,2,3,4)
+cws <- c(6,7,8,9,10)
+for(k in 1:5){
+  cw = cws[k]
+  set.seed(seeds[k])
+  stand <- stand |> mutate(dbh = 0, cwd = 0, shd=0, d=NA, cd = 100)
+  for(i in 1:1000){#i=1
     empty <- stand[stand$dbh == 0,]
     empty <- empty[sample(1:nrow(empty),size=1, replace = FALSE, prob = empty$wt),]$stumpid
     stand <- stand |> mutate(dbh = ifelse(stumpid %in% empty, 30,dbh),
@@ -118,15 +149,16 @@ for(k in 1:5){
     totcov <- subset(stand, xp >= 10 & xp <= 90 & yp >= 10 & yp <= 90) |> 
       mutate(shd =  ifelse(shd >0,1,0), stem =  ifelse(dbh >0,1,0))
     
-    cdf0 <- data.frame(stems=sum(totcov$stem)/6400*10000*(cw/2)^2*pi/100, ccov = mean(totcov$shd)*100)
+    cdf0 <- data.frame(crowns=sum(totcov$stem)/6400*10000*(cw/2)^2*pi/100, tcov = mean(totcov$shd)*100)
     if(i==1){cdf <- cdf0}else{cdf <- rbind(cdf, cdf0)}
   }
   if(k==1){cdfx <- cdf}else{cdfx <- rbind(cdfx, cdf)}
 }
-ggplot(cdfx, aes(x=stems,y=ccov))+
+
+cdfavoid <- cdfx
+ggplot(cdfx, aes(x=crowns,y=tcov))+
   geom_point(size=0.1)
 
-cdf <- cdfx
 
 
 ccv <- function(x){
@@ -138,50 +170,61 @@ ccv <- function(x){
   y = -100*(exp(b1*x^b2))^-1+100
   return(y)
 }
-cdf <- cdf |> mutate(pred = ccv(stems))
-ggplot(cdf)+
-  geom_point(aes(x=stems,y=ccov),color='red')+
-  geom_line(aes(x=stems,y=pred))
-
-cv <- nls(ccov ~ -100*(exp(b1*stems^b2))^-1+100, data = cdf, 
-          start = list(b1 = 0.1,b2 = 1))
-cdf <- cdf |> mutate(pred = predict(cv, stems))
-ggplot(cdf)+
-  geom_point(aes(x=stems,y=ccov),color='red')+
-  geom_line(aes(x=stems,y=pred))
 
 
+cdfx <- cdfoverlap
+#build models
+# cdf2 <- subset(cdfx, crowns <= 700 & crowns >-10)
+# 
+# cdf2 <- subset(cdfx, crowns <= 295 & crowns >0)
+# cv <- nls(tcov ~ -100*(exp(b1*crowns^b2))^-1+100, data = cdf2, 
+#           start = list(b1 = 1, b2=1))
+# cdf2 <- cdf2 |> mutate(tcov2 = predict(cv, crowns))
+# ggplot(cdf2)+
+#   geom_point(aes(x=crowns,y=tcov),color='red')+
+#   geom_line(aes(x=crowns,y=tcov2))
+# cv
+# cvreverse <- nls(crowns ~  tcov*((1-b1*tcov/(tcov-100)))^b2, data = cdf2, 
+#                  start = list(b1 = 1,b2 = 1))
+# cdf2 <- cdf2 |> mutate(crowns2 = predict(cvreverse, tcov))
+# ggplot(cdf2)+
+#   geom_point(aes(x=crowns,y=tcov),color='red')+
+#   geom_line(aes(x=crowns2,y=tcov))
+# cvreverse
 
-cv <- nls(ccov ~ 100*(1-exp(b1*stems))^b2, data = cdf, 
-          start = list(b1 = -0.01767, b2=1))
-cdf <- cdf |> mutate(pred = predict(cv, stems))
-ggplot(cdf)+
-  geom_point(aes(x=stems,y=ccov),color='red')+
-  geom_line(aes(x=stems,y=pred))
+#test formulas
+cdf2 <- subset(cdfx, crowns <= 295 & crowns >0)
 
-cdf2 <- subset(cdf, ccov <= 99.9)
-cv <- nls(stems ~  b1*log(1-log(1-ccov/100))^b2, data = cdf2, 
-          start = list(b1 = 110, b2=1.2 ))
-cdf2 <- cdf2 |> mutate(pred = predict(cv, ccov))
-
-
-ccov = 100*(1-exp(b1*stems))^b2
-log(1-log(ccov/100))/b1 = stems
+cv <- nls(tcov ~ 2*(100/(1+exp(0-crowns/b1))^1-50)+b2*crowns*exp(-((crowns-b3)^2/b4)), 
+          data = cdf2, start = list(b1 = 50, b2=1, b3=150, b4=100))#
+cdf2 <- cdf2 |> mutate(tcov2 = predict(cv, cdf2))
+ggplot(cdf2)+
+  geom_point(aes(x=crowns,y=tcov),color='green')+
+  geom_line(aes(x=crowns,y=crowns),color='blue')+
+  geom_line(aes(x=crowns,y=tcov2),color='red')+
+  scale_y_continuous(limits = c(0,100))
 
 
+cdf2 <- subset(cdfavoid, crowns <= 700 & crowns >-10)
+cdf2 <- cdf2 |> mutate(f1 = tocov(crowns, avoid = T),
+                       f2 = xxxxtocov(crowns, avoid = T))
+x0=cdf2$tcov
+x1=cdf2$f1
+x2=cdf2$f2
+sum((x1-x0)^2)
+sum((x2-x0)^2)
 
-b1 = 118.648;   b2=1.158 
-cdf <- mutate(cdf, pred = b1*log(1-log(1-ccov/100.))^b2)
-ggplot(cdf)+
-  geom_point(aes(x=ccov,y=stems),color='red')+
-  geom_line(aes(x=ccov,y=pred))
-
-nstem <- function(k,cw, a=1){
+nstem <- function(k,cw, a=1, avoid=T){
   #k = canopy cover %
   #crown width m
   #a = area ha
   a0 = 10000*a
-  b1 = 118.648;   b2=1.158 
+  if(avoid){
+    #avoid overlap
+    b1 = 118.648;   b2=1.158
+  }else{
+    #random overlap
+    b1 = 175.467;   b2=1.748}
   #component area
   kk = b1*log(1-log(1-k/100))^b2
   #relative crown area per unit area
@@ -191,13 +234,56 @@ nstem <- function(k,cw, a=1){
   return(st)
 }
 
+#get aggregate crown area
+tocov <- function(kk, avoid=T){
+  if(avoid){
+    #avoid overlap
+    b1=5.504e+01;b2=2.081e-02;b3=1.489e+02;b4=9.593e+03
+    k = 2 * (100/(1 + exp(0 - kk/b1))^1 - 50) + b2 * kk*exp(-((kk - b3)^2/b4))
+  }else{
+    #random overlap
+    b1=80.3178;b2=0.6273;b3=-124.8550;b4=23848.2169
+    k = 2 * (100/(1 + exp(0 - kk/b1))^1 - 50) + b2 * kk*exp(-((kk - b3)^2/b4))
+  }
+  return(k)
+}
 
-findcw <- function(k, st, a=1){
+xxxxtocov <- function(kk, avoid=T){
+  if(avoid){
+    #avoid overlap
+    b1 = 0.003639; b2 = 1.289286 
+  }else{
+    #random overlap
+    b1 = 0.009502; b2 = 1.008376}
+  k = -100*(exp(b1*kk^b2))^-1+100
+  return(k)
+}
+#find crown area index
+carea <- function(k, avoid=T){
+  #k = canopy cover %
+  if(avoid){
+    #avoid overlap
+    b1 = 4.1225; b2 = 0.1507
+  }else{
+    #random overlap
+    b1 = 2.8950; b2 = 0.2834}
+  #component area
+  kk = k*((1-b1*k/(k-100)))^b2
+  return(kk)
+}
+
+#find crown width
+findcw <- function(k, st, a=1, avoid=T){
   #k = canopy cover %
   #crown width m
   #a = area ha
   a0 = 10000*a
-  b1 = 118.648;   b2=1.158 
+  if(avoid){
+    #avoid overlap
+    b1 = 118.648;   b2=1.158
+  }else{
+    #random overlap
+    b1 = 175.467;   b2=1.748}
   #component area
   kk = b1*log(1-log(1-k/100))^b2
   #relative crown area per unit area
@@ -210,7 +296,14 @@ findcw <- function(k, st, a=1){
 nstem(k=50, cw=15, a=1)
 findcw(k=50, st=32, a=1)
 
-
+avoid=F
+p=30
+x <- carea(p,avoid = avoid)+carea(p,avoid = avoid)+carea(p,avoid = avoid)
+x
+y=tocov(x,avoid = avoid)
+y
+y=vegnasis::cover.agg(c(p,p,p))
+y
 cdf3 <- cdf
 
 cp <- c('white',colorRampPalette(c('green','darkgreen'))(3))
