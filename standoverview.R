@@ -193,46 +193,43 @@ cdfx <- cdfoverlap
 # cvreverse
 
 #test formulas
-cdf2 <- subset(cdfx, crowns <= 295 & crowns >0)
+######
+cdf2 <- subset(cdfavoid, crowns <= 295 & crowns >0)
+cdf2 <- cdf2 |> mutate(k = tocov(crowns, avoid = T))
+cv1 <- nls(crowns ~ k*((1-b1*k/(k-100)))^b2, 
+           data = cdf2, start = list(b1 = 2.8950, b2 = 0.2834))#
+cv2 <- nls(crowns ~ k*b3+b1*(log(100)-log(100-k))^b2, 
+           data = cdf2, start = list(b1 = 1, b2 = 1, b3 = 1))#
 
-cv <- nls(tcov ~ 2*(100/(1+exp(0-crowns/b1))^1-50)+b2*crowns*exp(-((crowns-b3)^2/b4)), 
-          data = cdf2, start = list(b1 = 50, b2=1, b3=150, b4=100))#
-cdf2 <- cdf2 |> mutate(tcov2 = predict(cv, cdf2))
+cdf2 <- cdf2 |> mutate(kk1 = predict(cv1, k),
+                       kk2 = predict(cv2, k))
 ggplot(cdf2)+
-  geom_point(aes(x=crowns,y=tcov),color='green')+
-  geom_line(aes(x=crowns,y=crowns),color='blue')+
-  geom_line(aes(x=crowns,y=tcov2),color='red')+
-  scale_y_continuous(limits = c(0,100))
+  geom_point(aes(y=crowns,x=k),color='green')+
+  geom_line(aes(y=crowns,x=crowns),color='yellow')+
+  geom_line(aes(y=kk1,x=k),color='red')+
+  geom_line(aes(y=kk2,x=k),color='blue')+
+  scale_x_continuous(limits = c(0,100))
+
+cdf2 <- cdf2 |> mutate(r1 = log(crowns) - log(kk1),
+                       r2 = log(crowns) - log(kk2))
+ggplot(cdf2)+
+  geom_line(aes(y=r1,x=k),color='red')+
+  geom_line(aes(y=r2,x=k),color='blue')
 
 
-cdf2 <- subset(cdfavoid, crowns <= 700 & crowns >-10)
-cdf2 <- cdf2 |> mutate(f1 = tocov(crowns, avoid = T),
-                       f2 = xxxxtocov(crowns, avoid = T))
+cdf3 <- subset(cdf2, k <= 90)
 x0=cdf2$tcov
-x1=cdf2$f1
-x2=cdf2$f2
+x1=cdf2$kk1
+x2=cdf2$kk2
+
 sum((x1-x0)^2)
 sum((x2-x0)^2)
 
-nstem <- function(k,cw, a=1, avoid=T){
-  #k = canopy cover %
-  #crown width m
-  #a = area ha
-  a0 = 10000*a
-  if(avoid){
-    #avoid overlap
-    b1 = 118.648;   b2=1.158
-  }else{
-    #random overlap
-    b1 = 175.467;   b2=1.748}
-  #component area
-  kk = b1*log(1-log(1-k/100))^b2
-  #relative crown area per unit area
-  sa = (cw/2)^2*pi/a0
-  #number of stems oer unit area
-  st = round(kk/sa/100, 0)
-  return(st)
-}
+sum((log(x1)-log(x0))^2)
+sum((log(x2)-log(x0))^2)
+
+
+
 
 #get aggregate crown area
 tocov <- function(kk, avoid=T){
@@ -247,7 +244,49 @@ tocov <- function(kk, avoid=T){
   }
   return(k)
 }
+#find crown area index
+carea <- function(k, avoid=T){
+  #k = canopy cover %
+  if(avoid){
+    #avoid overlap
+    b1 = 23.2610; b2 = 1.1241; b3 = 0.9346
+    kk = k * b3 + b1 * (log(100) - log(100 - k))^b2
+  }else{
+    #random overlap
+    b1 = 88.3478; b2 = 1.0353; b3 = 0.2209
+    kk = k * b3 + b1 * (log(100) - log(100 - k))^b2
+  }
+  #component area
+  return(kk)
+}
 
+nstem <- function(k,cw, a=1, avoid=T){
+  #k = canopy cover %
+  #crown width m
+  #a = area ha
+  a0 = 10000*a
+  #component area
+  kk = carea(k=k, avoid=avoid)
+  #relative crown area per unit area
+  sa = (cw/2)^2*pi/a0
+  #number of stems oer unit area
+  st = round(kk/sa/100, 0)
+  return(st)
+}
+#find crown width
+findcw <- function(k, st, a=1, avoid=T){
+  #k = canopy cover %
+  #crown width m
+  #a = area ha
+  a0 = 10000*a
+  #component area
+  kk = carea(k=k, avoid=avoid)
+  #relative crown area per unit area
+  sa = a0*kk/100/st
+  #number of stems oer unit area
+  cw = round((sa/pi)^0.5*2,1)
+  return(cw)
+}
 xxxxtocov <- function(kk, avoid=T){
   if(avoid){
     #avoid overlap
@@ -259,7 +298,7 @@ xxxxtocov <- function(kk, avoid=T){
   return(k)
 }
 #find crown area index
-carea <- function(k, avoid=T){
+xxxxcarea <- function(k, avoid=T){
   #k = canopy cover %
   if(avoid){
     #avoid overlap
@@ -272,26 +311,7 @@ carea <- function(k, avoid=T){
   return(kk)
 }
 
-#find crown width
-findcw <- function(k, st, a=1, avoid=T){
-  #k = canopy cover %
-  #crown width m
-  #a = area ha
-  a0 = 10000*a
-  if(avoid){
-    #avoid overlap
-    b1 = 118.648;   b2=1.158
-  }else{
-    #random overlap
-    b1 = 175.467;   b2=1.748}
-  #component area
-  kk = b1*log(1-log(1-k/100))^b2
-  #relative crown area per unit area
-  sa = a0*kk/100/st
-  #number of stems oer unit area
-  cw = round((sa/pi)^0.5*2,1)
-  return(cw)
-}
+
 
 nstem(k=50, cw=15, a=1)
 findcw(k=50, st=32, a=1)
