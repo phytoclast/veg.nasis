@@ -287,6 +287,19 @@ findcw <- function(k, st, a=1, avoid=T){
   cw = round((sa/pi)^0.5*2,1)
   return(cw)
 }
+
+xxxcover.agg <- function(x, avoid=FALSE){
+  if (max(x) > 100){warning("Cover cannot exceed 100%!")}else{
+    if(!avoid){k = round(100*(1-10^(sum(log10(1-(x/100.0001))))),1)
+    }else{
+      k = round(tocov(sum(carea(x, avoid = TRUE)), avoid = TRUE),1)
+    }
+    if(max(x) == 100){k=100}
+    return(k)}}
+
+p <- c(10,89,30,80,50,10,99.999)
+xxxcover.agg(p, avoid = T)
+
 xxxxtocov <- function(kk, avoid=T){
   if(avoid){
     #avoid overlap
@@ -313,17 +326,26 @@ xxxxcarea <- function(k, avoid=T){
 
 
 
+
 nstem(k=50, cw=15, a=1)
 findcw(k=50, st=32, a=1)
 
-avoid=F
-p=30
-x <- carea(p,avoid = avoid)+carea(p,avoid = avoid)+carea(p,avoid = avoid)
+avoid=T
+p1=10
+p2=50
+p3=40
+p4=70
+x <- carea(p1,avoid = avoid)+carea(p2,avoid = avoid)+carea(p3,avoid = avoid)+carea(p4,avoid = avoid)
 x
 y=tocov(x,avoid = avoid)
 y
-y=vegnasis::cover.agg(c(p,p,p))
+y=vegnasis::cover.agg(c(p1,p2,p3,p4))
 y
+y=vegnasis::cover.agg.stratum(c(p1,p2,p3,p4))
+y
+tocov(sum(carea(c(p1,p2,p3,p4))))
+
+
 cdf3 <- cdf
 
 cp <- c('white',colorRampPalette(c('green','darkgreen'))(3))
@@ -341,6 +363,11 @@ ggplot(stand, aes(x=xp,y=yp, color = cd))+
   geom_point()+
   coord_fixed()+
   scale_color_gradient(low = 'green', high = 'darkgreen')
+
+ggplot(stand, aes(x=xp,y=yp, color = stratid))+
+  geom_point()+
+  coord_fixed()+
+  scale_color_gradient(high = 'green', low = 'darkgreen')
 
 
 
