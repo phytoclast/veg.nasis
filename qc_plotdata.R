@@ -58,22 +58,25 @@ ba <- get_vegplot_speciesbasalarea_from_NASIS(SS=F)
 si <- get_vegplot_tree_si_details_from_NASIS_db(SS=F)
 trans <- get_vegplot_transect_from_NASIS_db(SS=F)
 transp <- get_vegplot_transpecies_from_NASIS_db(SS=F)
-siteeco <- subset(sites, select=c(usiteid, obsdate,upedonid, ecositeid, ecositenm, ecostatename, commphasename, longstddecimaldegrees,latstddecimaldegrees, horizdatnm, site_mlra, site_state, site_county,
+siteeco <- subset(sites, select=c(usiteid, upedonid, obsdate, ecositeid, ecositenm, ecostatename, commphasename, longstddecimaldegrees,latstddecimaldegrees, horizdatnm, site_mlra, site_state, site_county,
                                   elev, slope, aspect,hillslopeprof,geomposflats,geomposhill,geompostrce, geomposmntn,
                                   drainagecl,pondfreqcl,flodfreqcl,
-                                  earthcovkind1, earthcovkind2))
-vegplot1 <- subset(vegplot, select=c(usiteid, assocuserpedonid, vegplotid, vegplotiid, vegplotsize, primarydatacollector,vegdataorigin, obsintensity, cancovtotalpct, cancovtotalclass, overstorycancontotalpct, overstorycancovtotalclass ,treesnagdensityhard,treesnagdensitysoft,basalareaplottotal))|> 
+                                  earthcovkind1, earthcovkind2)) |> unique() 
+
+sitepedon <- siteeco |> group_by(usiteid) |>   summarise(upedonid = first(upedonid, na_rm=T))
+colnames(sitepedon) <- c('usiteid','AnyPedon')
+vegplot1 <- subset(vegplot, select=c(usiteid, obsdate, assocuserpedonid, vegplotid, vegplotiid, vegplotsize, primarydatacollector,vegdataorigin, obsintensity, cancovtotalpct, cancovtotalclass, overstorycancontotalpct, overstorycancovtotalclass ,treesnagdensityhard,treesnagdensitysoft,basalareaplottotal))|> 
   mutate(overstorycover = ifelse(!is.na(overstorycancontotalpct), overstorycancontotalpct,readcoverclass(overstorycancovtotalclass)),
          allvegcover = ifelse(!is.na(cancovtotalpct), cancovtotalpct,readcoverclass(cancovtotalclass))
   )
 
-vegground1 <- subset(vegground, select=c(vegplotid,transectlength, totalpointssampledcount, groundsurfcovtype,groundcoverptcount,groundcoverptpct)) 
+vegground1 <- subset(vegground, select=c(vegplotid, transectlength, totalpointssampledcount, groundsurfcovtype, groundcoverptcount, groundcoverptpct)) 
 
 ba1 <- subset(ba, select=c(vegplotid, plantsciname, speciesbasalarea, treediameterbreastheight))
 trans1 <- subset(trans, select=c(vegplotid, totalpointssampledcount, groundsurfcovpointssamp, totharvestannualprod ))
 transp1 <- subset(transp, select=c(vegplotid, plantsciname, speciesfoliarcovhitcount, speciesaveyielddblsamp, plantprodquadratsize))
 veg <- veg.raw |> clean.veg()
-checkspp <- veg |> subset(!is.na(taxon)) |> group_by(plot) |> summarize(nspp = length(taxon), covmax = max(taxon, na.rm = T))
+checkspp <- veg |> subset(!is.na(taxon)) |> group_by(plot) |> summarize(nspp = length(taxon), covmax = max(cover, na.rm = T))
 checkstrat <- veg |> subset(!is.na(stratum.min)) |> group_by(plot) |> summarize(maxstrat = max(stratum.min))
 checkcrownmax <- veg |> subset(!is.na(crown.max)) |> group_by(plot) |> summarize(maxcrown = max(crown.max))
 checkstructure <- veg |> fill.type.df() |> fill.hts.df() |> get.structure() |> mutate(vegcover = (1-(1-tree/100)*(1-shrub/100)*(1-herb/100))*100) 
@@ -95,11 +98,14 @@ vegplot1 <- vegplot1 |>
   left_join(checkground, join_by(vegplotid==vegplotid))|> 
   left_join(checksi, join_by(vegplotiid==vegplotiid))
 
-checkplot <- siteeco |> left_join(vegplot1)
+checkplot <- siteeco |> left_join(sitepedon)|> left_join(vegplot1) 
 
 checkplot <-  checkplot |> mutate(
-  VegPlotID = vegplotid, 
-  Pedon_ID = ifelse(is.na(assocuserpedonid),upedonid,assocuserpedonid),
+  Site_ID = usiteid,
+  VegPlot_ID = vegplotid, 
+  Pedon_ID = case_when(is.na(assocuserpedonid) & is.na(upedonid) ~ AnyPedon,
+                       is.na(assocuserpedonid) ~ upedonid,
+                       TRUE ~ assocuserpedonid),
   Obs_Date = obsdate,
   Ecosite_ID = ecositeid,
   Community_Phase = commphasename,
@@ -167,7 +173,7 @@ checkplot <-  checkplot |> mutate(
   ,
   Element24 = case_when(is.na(nbiomass)  ~ 'Missing biomass',
                         TRUE ~ 'Pass')
-) |> subset(select=c("VegPlotID","Pedon_ID","Obs_Date",
+) |> subset(!is.na(VegPlot_ID), select=c("Site_ID", "VegPlot_ID","Pedon_ID","Obs_Date",
                      "Ecosite_ID","Community_Phase","Obsintensity","Element1",
                      "Element2","Element3","Element4","Element5",
                      "Element6","Element7","Element8","Element9",
@@ -177,3 +183,57 @@ checkplot <-  checkplot |> mutate(
                      "Element22","Element23","Element24"))
 
 rm(siteass,siteeco,checkstrat,checkspp,checkcrownmax,checkstructure,checkba,checktrans,checktransp,checkground,checksi)
+write.csv(checkplot, 'checkplot.csv', row.names = F, na="")
+
+checkplot2 <- checkplot |> mutate(Element1 =  ifelse(Element1 %in% "Pass", 1,ifelse(is.na(Element1),NA,0)),
+                                  Element2 =  ifelse(Element2 %in% "Pass", 1,ifelse(is.na(Element2),NA,0)),
+                                  Element3 =  ifelse(Element3 %in% "Pass", 1,ifelse(is.na(Element3),NA,0)),
+                                  Element4 =  ifelse(Element4 %in% "Pass", 1,ifelse(is.na(Element4),NA,0)),
+                                  Element5 =  ifelse(Element5 %in% "Pass", 1,ifelse(is.na(Element5),NA,0)),
+                                  Element6 =  ifelse(Element6 %in% "Pass", 1,ifelse(is.na(Element6),NA,0)),
+                                  Element7 =  ifelse(Element7 %in% "Pass", 1,ifelse(is.na(Element7),NA,0)),
+                                  Element8 =  ifelse(Element8 %in% "Pass", 1,ifelse(is.na(Element8),NA,0)),
+                                  Element9 =  ifelse(Element9 %in% "Pass", 1,ifelse(is.na(Element9),NA,0)),
+                                  Element10 =  ifelse(Element10 %in% "Pass", 1,ifelse(is.na(Element10),NA,0)),
+                                  Element11 =  ifelse(Element11 %in% "Pass", 1,ifelse(is.na(Element11),NA,0)),
+                                  Element12 =  ifelse(Element12 %in% "Pass", 1,ifelse(is.na(Element12),NA,0)),
+                                  Element13 =  ifelse(Element13 %in% "Pass", 1,ifelse(is.na(Element13),NA,0)),
+                                  Element14 =  ifelse(Element14 %in% "Pass", 1,ifelse(is.na(Element14),NA,0)),
+                                  Element15 =  ifelse(Element15 %in% "Pass", 1,ifelse(is.na(Element15),NA,0)),
+                                  Element16 =  ifelse(Element16 %in% "Pass", 1,ifelse(is.na(Element16),NA,0)),
+                                  Element17 =  ifelse(Element17 %in% "Pass", 1,ifelse(is.na(Element17),NA,0)),
+                                  Element18 =  ifelse(Element18 %in% "Pass", 1,ifelse(is.na(Element18),NA,0)),
+                                  Element19 =  ifelse(Element19 %in% "Pass", 1,ifelse(is.na(Element19),NA,0)),
+                                  Element20 =  ifelse(Element20 %in% "Pass", 1,ifelse(is.na(Element20),NA,0)),
+                                  Element21 =  ifelse(Element21 %in% "Pass", 1,ifelse(is.na(Element21),NA,0)),
+                                  Element22 =  ifelse(Element22 %in% "Pass", 1,ifelse(is.na(Element22),NA,0)),
+                                  Element23 =  ifelse(Element23 %in% "Pass", 1,ifelse(is.na(Element23),NA,0)),
+                                  Element24 =  ifelse(Element24 %in% "Pass", 1,ifelse(is.na(Element24),NA,0)))
+colnames(checkplot2) <- c("Site_ID", "VegPlot_ID","Pedon_ID","Obs_Date",
+                          "Ecosite_ID","Community_Phase","Obsintensity",
+                          "Coordinates (WGS84 lat/lon)",
+                                     "Geographic Elements (MLRA/State/County)",
+                                     "Elevation, Slope, and Landform Elements",
+                                     "Hydrologic Elements (drain/pond/flood)",
+                                     "Other Vegetation Kind Elements",
+                                     "Disturbance (optional)",
+                                     "Observers and Data Origin",
+                                     "Veg Plot Size",
+                                     "Protocol",
+                                     "Total Canopy Cover",
+                                     "Dominant Species",
+                                     "Cover by Sp",
+                                     "Strata by Sp",
+                                     "Complete Species Composition",
+                                     "Total Basal Area + by Sp",
+                                     "Plant Heights (max by spp + overstory base)",
+                                     "Basal Area Tree Diameters",
+                                     "Foliar Cover LPI",
+                                     "Ground Surface Cover",
+                                     "Snags",
+                                     "Tree Rings Counted",
+                                     "Tree Heights",
+                                     "Seedlings Counted",
+                                     "Biomass Documented")
+
+write.csv(checkplot2, 'checkplot2.csv', row.names = F, na="")
