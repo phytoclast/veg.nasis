@@ -1,5 +1,19 @@
+#This script downloads vegplot data from NASIS and evaluates whether it meets the criteria for low, medium, or high intensity (it does not actually make the final determination but flags criteria to allow for a case by case judgment).
+#
+#It is recommended that you first query within NASIS all veg plots, sites, and pedons associated with each observation to ensure that each element is fairly evaluated. There are some data elements that do not yet have a fetch NASIS function, such as disturbance and protocols.
+#
+#The product is a couple of spreadsheets with a status summary for each plot record, save in the current working directory.
+
+#Load relevant data packages
+#remotes::install_github("ncss-tech/soilDB", dependencies = FALSE) #install latest version of SoilDB package
+#remotes::install_github("phytoclast/vegnasis", dependencies = FALSE) #install latest version of vegnasis package
 library(soilDB)
 library(vegnasis)
+
+#Make working directory the same as where this R script is stored.
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+
+#Data elements being evaluated
 # 1	Coordinates (WGS84 lat/lon)
 # 2	Geographic Elements (MLRA/State/County)
 # 3	Elevation, Slope, and Landform Elements
@@ -25,7 +39,7 @@ library(vegnasis)
 # 23	Seedlings Counted
 # 24	Biomass Documented
 
-
+#Function to convert cover class to numeric data
 readcoverclass <- function(x){
   cover = case_when(
     x %in% "trace" ~ (0.1)/2,
@@ -41,14 +55,9 @@ readcoverclass <- function(x){
     TRUE ~ NA)
   return(cover)}
 
-#Load Demo Data
-siteass <- vegnasis::siteass20250414
-sites <- vegnasis::sites20250414
-veg.raw <- vegnasis::veg.raw20250414
-vegplot <- vegnasis::vegplot20250414
-vegground <- vegnasis::vegground20250414
 
-#To use your own data, remove # below
+
+#Download Data from NASIS. Set parameter SS=F to download everythin in your local database; Set SS=T to only download from selected set.
 siteass <- get_site_association_from_NASIS(SS=F)
 sites <- get_site_data_from_NASIS_db(SS=F)
 veg.raw <- soilDB::get_vegplot_species_from_NASIS_db(SS=F)
@@ -58,6 +67,8 @@ ba <- get_vegplot_speciesbasalarea_from_NASIS(SS=F)
 si <- get_vegplot_tree_si_details_from_NASIS_db(SS=F)
 trans <- get_vegplot_transect_from_NASIS_db(SS=F)
 transp <- get_vegplot_transpecies_from_NASIS_db(SS=F)
+
+#Reduce to most relevant columns
 siteeco <- subset(sites, select=c(usiteid, upedonid, obsdate, ecositeid, ecositenm, ecostatename, commphasename, longstddecimaldegrees,latstddecimaldegrees, horizdatnm, site_mlra, site_state, site_county,
                                   elev, slope, aspect,hillslopeprof,geomposflats,geomposhill,geompostrce, geomposmntn,
                                   drainagecl,pondfreqcl,flodfreqcl,
@@ -75,8 +86,12 @@ vegground1 <- subset(vegground, select=c(vegplotid, transectlength, totalpointss
 ba1 <- subset(ba, select=c(vegplotid, plantsciname, speciesbasalarea, treediameterbreastheight))
 trans1 <- subset(trans, select=c(vegplotid, totalpointssampledcount, groundsurfcovpointssamp, totharvestannualprod ))
 transp1 <- subset(transp, select=c(vegplotid, plantsciname, speciesfoliarcovhitcount, speciesaveyielddblsamp, plantprodquadratsize))
-veg <- veg.raw |> clean.veg()
-checkspp <- veg |> subset(!is.na(taxon)) |> group_by(plot) |> summarize(nspp = length(taxon), covmax = max(cover, na.rm = T))
+
+#Run Vegnasis scripts to consolidate cover and height columns
+veg <- veg.raw |> clean.veg() |> subset(!is.na(plot))
+
+#Summarize various columns to show that they have data
+checkspp <- veg |> subset(!is.na(taxon)) |> group_by(plot) |> summarize(nspp = length(taxon), covmax = max(cover, na.rm = T), basum = sum(BA, na.rm = T)) |> mutate(basum = round(vegnasis::BA.to.USC(basum),0))
 checkstrat <- veg |> subset(!is.na(stratum.min)) |> group_by(plot) |> summarize(maxstrat = max(stratum.min))
 checkcrownmax <- veg |> subset(!is.na(crown.max)) |> group_by(plot) |> summarize(maxcrown = max(crown.max))
 checkstructure <- veg |> fill.type.df() |> fill.hts.df() |> get.structure() |> mutate(vegcover = (1-(1-tree/100)*(1-shrub/100)*(1-herb/100))*100) 
@@ -87,6 +102,7 @@ checktransp <- transp1 |> group_by(vegplotid) |> summarize(fpoints = sum(species
 checkground <- vegground1 |> group_by(vegplotid) |> summarize(gpoints = sum(groundcoverptcount))
 checksi <- si |> group_by(vegplotiid) |> summarize(rings = max(growthringcount),  treeht = max(treecanopyhttop))
 
+#Join summaries to one data frame
 vegplot1 <- vegplot1 |> 
   left_join(checkspp, join_by(vegplotid==plot)) |> 
   left_join(checkstrat, join_by(vegplotid==plot)) |> 
@@ -99,7 +115,9 @@ vegplot1 <- vegplot1 |>
   left_join(checksi, join_by(vegplotiid==vegplotiid))
 
 checkplot <- siteeco |> left_join(sitepedon)|> left_join(vegplot1) 
+checkplot <- checkplot |> mutate(totalba = ifelse(is.na(totalba),basum, totalba))
 
+#Evaluate each summarized value to make a determination of whether it meets criteria for each data element as defined above. Then remove temporary columns.
 checkplot <-  checkplot |> mutate(
   Site_ID = usiteid,
   VegPlot_ID = vegplotid, 
@@ -107,6 +125,7 @@ checkplot <-  checkplot |> mutate(
                        is.na(assocuserpedonid) ~ upedonid,
                        TRUE ~ assocuserpedonid),
   Obs_Date = obsdate,
+  Observer = primarydatacollector,
   Ecosite_ID = ecositeid,
   Community_Phase = commphasename,
   Obsintensity = obsintensity,
@@ -142,7 +161,7 @@ checkplot <-  checkplot |> mutate(
                         TRUE ~ 'Pass'),
   Element13 = case_when(is.na(maxstrat)  ~ 'Missing strata',
                         TRUE ~ 'Pass'),
-  Element14 = case_when((vegcover < 0.5*allvegcover) | (tree < 0.5*overstorycover) ~ 'Likely incomplete species list',
+  Element14 = case_when((vegcover < 0.90*allvegcover) | (tree < 0.90*overstorycover) | is.na(nspp) ~ 'Likely incomplete species list',
                         TRUE ~ 'Pass'),
   Element15 = case_when(is.na(basalareaplottotal) ~ 'Missing total basal area',
                         is.na(totalba) ~ 'Missing species basal area',
@@ -173,7 +192,7 @@ checkplot <-  checkplot |> mutate(
   ,
   Element24 = case_when(is.na(nbiomass)  ~ 'Missing biomass',
                         TRUE ~ 'Pass')
-) |> subset(!is.na(VegPlot_ID), select=c("Site_ID", "VegPlot_ID","Pedon_ID","Obs_Date",
+) |> subset(!is.na(VegPlot_ID), select=c("Site_ID", "VegPlot_ID","Pedon_ID","Obs_Date","Observer",
                      "Ecosite_ID","Community_Phase","Obsintensity","Element1",
                      "Element2","Element3","Element4","Element5",
                      "Element6","Element7","Element8","Element9",
@@ -182,9 +201,13 @@ checkplot <-  checkplot |> mutate(
                      "Element18","Element19","Element20","Element21",
                      "Element22","Element23","Element24"))
 
+#Optional removal of now redundant tables to make global environment a little cleaner.
 rm(siteass,siteeco,checkstrat,checkspp,checkcrownmax,checkstructure,checkba,checktrans,checktransp,checkground,checksi)
+
+#Save verbose version of this checklist.
 write.csv(checkplot, 'checkplot.csv', row.names = F, na="")
 
+#Simplify checklist to ones and zeros.
 checkplot2 <- checkplot |> mutate(Element1 =  ifelse(Element1 %in% "Pass", 1,ifelse(is.na(Element1),NA,0)),
                                   Element2 =  ifelse(Element2 %in% "Pass", 1,ifelse(is.na(Element2),NA,0)),
                                   Element3 =  ifelse(Element3 %in% "Pass", 1,ifelse(is.na(Element3),NA,0)),
@@ -209,7 +232,8 @@ checkplot2 <- checkplot |> mutate(Element1 =  ifelse(Element1 %in% "Pass", 1,ife
                                   Element22 =  ifelse(Element22 %in% "Pass", 1,ifelse(is.na(Element22),NA,0)),
                                   Element23 =  ifelse(Element23 %in% "Pass", 1,ifelse(is.na(Element23),NA,0)),
                                   Element24 =  ifelse(Element24 %in% "Pass", 1,ifelse(is.na(Element24),NA,0)))
-colnames(checkplot2) <- c("Site_ID", "VegPlot_ID","Pedon_ID","Obs_Date",
+#Use verbose column names.
+colnames(checkplot2) <- c("Site_ID", "VegPlot_ID","Pedon_ID","Obs_Date","Observer",
                           "Ecosite_ID","Community_Phase","Obsintensity",
                           "Coordinates (WGS84 lat/lon)",
                                      "Geographic Elements (MLRA/State/County)",
@@ -236,4 +260,5 @@ colnames(checkplot2) <- c("Site_ID", "VegPlot_ID","Pedon_ID","Obs_Date",
                                      "Seedlings Counted",
                                      "Biomass Documented")
 
+#Save less verbose version of checklist (but with more verbose column names).
 write.csv(checkplot2, 'checkplot2.csv', row.names = F, na="")
