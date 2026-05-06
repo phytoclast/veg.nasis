@@ -1,12 +1,10 @@
-#remotes::install_github("ncss-tech/soilDB@fix-466")
+#remotes::install_github("ncss-tech/soilDB@fix-466") #This is a fix to SoilDB for fetch GDB functions
 library(soilDB)
 library(aqp)
 library(sf)
-library(mapview)
-library(vegnasis)
+# library(vegnasis)
 library(terra)
-library(future)
-library(rgbif)
+# library(rgbif)
 #set working directory to folder where this R file is saved
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
@@ -44,36 +42,85 @@ for(i in 1:length(soilstates)){#i=17
   #use this for raster feature
   if(!file.exists(rastfilename)){
     lmu <- readRDS(lmufilename)
-    excludmu <- lmu |> subset(!tolower(muname) %in% tolower(excludedlandtypes))
-    excludmu <- excludmu[,c('lmapunitiid','lmapunitiid')]|> as.matrix()
-    
+    # # make borders NA to prevent interference with merging
+    # excludmu <- lmu |> subset(!tolower(muname) %in% tolower(excludedlandtypes))
+    # excludmu <- excludmu[,c('lmapunitiid','lmapunitiid')]|> as.matrix()
+    # 
+    # s.rast <- terra::rast(dezip, 'MURASTER_10m')
+    # s.excl <- classify(s.rast, excludmu, others=NA)excludmu <- lmu |> subset(tolower(muname) %in% tolower(excludedlandtypes)) |> mutate(val=NA)
+    #This excludes non-natural soils and water bodies so that the resample doesn't overemphasize areas that is irrelevent to MLRA identity
+    excludmu <- lmu |> subset(tolower(muname) %in% tolower(excludedlandtypes)) |> mutate(val=NA)
+    excludmu <- excludmu[,c('lmapunitiid','val')]|> as.matrix()
+    #Get the raster from the geodatabase
     s.rast <- terra::rast(dezip, 'MURASTER_10m') 
-    s.excl <- classify(s.rast, excludmu, others=NA)
+    s.excl <- classify(s.rast, excludmu)
+    #Resample to 90m
     s.rast90 <- aggregate(s.excl,fun='modal', fact=9, filename=rastfilename, overwrite=TRUE, na.rm=TRUE)
+    #This removes the zeros in the border areas so that the merge can happen correctly
+    s.rast90a <- ifel(s.rast90 == 0,NA,s.rast90)
+    writeRaster(s.rast90a, filename=rastfilename, overwrite=TRUE)
   }}
 
+regionalfile <- 'gdbtemp/mukeys90_NE_Region.tif'
+if(!file.exists(regionalfile)){
+  filez <- paste0('gdbtemp/mukeys90m_',soilstates,'.tif')
+  essembledtifs <- sprc(filez)
+  essembledtifs1 <- merge(essembledtifs, method="near")
+  fillcracks <- focal(essembledtifs1, fun='modal', na.policy="only", na.rm=TRUE)
+  writeRaster(fillcracks,regionalfile, overwrite=T)}
+mkeys <- rast(regionalfile)
+names(mkeys) <- 'mkeys'
 
-
-
-
-#now either merge together and rasterize the MLRA layer
-#Zonal statistics 
-#
-soilstate <- 'MI'
-rastfilename <- paste0('gdbtemp/mukeys90m_',soilstate,'.tif')
-s.rast90 <- rast(rastfilename)
-
-r.mlra <- rasterize(vect(MLRA), s.rast90, field='LRU')
+r.mlra <- rasterize(vect(MLRA), mkeys, field='LRU')
 plot(r.mlra)
-r <- c(s.rast90,r.mlra)
+#now either merge together and rasterize the MLRA layer
+#crosstabulate statistics 
+r <- c(mkeys,r.mlra)
 zstats <- terra::crosstab(r, long=TRUE)
 
+#gatherup all the mudata saved earlier
+lmu <- NULL
+for(i in 1:length(soilstates)){#i=17
+  soilstate <- soilstates[i]
+  lmufilename <- paste0('gdbtemp/lmu_',soilstate,'.RDS')
+  lmu0 <- readRDS(lmufilename)
+  if(is.null(lmu)){lmu=lmu0}else{lmu<-rbind(lmu,lmu0)}
+  lmu0 <- NULL
+}
+
+#Crosstabulation of the MLRA overlap with mapunits
+lmustat <- zstats |> left_join(lmu, by=join_by(mkeys==lmapunitiid))
+#merge LRUs that are not distinguished
+lmustat <- lmustat |> mutate(MLRA = case_when(grepl('139', LRU) ~ '139',
+                                              grepl('111B', LRU) ~ '111B',
+                                              grepl('111C', LRU) ~ '111C',
+                                              grepl('98A', LRU) ~ '98A',
+                                              TRUE ~ LRU),
+                             MLRA = as.factor(MLRA)) 
+lmustat <- lmustat |> group_by(mkeys, grpname,areasymbol,liid,nationalmusym,muiid,musym,muname,mukind,mutype,mustatus,dmuinvesintens,muacres,farmlndcl,dmuiid,pct_component,pct_hydric,n_component,n_majcompflag,MLRA) |> 
+  summarise(n=sum(n)) |> ungroup()
+
+mustat <- lmustat |> group_by(muiid,musym,muname,mukind,mutype,mustatus,dmuinvesintens,muacres,farmlndcl,dmuiid,pct_component,pct_hydric,n_component,n_majcompflag,MLRA) |> 
+  summarise(n=sum(n)) |> ungroup()
+#do the math to determine the most appropriate MLRA (MLRA affinity)
+mustat <- mustat |> group_by(MLRA) |> mutate(mlratotal = sum(n), pmlra = n/mlratotal*100) |> ungroup()
+mustat <- mustat |> group_by(muiid) |> mutate(mutotal = sum(n), affinity = n/mutotal*100, maxaffinity = max(affinity)) |> ungroup()
+mlra_affinity <- mustat |> subset(affinity == maxaffinity)
+mlra_affinity <- mlra_affinity |> group_by(muiid) |> mutate(count=length(muiid), ,
+                                                            MLRAind = as.numeric(MLRA))
+
+lmu_affinity <- mlra_affinity |> left_join(lmu[,c('lmapunitiid', 'muiid')]) |> subset(!is.na(lmapunitiid), select= c(lmapunitiid, MLRAind)) |> unique() |> as.matrix()
+
+
+#Render new attributes to the mukey raster reflecting MLRA affinity
+r.affinity <- classify(mkeys, lmu_affinity, others=NA)
+plot(r.affinity)
+writeRaster(r.affinity, 'gdbtemp/r.affinity.tif', overwrite=T)
+
+plot(r.affinity)
 
 
 
-
-
-writeRaster(hydric,'gdbtemp/mitemp.tif')
-rvar <- subset(lmu,select=c('lmapunitiid','pct_hydric')) |> as.matrix()
-hydric <- classify(s.rast90, rvar, others=NA)
-plot(hydric)
+# rvar <- subset(lmu,select=c('lmapunitiid','pct_hydric')) |> as.matrix()
+# hydric <- classify(s.rast90, rvar, others=NA)
+# plot(hydric)
