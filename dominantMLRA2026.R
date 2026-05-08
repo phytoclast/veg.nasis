@@ -18,14 +18,14 @@ MLRA <- st_read('C:/GIS/Ecoregion/MLRA_2018.shp')
 #Name of state to extract from (insert your own two letter state code or create a loop to aggregate multiple states)
 soilstates <- c('CT','DC','DE','IL','IN','KY','MA','MD','ME','MI','NH','NJ','NY','OH','PA','RI','TN','VA','VT','WI','WV','NC')
 #download soil legends by state
-for(i in 1:length(soilstates)){#i=17
+for(i in 1:length(soilstates)){#i=15
   soilstate <- soilstates[i]
   lmufilename <- paste0('gdbtemp/lmu_',soilstate,'.RDS')
   if(!file.exists(lmufilename)){
     lmu <- get_mapunit_from_NASISWebReport(areasymbol=paste0(soilstate,'%'))
     saveRDS(lmu,lmufilename)}}
-
-
+# lmu1 <- get_mapunit_from_NASISWebReport(areasymbol='PA%6%')
+#missing areas c(PA605, PA611, PA607, PA609, PA610)
 
 #create 90-m rasters by state with water and artificial surfaces excluded
 for(i in 1:length(soilstates)){#i=17
